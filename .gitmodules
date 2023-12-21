@@ -1,0 +1,6 @@
+[submodule "webapp"]
+	path = webapp
+	url = git@github.com:pmielle/sonddr-webapp.git
+[submodule "api"]
+	path = api
+	url = git@github.com:pmielle/sonddr-api.git
