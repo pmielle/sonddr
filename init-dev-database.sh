@@ -10,14 +10,14 @@ docker run -d --rm --network sonddr -p 27017:27017 --name mongo \
 echo "sleeping 10s to let the container spawn..."
 sleep 10
 
-docker exec -it \
+docker exec \
 	mongo \
 	mongosh --quiet --eval 'rs.initiate()'
 
 echo "sleeping 10s to let the replica set initiate..."
 sleep 10
 
-docker exec -it \
+docker exec \
 	mongo \
 	mongosh --quiet \
 		--eval 'use sonddr' \
@@ -31,7 +31,7 @@ docker exec -it \
 		--eval 'db.createCollection("discussions", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })'
 
-docker exec -it \
+docker exec \
 	mongo \
 	mongosh --quiet \
 		--eval 'use sonddr' \
