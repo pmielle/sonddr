@@ -3,7 +3,7 @@ set -euo pipefail
 
 # https://www.mongodb.com/community/forums/t/docker-compose-replicasets-getaddrinfo-enotfound/14301
 
-docker run -d --rm --network sonddr -p 27017:27017 --name mongo \
+docker run --quiet -d --rm --network sonddr -p 27017:27017 --name mongo \
 	mongo:6 \
 	--replSet sonddr
 

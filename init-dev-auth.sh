@@ -3,7 +3,7 @@ set -euo pipefail
 
 # https://www.keycloak.org/getting-started/getting-started-docker
 
-docker run -d --rm --network sonddr -p 8080:8080 --name keycloak -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:22.0.1 start-dev # v23 causes problems
+docker run --quiet -d --rm --network sonddr -p 8080:8080 --name keycloak -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:22.0.1 start-dev # v23 causes problems
 
 echo "sleeping 60s to let keycloak init..." # 10s is too short
 sleep 60
