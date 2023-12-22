@@ -3,5 +3,6 @@ set -euo pipefail
 
 docker build --quiet -t express api
 
-docker run --quiet -d --rm --network sonddr -p 3000:3000 --name express \
+docker run --quiet -d --rm --network sonddr --name express \
+	--env KEYCLOAK_URL=$HOSTNAME \
 	express
