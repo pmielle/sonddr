@@ -6,7 +6,7 @@ set -euo pipefail
 # v23 causes problem
 # --http-relative-path must match the reverse proxy path
 docker run --quiet -d --rm --name keycloak \
-	--network sonddr -p 8080:8080 \
+	--network sonddr \
 	--env KEYCLOAK_ADMIN=admin --env KEYCLOAK_ADMIN_PASSWORD=admin \
 	quay.io/keycloak/keycloak:22.0.1 \
 	start-dev  --http-relative-path /auth
