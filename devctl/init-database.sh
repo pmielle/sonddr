@@ -3,7 +3,7 @@ set -euo pipefail
 
 # https://www.mongodb.com/community/forums/t/docker-compose-replicasets-getaddrinfo-enotfound/14301
 
-docker run --quiet -d --rm --name mongo \
+docker run --quiet -d --rm --name database \
 	--network sonddr \
 	mongo:6 \
 	--replSet sonddr
@@ -12,14 +12,14 @@ echo "sleeping 10s to let the container spawn..."
 sleep 10
 
 docker exec \
-	mongo \
+	database \
 	mongosh --quiet --eval 'rs.initiate()'
 
 echo "sleeping 10s to let the replica set initiate..."
 sleep 10
 
 docker exec \
-	mongo \
+	database \
 	mongosh --quiet \
 		--eval 'use sonddr' \
 		--eval 'db.createCollection("goals")' \
@@ -33,7 +33,7 @@ docker exec \
 		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })'
 
 docker exec \
-	mongo \
+	database \
 	mongosh --quiet \
 		--eval 'use sonddr' \
 		--eval 'db.goals.insertOne({name: "No poverty", icon: "home", color: "#89465E", order: 1})' \
