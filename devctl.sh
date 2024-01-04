@@ -17,9 +17,9 @@ docker network create sonddr >/dev/null 2>&1 || true
 # special subcommand "up" + authority
 # n.b. early exit
 if [[ "$1" = "up" ]]; then
-	export SONDDR_AUTHORITY="$2"
-	reinit database &
+	export SONDDR_AUTHORITY="${2:-$SONDDR_AUTHORITY}"
 	reinit auth     &
+	reinit database &
 	reinit api      &
 	reinit webapp   &
 	wait 
