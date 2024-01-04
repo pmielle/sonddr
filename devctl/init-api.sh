@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ -z ${SONDDR_AUTHORITY:-} ]]; then echo "SONDDR_AUTHORITY env var is missing" >&2; exit 1; fi
+
 docker build --quiet -t api api
 
 docker run --quiet -d --rm --network sonddr --name api \
-	--env KEYCLOAK_URL=$HOSTNAME \
+	--env KEYCLOAK_URL="http://$SONDDR_AUTHORITY/auth" \
 	api

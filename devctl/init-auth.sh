@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ -z ${SONDDR_AUTHORITY:-} ]]; then echo "SONDDR_AUTHORITY env var is missing" >&2; exit 1; fi
+
 # https://www.keycloak.org/getting-started/getting-started-docker
 
 # v23 causes problem
@@ -23,4 +25,4 @@ docker exec auth bash -c "$kcadm create users $kcadm_auth -r sonddr -s username=
 docker exec auth bash -c "$kcadm set-password $kcadm_auth -r sonddr --username test --new-password test"
 
 docker exec auth bash -c "$kcadm create clients $kcadm_auth -r sonddr -s clientId=sonddr-backend -s standardFlowEnabled=false -s enabled=true"
-docker exec auth bash -c "$kcadm create clients $kcadm_auth -r sonddr -s clientId=sonddr-frontend -s 'redirectUris=[\"http://$HOSTNAME/*\"]' -s 'webOrigins=[\"http://$HOSTNAME\"]' -s directAccessGrantsEnabled=true -s publicClient=true -s enabled=true"
+docker exec auth bash -c "$kcadm create clients $kcadm_auth -r sonddr -s clientId=sonddr-frontend -s 'redirectUris=[\"http://$SONDDR_AUTHORITY/*\"]' -s 'webOrigins=[\"http://$SONDDR_AUTHORITY\"]' -s directAccessGrantsEnabled=true -s publicClient=true -s enabled=true"
