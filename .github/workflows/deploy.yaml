@@ -1,0 +1,22 @@
+on:
+  push:
+    branches:
+      - cicd
+
+jobs:
+  reinit_everything:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1.0.2
+        env: 
+          SONDDR_AUTHORITY: dev.sonddr.com
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: SONDDR_AUTHORITY
+          script_stop: true
+          script: |
+            cd /srv/sonddr
+            git pull
+            sudo ./devctl.sh up $SONDDR_AUTHORITY

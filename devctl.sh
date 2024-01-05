@@ -18,11 +18,10 @@ docker network create sonddr >/dev/null 2>&1 || true
 # n.b. early exit
 if [[ "$1" = "up" ]]; then
 	export SONDDR_AUTHORITY="${2:-$SONDDR_AUTHORITY}"
-	reinit auth     &
-	reinit database &
-	reinit api      &
-	reinit webapp   &
-	wait 
+	reinit auth
+	reinit database
+	reinit api 
+	reinit webapp
 	reinit reverse-proxy
 	exit 0
 fi

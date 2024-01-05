@@ -13,8 +13,8 @@ docker run --quiet -d --rm --name auth \
 	quay.io/keycloak/keycloak:22.0.1 \
 	start-dev  --http-relative-path /auth
 
-echo "sleeping 60s to let keycloak init..." # 30s is sometimes too short
-sleep 60
+echo "sleeping 120s to let keycloak init..." # 60s is sometimes too short
+sleep 120
 
 kcadm="/opt/keycloak/bin/kcadm.sh"
 kcadm_auth="--server http://localhost:8080/auth --realm master --user admin --password admin"
