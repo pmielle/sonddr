@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - cicd
+      - master
 
 jobs:
   reinit_everything:
