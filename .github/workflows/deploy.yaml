@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - cicd
+      - master
 
 jobs:
   reinit_everything:
@@ -19,5 +19,7 @@ jobs:
           script: |
             cd /srv/sonddr
             git pull
+            # exported variables don't work for some reason,
+            # so SONDDR_AUTHORITY has to be passed explicitly
             sudo SONDDR_AUTHORITY=$SONDDR_AUTHORITY ./devctl.sh reinit api
             sudo SONDDR_AUTHORITY=$SONDDR_AUTHORITY ./devctl.sh reinit webapp
