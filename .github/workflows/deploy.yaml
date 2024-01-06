@@ -19,5 +19,5 @@ jobs:
           script: |
             cd /srv/sonddr
             git pull
-            sudo ./devctl.sh reinit api
-            sudo ./devctl.sh reinit webapp
+            sudo SONDDR_AUTHORITY=$SONDDR_AUTHORITY ./devctl.sh reinit api
+            sudo SONDDR_AUTHORITY=$SONDDR_AUTHORITY ./devctl.sh reinit webapp
