@@ -19,4 +19,7 @@ jobs:
           script: |
             cd /srv/sonddr
             git pull
-            sudo ./devctl.sh up $SONDDR_AUTHORITY
+            # exported variables don't work for some reason,
+            # so SONDDR_AUTHORITY has to be passed explicitly
+            sudo SONDDR_AUTHORITY=$SONDDR_AUTHORITY ./devctl.sh reinit api
+            sudo SONDDR_AUTHORITY=$SONDDR_AUTHORITY ./devctl.sh reinit webapp
