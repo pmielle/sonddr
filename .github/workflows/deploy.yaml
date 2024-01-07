@@ -18,6 +18,7 @@ jobs:
           script_stop: true
           script: |
             cd /srv/sonddr
-            git pull
+            git pull --recurse-submodules
+            git submodule update --recursive
             sudo -E ./devctl.sh reinit api # -E otherwise SONDDR_AUTHORITY is not available
             sudo -E ./devctl.sh reinit webapp
