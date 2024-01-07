@@ -4,7 +4,7 @@ on:
       - master
 
 jobs:
-  reinit_everything:
+  pull_and_reinit:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1.0.2
