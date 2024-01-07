@@ -24,5 +24,8 @@ docker exec auth bash -c "$kcadm create realms $kcadm_auth -s realm=sonddr -s en
 docker exec auth bash -c "$kcadm create users $kcadm_auth -r sonddr -s username=test -s enabled=true"
 docker exec auth bash -c "$kcadm set-password $kcadm_auth -r sonddr --username test --new-password test"
 
+docker exec auth bash -c "$kcadm create users $kcadm_auth -r sonddr -s username=test2 -s enabled=true"
+docker exec auth bash -c "$kcadm set-password $kcadm_auth -r sonddr --username test2 --new-password test2"
+
 docker exec auth bash -c "$kcadm create clients $kcadm_auth -r sonddr -s clientId=sonddr-backend -s standardFlowEnabled=false -s enabled=true"
 docker exec auth bash -c "$kcadm create clients $kcadm_auth -r sonddr -s clientId=sonddr-frontend -s 'redirectUris=[\"http://$SONDDR_AUTHORITY/*\"]' -s 'webOrigins=[\"http://$SONDDR_AUTHORITY\"]' -s directAccessGrantsEnabled=true -s publicClient=true -s enabled=true"
