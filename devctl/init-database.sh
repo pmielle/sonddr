@@ -5,6 +5,7 @@ set -euo pipefail
 
 docker run --quiet -d --rm --name database \
 	--network sonddr \
+	--env MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME --env MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD \
 	mongo:6 \
 	--replSet sonddr
 
