@@ -31,7 +31,7 @@ docker exec \
 		--eval 'db.createCollection("votes")' \
 		--eval 'db.createCollection("messages", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("discussions", { changeStreamPreAndPostImages: { enabled: true} })' \
-		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })'
+		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.goals.insertOne({name: "No poverty", icon: "home", color: "#89465E", order: 1})' \
 		--eval 'db.goals.insertOne({name: "Health and well-being", icon: "health_and_safety", color: "#894646", order: 2})' \
 		--eval 'db.goals.insertOne({name: "Reduced inequalities", icon: "handshake", color: "#896246", order: 3})' \
