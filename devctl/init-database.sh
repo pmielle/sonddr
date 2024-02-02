@@ -23,12 +23,12 @@ docker exec \
 	database \
 	mongosh --quiet \
 		--eval 'use sonddr' \
-		--eval 'db.createCollection("goals")' \
-		--eval 'db.createCollection("cheers")' \
-		--eval 'db.createCollection("comments")' \
-		--eval 'db.createCollection("ideas")' \
-		--eval 'db.createCollection("users")' \
-		--eval 'db.createCollection("votes")' \
+		--eval 'db.createCollection("goals", { changeStreamPreAndPostImages: { enabled: true} })' \
+		--eval 'db.createCollection("cheers", { changeStreamPreAndPostImages: { enabled: true} })' \
+		--eval 'db.createCollection("comments", { changeStreamPreAndPostImages: { enabled: true} })' \
+		--eval 'db.createCollection("ideas", { changeStreamPreAndPostImages: { enabled: true} })' \
+		--eval 'db.createCollection("users", { changeStreamPreAndPostImages: { enabled: true} })' \
+		--eval 'db.createCollection("votes", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("messages", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("discussions", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })' \
