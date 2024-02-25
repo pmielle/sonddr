@@ -10,6 +10,7 @@ if [[ -z ${SONDDR_AUTHORITY:-} ]]; then echo "SONDDR_AUTHORITY env var is missin
 docker run --quiet -d --rm --name auth \
 	--network sonddr \
 	--mount="type=bind,source=./auth/sonddr-realm.json,target=/opt/keycloak/data/import/sonddr-realm.json" \
+	--mount="type=bind,source=./auth/my-theme,target=/opt/keycloak/themes/my-theme" \
 	--env KEYCLOAK_ADMIN=$KEYCLOAK_USERNAME --env KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_PASSWORD \
 	--env SONDDR_AUTHORITY --env SONDDR_BACKEND_SECRET --env SONDDR_GOOGLE_SECRET \
 	quay.io/keycloak/keycloak:22.0.1 \
