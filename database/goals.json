@@ -1,0 +1,58 @@
+[
+	{
+		"name": "No poverty",
+		"icon": "home",
+		"color": "#89465E",
+		"order": 1,
+		"header": "The recent pandemic pushed tens of millions into poverty worldwide and although extreme poverty (<2.15$/day) has been decreasing over the last generation, it is starting to stagnate."
+	},
+	{
+		"name": "Health and well-being",
+		"icon": "health_and_safety",
+		"color": "#894646",
+		"order": 2,
+		"header": "We live in a world in which 10 children die every minute. But a significant part of these deaths, as well as many other; such as communicable diseases or substance abuse, are preventable."
+	},
+	{
+		"name": "Reduced inequalities",
+		"icon": "handshake",
+		"color": "#896246",
+		"order": 3,
+		"header": "Both within and among countries, many domains such as health and education are strike by inequalities. And although global economic inequality is starting to go down, there is still a long way to go."
+	},
+	{
+		"name": "Sustainability",
+		"icon": "recycling",
+		"color": "#898246",
+		"order": 4,
+		"header": "The recent economic progress has been accompanied by waste production and natural resource consumption in all sectors of the economy at a much faster rate than either population or GDP growth."
+	},
+	{
+		"name": "Preserved ecosystems",
+		"icon": "eco",
+		"color": "#4B8946",
+		"order": 5,
+		"header": "The current human-caused climate change has devastating impacts on biodiversity. The current rate of extinction of species is a thousand times too high: we already are in a 6th extinction event."
+	},
+	{
+		"name": "Peace and justice",
+		"icon": "balance",
+		"color": "#468981",
+		"order": 6,
+		"header": "2022 witnessed an unprecedented 50% increase in conflict-related civilian deaths. In the meantime, violence and corruption runs rampant in a justice that is often too slow or malfunctioning."
+	},
+	{
+		"name": "Decent work",
+		"icon": "work",
+		"color": "#464D89",
+		"order": 7,
+		"header": "In too many places, having a job does not guarantee the ability to escape from poverty. And even when it does, a lot more work is still needed to do to achieve a sustained and sustainable workplace."
+	},
+	{
+		"name": "Quality education",
+		"icon": "school",
+		"color": "#684689",
+		"order": 8,
+		"header": "Getting a proper education has been proven to be one of the most powerful vehicles for development, and although primary and secondary school completion rates are rising, the pace is slow and uneven."
+	}
+]

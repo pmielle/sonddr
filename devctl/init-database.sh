@@ -5,6 +5,7 @@ set -euo pipefail
 
 docker run --quiet -d --rm --name database \
 	--network sonddr \
+	--mount type=bind,source=./database/,target=/my_data/ \
 	mongo:6 \
 	--replSet sonddr
 
@@ -31,12 +32,8 @@ docker exec \
 		--eval 'db.createCollection("votes", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("messages", { changeStreamPreAndPostImages: { enabled: true} })' \
 		--eval 'db.createCollection("discussions", { changeStreamPreAndPostImages: { enabled: true} })' \
-		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })' \
-		--eval 'db.goals.insertOne({name: "No poverty", icon: "home", color: "#89465E", order: 1})' \
-		--eval 'db.goals.insertOne({name: "Health and well-being", icon: "health_and_safety", color: "#894646", order: 2})' \
-		--eval 'db.goals.insertOne({name: "Reduced inequalities", icon: "handshake", color: "#896246", order: 3})' \
-		--eval 'db.goals.insertOne({name: "Sustainability", icon: "recycling", color: "#898246", order: 4})' \
-		--eval 'db.goals.insertOne({name: "Preserved ecosystems", icon: "eco", color: "#4B8946", order: 5})' \
-		--eval 'db.goals.insertOne({name: "Peace and justice", icon: "balance", color: "#468981", order: 6})' \
-		--eval 'db.goals.insertOne({name: "Decent work", icon: "work", color: "#464D89", order: 7})' \
-		--eval 'db.goals.insertOne({name: "Quality education", icon: "school", color: "#684689", order: 8})'
+		--eval 'db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })'
+
+docker exec \
+	database \
+	mongoimport --db sonddr --collection goals --jsonArray /my_data/goals.json
