@@ -1,0 +1,12 @@
+#external-links {
+  width: 100%;
+
+  #open-in-new {
+    opacity: 0.5;
+  }
+
+  #external-link-label {
+    opacity: 0.5;
+    margin-left: calc(32px + 2 * var(--gutter));
+  }
+}

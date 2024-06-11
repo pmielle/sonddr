@@ -1,0 +1,42 @@
+<div id="container" class="gutter frosted flex column justify-end"
+  [style.backgroundColor]=" opaque || stuck ? color.transparentColor(this.backgroundColor, .66) : 'transparent'"
+  [class]="{'frosted': stuck, 'mobile': (screen.isMobile$ | async)}" (click)="onClick()">
+
+  <div id="content" class="flex justify-start">
+
+    @switch (leftItem) {
+
+    @case ('logo') {
+    <div id="logo" class="pointer left-item" [class.mobile]="screen.isMobile$|async" matRipple
+      [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="32">
+      <img src="assets/light-logo-without-text.png" alt="logo">
+    </div>
+    }
+
+    @case ('close_home') {
+    <div class="left-item" [class.mobile]="screen.isMobile$|async" (click)="goHome()">
+      <button mat-icon-button><mat-icon>close</mat-icon></button>
+    </div>
+    }
+
+    @case ('back') {
+    <div class="left-item" [class.mobile]="screen.isMobile$|async" (click)="goBack()">
+      <button mat-icon-button><mat-icon>arrow_back</mat-icon></button>
+    </div>
+    }
+
+    @case ('close') {
+    <div class="left-item" [class.mobile]="screen.isMobile$|async" (click)="goBack()">
+      <button mat-icon-button><mat-icon>close</mat-icon></button>
+    </div>
+    }
+
+    }
+
+    <ng-content></ng-content>
+
+  </div>
+</div>
+
+<!-- right below so that it does not transition if scroll down is only a few pixels -->
+<div appIntersection [rootMargin]="(screen.isMobile$|async) ? '-20px 0px 0px 0px' : '-80px 0px 0px 0px'" (isIntersecting)="this.stuck=!$event"></div>

@@ -1,0 +1,10 @@
+#container {
+    display: inline-flex;
+    padding: 5px 10px;
+    border-radius: 99px;
+    border-style: solid;
+
+    &.no-label {
+        padding: 5px 5px;
+    }
+}

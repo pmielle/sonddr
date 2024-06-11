@@ -1,0 +1,11 @@
+<mat-dialog-content>
+  <div id="header" class="flex gap justify-start">
+    <img id="type-logo" [src]="'assets/'+data.type+'-logo.png'">
+    <h2 class="no-margin-bottom">{{ data.type | titlecase }}</h2>
+  </div>
+  <input id="url-input" type="text" placeholder="https://"  [(ngModel)]="value">
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button mat-dialog-close [mat-dialog-close]="value" color="primary">Add link</button>
+</mat-dialog-actions>

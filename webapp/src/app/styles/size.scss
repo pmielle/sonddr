@@ -1,0 +1,12 @@
+:root {
+    --large-profile-picture-size: 56px;
+    --nav-bar-height: 84px;  // used only in mobile mode
+    --nav-bar-width: 100px;  // used only in desktop mode
+    --top-bar-height: 48px;  // keep in sync with comment-section and idea-list root margin
+}
+
+@media (min-width: 500px) {  // keep in sync with screen size service
+    :root {
+        --top-bar-height: 100px;  // keep in sync with comment-section and idea-list root margin
+    }
+  }

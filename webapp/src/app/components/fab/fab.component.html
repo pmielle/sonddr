@@ -1,0 +1,13 @@
+@if (displayedMode) {
+<div id="container" class="expo-out" [class]="{
+        'mobile': screen.isMobile$|async,
+        'out-of-sight': hidden,
+        'disabled': mainNav.isFabDisabled,
+        'updating': updating
+    }">
+  <button mat-fab [style.backgroundColor]="displayedMode.color" (click)="displayedMode.action()">
+    <mat-icon>{{ displayedMode.icon }}</mat-icon>
+  </button>
+  <span id="label" [class.mobile]="screen.isMobile$|async" [style.color]="displayedMode.color" [innerHTML]="displayedMode.label"></span>
+</div>
+}

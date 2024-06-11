@@ -1,0 +1,30 @@
+services:
+
+  webapp: 
+    image: !reset
+    build:
+      context: ../webapp/
+      target: dev
+      additional_contexts:
+        - shared=../shared/
+    volumes:
+      - ../webapp/:/srv/sonddr/
+
+  api:
+    image: !reset
+    build: 
+      context: ../api/
+      additional_contexts:
+        - shared=../shared/
+
+  auth: 
+    image: !reset
+    build: ../auth/
+
+  database:
+    image: !reset
+    build: ../database/
+
+  reverse-proxy:
+    image: !reset
+    build: ../reverse-proxy/

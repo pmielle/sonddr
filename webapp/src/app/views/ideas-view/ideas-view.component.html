@@ -1,0 +1,28 @@
+<div id="container">
+
+  <app-top-bar [left-item]="(screen.isMobile$ | async) ? 'logo' : undefined">
+    @if (!(screen.isMobile$|async)) {
+    <h1 class="no-margin-bottom">All ideas</h1>
+    }
+    <div class="spacer"></div>
+    <app-profile-picture class="pointer" [user]="userData.user$|async"
+      (click)="userData.goToProfile()"></app-profile-picture>
+  </app-top-bar>
+
+  <div id="header">
+    @if (screen.isMobile$ | async) {
+    <h1 id="title" class="gutter">All ideas</h1>
+    }
+
+    <p class="gutter">Sonddr is a place to share and contribute to each other nonprofit ideas to make the world a little (or a lot) better. Feel free to share yours! You can hop in or off a project at any time, so no pressure.</p>
+
+    <app-h-scroll>
+      @for (g of goals; track g.id) {
+      <app-goal-chip [goal]="g" [routerLink]="['goal', g.id]"></app-goal-chip>
+      }
+    </app-h-scroll>
+  </div>
+
+  <app-idea-list [ideas]="ideas" (sort-by-change)="onSortByChange($event)"></app-idea-list>
+
+</div>

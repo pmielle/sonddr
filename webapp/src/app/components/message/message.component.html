@@ -1,0 +1,12 @@
+<div id="container" class="flex justify-start gutter" [ngClass]="{'mobile': screen.isMobile$|async ,'from-user': message?.author?.isUser, 'deleted': message?.deleted}">
+  <div id="bubble" [cdkContextMenuTriggerFor]="menu">
+    <p class="no-margin-bottom">{{ message?.content }}</p>
+  </div>
+  <ng-template #menu>
+    <div cdkMenu>
+      @if(message?.author?.isUser && ! message?.deleted) {
+      <button mat-flat-button cdkMenuItem (click)="delete.next()">Delete</button>
+      }
+    </div>
+  </ng-template>
+</div>

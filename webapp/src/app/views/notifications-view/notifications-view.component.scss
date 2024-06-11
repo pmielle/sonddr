@@ -1,0 +1,26 @@
+#container {
+
+  #title {
+    margin-top: var(--spacing);
+  }
+
+  .notifications {
+    margin-top: var(--large-spacing);
+  }
+
+  .n-unread {
+    margin-left: var(--gutter);
+  }
+
+  #no-new {
+    margin-top: var(--large-spacing);
+    margin-left: var(--gutter);
+    opacity: 0.5;
+  }
+
+  #load-older {
+    margin-top: var(--large-spacing);
+    margin-left: var(--gutter);
+  }
+
+}

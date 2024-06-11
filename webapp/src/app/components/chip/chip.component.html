@@ -1,0 +1,10 @@
+<div id="container" class="flex small-gap" [class]="{
+        'no-label': noLabel,
+        'pointer': clickable
+    }" [style.backgroundColor]="color" [style.borderColor]="color" [style.borderWidth]="border ? '1px' : '0px'"
+  mat-ripple [matRippleDisabled]="!clickable">
+  <mat-icon [style.color]="foregroundColor">{{ icon }}</mat-icon>
+  @if (noLabel === false) {
+  <div id="label" [style.color]="foregroundColor">{{ label }}</div>
+  }
+</div>

@@ -1,0 +1,62 @@
+<div id="container">
+
+  <app-top-bar left-item="back">
+    <div class="spacer"></div>
+    @if (idea?.author?.isUser) {
+    <button mat-icon-button [mat-menu-trigger-for]="menu"><mat-icon>more_vert</mat-icon></button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="onEditClick()">Edit</button>
+      <button mat-menu-item (click)="onDeleteClick()">Delete</button>
+    </mat-menu>
+    }
+  </app-top-bar>
+
+  <div id="cover">
+    <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()" [appOpenImage]="idea?.cover"></div>
+
+    <div id="bottom-strip" class="flex gap justify-start">
+      @for (g of idea?.goals; track g.id) {
+      <app-goal-chip
+          [no-label]="true"
+          [goal]="g"
+          [routerLink]="['/', 'ideas', 'goal', g.id]"
+          ></app-goal-chip>
+      }
+      <div class="spacer"></div>
+      <app-like-counter [idea]="idea" (click)="toggleCheer()"></app-like-counter>
+    </div>
+  </div>
+
+  <div id="page-content" class="flex column large-gap">
+
+    <div id="header" class="flex column align-start">
+      <h1 id="title" class="no-margin-bottom">{{ idea?.title }}</h1>
+      <div id="author">
+        <app-profile-picture [user]="idea?.author" class="pointer"
+          [routerLink]="['/', 'ideas', 'user', idea?.author?.id]"></app-profile-picture>
+        <p class="no-margin-bottom">
+          <span id="author-name" class="pointer" [routerLink]="['/', 'ideas', 'user', idea?.author?.id]">
+            {{ idea?.author?.name }}
+          </span>
+          <span id="date"> - {{ time.makeAgo(idea?.date) }}</span>
+        </p>
+      </div>
+
+      <app-external-links
+        [is-logged-in-user]="idea?.author?.isUser"
+        [external-links]="idea?.externalLinks"
+        (add)="addExternalLink($event)"
+        (delete)="deleteExternalLink($event)"
+      ></app-external-links>
+
+    </div>
+
+    <div id="content" [innerHTML]="idea?.content"></div>
+
+    <app-comment-section [comments]="comments" (sort-by-change)="onSortByChange($event)"
+      (post-comment)="postComment($event)" (upvote)="upvoteComment($event)" (downvote)="downvoteComment($event)"
+      (delete-vote)="deleteCommentVote($event)" (delete-comment)="deleteComment($event)" (focus)="onInputFocus()" (blur)="onInputBlur()"></app-comment-section>
+
+  </div>
+
+</div>

@@ -1,0 +1,15 @@
+app-top-bar {
+
+    #top-bar-content {
+        width: 100%;
+    }
+    
+    input { 
+        flex: 1; 
+        margin-right: var(--gutter);
+    }
+}
+
+#results-label {
+    opacity: 0.5;
+}

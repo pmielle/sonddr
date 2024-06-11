@@ -1,0 +1,17 @@
+# npm
+node_modules/
+package-lock.json
+
+# angular
+dist/
+.angular/
+
+# editors
+.idea/
+.vscode/
+
+# secrets
+.env
+
+# misc
+.DS_Store

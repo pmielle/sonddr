@@ -1,0 +1,41 @@
+<div id="container">
+
+  <app-top-bar>
+    @if (!(screen.isMobile$|async)) {
+    <h1 class="no-margin-bottom">Notifications</h1>
+    }
+    <div class="spacer"></div>
+    <app-profile-picture class="pointer" [user]="userData.user$|async"
+      (click)="userData.goToProfile()"></app-profile-picture>
+  </app-top-bar>
+
+  @if (screen.isMobile$ | async) {
+  <h1 id="title" class="gutter no-margin-bottom">Notifications</h1>
+  }
+
+  @if (userData.newNotifications.length > 0) {
+  <div id="new-notifications" class="notifications">
+    <p class="n-unread">{{ userData.newNotifications.length }} unread <app-red-dot></app-red-dot></p>
+    @for (n of userData.newNotifications; track n.id) {
+    <app-notification [notification]="n" (click)="openNotification(n, true)"></app-notification>
+    }
+  </div>
+  } @else {
+  <div id="no-new">No new notification</div>
+  }
+
+  @if (showOlder) {
+  <div id="old-notifications" class="notifications">
+    <p class="n-unread">Earlier</p>
+    @for (n of userData.oldNotifications; track n.id) {
+    <app-notification [notification]="n" (click)="openNotification(n)"></app-notification>
+    }
+  </div>
+  } @else if (userData.oldNotifications.length > 0) {
+  <div id="load-older">
+    <app-chip label="Show older notifications" icon="expand_more" [border]="true" (click)="showOlder=true">
+    </app-chip>
+  </div>
+  }
+
+</div>

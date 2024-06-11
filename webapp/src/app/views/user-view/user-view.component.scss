@@ -1,0 +1,52 @@
+#container {
+  padding-bottom: calc(var(--nav-bar-height) + 56px + 2 * var(--spacing));  // fab size
+
+    #cover {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/9;
+        max-height: 300px;
+
+        #cover-background {
+            position: absolute;
+            top: calc(-1 * var(--top-bar-height));
+            left: 0;
+            height: calc(100% + var(--top-bar-height));
+            width: 100%;
+            background-color: var(--grey);
+        }
+
+        #profile-picture {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 25%);
+        }
+    }
+
+    #header {
+        width: 100%;
+        gap: var(--spacing);
+        padding-top: var(--large-spacing);
+        padding-bottom: var(--large-spacing);
+
+        #since {
+            opacity: 0.5;
+        }
+
+        #external-links {
+            max-width: 100%;
+
+            #open-in-new {
+                opacity: 0.5;
+            }
+
+            #external-link-label {
+                margin-top: -4px;
+                opacity: 0.5;
+                margin-left: var(--gutter);
+            }
+        }
+    }
+
+}

@@ -1,0 +1,20 @@
+#container {
+    --width: var(--nav-bar-width);
+    position: relative;
+    width: var(--width);
+
+    &.mobile {
+        --width: 50px;
+    }
+
+    #badge {
+        position: absolute;
+        top: -10px;
+        min-width: 20px;
+        background-color: red;
+        border-radius: 99px;
+        padding: 0 5px;
+        text-align: center;
+        left: calc(var(--width) / 2);
+    }
+}

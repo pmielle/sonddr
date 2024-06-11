@@ -1,0 +1,15 @@
+<div id="container">
+  <div id="scroll-container" class="h-scroll no-scrollbar" [style.paddingLeft]="leftPadding">
+    <div id="intersection-container">
+      <div id="left-intersect" appIntersection (isIntersecting)="this.leftShadow=!$event"></div>
+      <ng-content></ng-content>
+      <div id="right-intersect" appIntersection (isIntersecting)="this.rightShadow=!$event"></div>
+    </div>
+  </div>
+  @if (this.hideShadows === false) {
+  <div id="left-shadow" class="shadow" [class.show]="leftShadow"
+    [style.background]="'linear-gradient(to right, '+shadowColor+', transparent)'"></div>
+  <div id="right-shadow" class="shadow" [class.show]="rightShadow"
+    [style.background]="'linear-gradient(to left, '+shadowColor+', transparent)'"></div>
+  }
+</div>

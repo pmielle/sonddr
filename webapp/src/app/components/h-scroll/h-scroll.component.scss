@@ -1,0 +1,46 @@
+#container {
+    position: relative;
+
+    #scroll-container {
+        padding-top: 5px;  // otherwise mat-ripple are cropped
+        padding-bottom: 5px;
+        padding-right: var(--gutter);
+        
+        #intersection-container {
+            position: relative;  // for #*-intersect position
+            display: inline-flex;
+            gap: var(--spacing);
+            justify-content: unset;
+            align-items: center;
+
+            #left-intersect {
+                position: absolute;
+                left: 0;
+            }
+            #right-intersect {
+                position: absolute;
+                right: 0;
+            }
+        }
+    }
+
+    .shadow {
+        position: absolute;
+        top: 0;
+        width: var(--large-spacing);
+        height: 100%;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity var(--duration);
+
+        &.show { opacity: 1; }
+
+        &#left-shadow {
+            left: 0;
+        }
+
+        &#right-shadow {
+            right: 0;
+        }
+    }
+}

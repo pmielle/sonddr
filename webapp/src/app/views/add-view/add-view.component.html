@@ -1,0 +1,48 @@
+<div id="container" class="swipe-up">
+
+  <app-top-bar left-item="close">
+    <h2 class="no-margin-bottom">{{ editIdeaId ? "Edit idea" : "New idea" }}</h2>
+  </app-top-bar>
+
+  <div id="cover">
+    <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()"
+      [class.lowkey]="coverPreview"></div>
+
+    <div id="upload">
+      <app-file-picker (file-change)="onCoverChange($event)">
+        <div id="button" class="flex column" mat-ripple [matRippleCentered]="true" [matRippleUnbounded]="true"
+          matRippleSize="20px">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Upload a cover</span>
+        </div>
+      </app-file-picker>
+    </div>
+
+    <div id="goals">
+      <app-h-scroll [hide-shadows]="true" left-padding="calc(2 * var(--gutter) + 32px)">
+        <app-chip label="Add a goal" icon="add" color="var(--background-color)" foreground-color="var(--grey)"
+          [mat-menu-trigger-for]="menu"></app-chip>
+        <mat-menu #menu="matMenu">
+          @for (g of selectableGoals; track g.id) {
+          <button mat-menu-item (click)="selectGoal(g)">
+            {{ g.name }}
+          </button>
+          }
+        </mat-menu>
+        @for (g of selectedGoals; track g.id) {
+        <app-goal-chip [goal]="g"></app-goal-chip>
+        }
+      </app-h-scroll>
+    </div>
+  </div>
+
+  <div id="form" class="flex column gap">
+    <input id="title" type="text" placeholder="Choose a title" (keyup)="refreshFabDisplay()" [(ngModel)]="title"
+      (focus)="onInputFocus()" (blur)="onInputBlur()" (keydown.tab)="onTitleTab($event)">
+
+    <app-editor placeholder="Explain your idea..." (keyup)="refreshFabDisplay()" (focus)="onInputFocus()"
+      (blur)="onInputBlur()"></app-editor>
+
+  </div>
+
+</div>

@@ -1,0 +1,51 @@
+<div
+    id="container"
+    class="flex column large-gap frosted expo-out"
+    [class]="{
+        'out-of-sight': (screen.isMobile$|async) && mainNav.isNavBarHidden,
+        'mobile': screen.isMobile$ | async,
+        'flat': (screen.isMobile$|async) && mainNav.isNavBarFlat,
+    }"
+>
+    <div
+        id="logo"
+        class="pointer"
+        [class.hidden]="screen.isMobile$ | async"
+        matRipple
+        [matRippleCentered]="true"
+        [matRippleUnbounded]="true"
+        [matRippleRadius]="32"
+        routerLink="/ideas"
+    >
+        <img src="assets/light-logo-without-text.png" alt="logo">
+    </div>
+
+    <app-nav-bar-item
+        label="Ideas"
+        icon="lightbulb"
+        (click)="onClick('ideas')"
+        [outlined]="(mainNav.tab$|async) !== 'ideas'"
+    ></app-nav-bar-item>
+    <app-nav-bar-item
+        label="Search"
+        icon="search"
+        (click)="onClick('search')"
+        [outlined]="(mainNav.tab$|async) !== 'search'"
+    ></app-nav-bar-item>
+    <app-nav-bar-item
+        label="Messages"
+        icon="forum"
+        (click)="onClick('messages')"
+        [outlined]="(mainNav.tab$|async) !== 'messages'"
+        [badge]="makeBadge(userData.activeDiscussions.length)"
+    ></app-nav-bar-item>
+    <app-nav-bar-item
+        label="Notifications"
+        icon="notifications"
+        (click)="onClick('notifications')"
+        [outlined]="(mainNav.tab$|async) !== 'notifications'"
+        [badge]="makeBadge(userData.newNotifications.length)"
+    ></app-nav-bar-item>
+
+    <app-fab [class.hidden]="screen.isMobile$ | async"></app-fab>
+</div>

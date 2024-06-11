@@ -1,0 +1,12 @@
+<div id="container" class="flex column align-start small-gap pointer" mat-ripple>
+  @if (findOtherUser(userData.user$|async); as u) {
+  <span id="title">
+    <app-profile-picture [user]="u"></app-profile-picture>
+    <b>{{ u.name }}</b>
+    <span id="ago"> - {{ time.makeAgo(discussion?.lastMessage?.date) }}</span>
+  </span>
+  }
+  <span id="last-message" class="ellipsis multi-2">
+    {{ discussion?.lastMessage?.author?.name }}: {{ discussion?.lastMessage?.content }}
+  </span>
+</div>

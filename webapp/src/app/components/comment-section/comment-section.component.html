@@ -1,0 +1,80 @@
+<div id="container">
+
+  <div id="input" class="flex gutter">
+    <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
+    <input
+      type="text"
+      placeholder="What do you think?"
+      [(ngModel)]="commentBody"
+      (keydown.enter)="onPostComment()"
+      (focus)="focus.next()"
+      (blur)="blur.next()"
+      #input
+    />
+    <app-chip label="Comment" color="var(--green)" icon="send" [class.disabled]="!this.formIsValid()"
+      (click)="onPostComment()"></app-chip>
+  </div>
+
+  @if (comments && comments.length) {
+  <div id="comments">
+
+    @if (shouldDisplaySortBy()) {
+    <div id="sort-by" class="flex">
+      <button [mat-menu-trigger-for]="menu" mat-button>
+        <span>Sort by</span>
+        <mat-icon>sort</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="updateSortBy('recent')">Recent</button>
+        <button mat-menu-item (click)="updateSortBy('popular')">Popular</button>
+      </mat-menu>
+    </div>
+    }
+
+    <div id="first-section-header-background"></div>
+
+    @if (isCollapsed) {
+    @if (sections && sections.length && sections[0].comments.length) {
+    <div class="section">
+      <div class="section-header flex row justify-start gutter" [class.invisible]="!sections[0].header">
+        <span>{{ sections[0].header }}</span>
+      </div>
+      <div class="section-content" [class.mobile]="screen.isMobile$ | async">
+        @if (sections[0].comments[0]; as c) {
+        <app-comment [comment]="c" (upvote)="upvote.next(c.id)" (downvote)="downvote.next(c.id)"
+          (delete-vote)="deleteVote.next(c.id)" (delete-comment)="deleteComment.next(c.id)"></app-comment>
+        }
+      </div>
+    </div>
+    }
+    @if (makeLabel(); as label) {
+    <app-chip id="expand" [label]="label" icon="expand_more" color="var(--foreground-color)"
+      foreground-color="var(--darker-background-color)" (click)="isCollapsed = false"></app-chip>
+    }
+    } @else {
+    @for (s of sections; track s) {
+    <div class="section">
+      <div class="section-header flex row justify-start gutter"
+        [style.backgroundColor]="s.stuck ? color.transparentColor('#303030', .66) : 'transparent'"
+        [class.invisible]="!s.header" appIntersection
+        [rootMargin]="(screen.isMobile$|async) ? '-49px 0px 0px 0px' : '-101px 0px 0px 0px'"
+        (isIntersecting)="s.stuck = !$event">
+        <span>{{ s.header }}</span>
+      </div>
+      <div class="section-content" [class.mobile]="screen.isMobile$ | async">
+        @for (c of s.comments; track c.id) {
+        <app-comment [comment]="c" (upvote)="upvote.next(c.id)" (downvote)="downvote.next(c.id)"
+          (delete-vote)="deleteVote.next(c.id)" (delete-comment)="deleteComment.next(c.id)"></app-comment>
+        }
+      </div>
+    </div>
+    }
+    }
+
+
+  </div>
+  } @else {
+  <div id="no-comments"></div>
+  }
+
+</div>

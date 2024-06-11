@@ -1,0 +1,10 @@
+#container {
+  display: inline-block;
+  margin-left: var(--small-spacing);
+  --size: 10px;
+  width: var(--size);
+  height: var(--size);
+  background-color: red;
+  border-radius: 99px;
+}
+

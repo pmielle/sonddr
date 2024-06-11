@@ -1,0 +1,24 @@
+{
+  "name": "sonddr-shared",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pmielle/sonddr-shared.git"
+  },
+  "author": "Paul Mielle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pmielle/sonddr-shared/issues"
+  },
+  "homepage": "https://github.com/pmielle/sonddr-shared#readme",
+  "type": "module",
+  "dependencies": {
+    "typescript": "^5.4.5"
+  }
+}

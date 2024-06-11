@@ -1,0 +1,34 @@
+<div id="container">
+
+  <app-top-bar>
+    @if (!(screen.isMobile$|async)) {
+    <h1 class="no-margin-bottom">Messages</h1>
+    }
+    <div class="spacer"></div>
+    <app-profile-picture class="pointer" [user]="userData.user$|async" (click)="userData.goToProfile()"></app-profile-picture>
+  </app-top-bar>
+
+  @if (screen.isMobile$ | async) {
+  <h1 id="title" class="gutter no-margin-bottom">Messages</h1>
+  }
+
+  @if (userData.activeDiscussions.length > 0) {
+  <div id="new-discussions" class="discussions">
+    <p class="n-unread">{{ userData.activeDiscussions.length }} unread <app-red-dot></app-red-dot></p>
+    @for (d of userData.activeDiscussions; track d.id) {
+    <app-discussion [discussion]="d" (click)="goToDiscussion(d, true)"></app-discussion>
+    }
+  </div>
+  }
+
+  <div id="old-discussions" class="discussions">
+    @if (userData.activeDiscussions.length > 0 && userData.olderDiscussions.length > 0) {
+    <p class="n-unread">Earlier
+    </p>
+    }
+    @for (d of userData.olderDiscussions; track d.id) {
+    <app-discussion [discussion]="d" (click)="goToDiscussion(d)"></app-discussion>
+    }
+  </div>
+
+</div>

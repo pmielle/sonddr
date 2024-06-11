@@ -1,0 +1,26 @@
+<div id="container">
+  <app-top-bar>
+    <div id="top-bar-content" class="flex">
+      <button mat-icon-button [disabled]="searchString.length === 0" (click)="clearSearch()">
+        <mat-icon>{{ searchString.length > 0 ? 'close' : 'search' }}</mat-icon>
+      </button>
+      <input
+        type="text"
+        placeholder="Search"
+        [(ngModel)]="searchString"
+        (keydown.enter)="search()"
+        (focus)="onInputFocus()"
+        #input
+      >
+      <app-profile-picture [user]="(userData.user$|async)" (click)="userData.goToProfile()"></app-profile-picture>
+    </div>
+  </app-top-bar>
+
+  <p id="results-label" class="gutter">{{ makeSearchResultsLabel() }}</p>
+
+  @if (ideas) {
+  <app-idea-list [ideas]="ideas" [hide-sort-by]="true"></app-idea-list>
+  } @else {
+  <!-- TODO: display something here eventually -->
+  }
+</div>

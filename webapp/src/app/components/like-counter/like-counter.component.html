@@ -1,0 +1,8 @@
+@if(idea) {
+<app-chip
+    [style.opacity]="idea.supports > 0 ? 1 : 0.5"
+    [icon]="idea.userHasCheered ? 'favorite' : 'favorite_outline'"
+    [label]="idea.supports"
+    color="var(--background-color)"
+    ></app-chip>
+}

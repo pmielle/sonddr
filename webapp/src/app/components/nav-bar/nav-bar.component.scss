@@ -1,0 +1,35 @@
+#container {
+    position: fixed;
+    top: var(--spacing);
+    left: var(--spacing);
+    padding-top: var(--large-spacing);
+    padding-bottom: var(--large-spacing);
+    justify-content: space-evenly;
+    z-index: 99;  // above everything else
+
+    &.out-of-sight {
+      transform: translateY(var(--nav-bar-height));
+    }
+
+    &.mobile {
+        top: initial;
+        left: initial;
+        bottom: 0;
+        width: 100vw;
+        flex-direction: row;
+        padding-top: 8px;
+        padding-left: var(--gutter);
+        padding-right: var(--gutter);
+
+        &:not(.flat) {
+          border-top-left-radius: var(--spacing);
+          border-top-right-radius: var(--spacing);
+        }
+    }
+
+    #logo {
+        position: relative;
+        height: 32px;
+        img { height: 100%; }
+    }
+}

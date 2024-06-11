@@ -1,0 +1,46 @@
+@if (user) {
+<div id="container" [class.swipe-up]="user.isUser">
+
+  <app-top-bar [left-item]="user.isUser ? 'close' : 'back'">
+    @if(! user.isUser) {
+    <div class="spacer"></div>
+    <app-profile-picture class="pointer" [user]="userData.user$|async"
+      (click)="userData.goToProfile()"></app-profile-picture>
+    } @else {
+    <h2 class="no-margin-bottom">My profile</h2>
+    <div class="spacer"></div>
+    <button mat-icon-button [mat-menu-trigger-for]="menu"><mat-icon>more_vert</mat-icon></button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="onEditClick()">Edit</button>
+    </mat-menu>
+    }
+  </app-top-bar>
+
+  <div id="cover">
+    <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()" [appOpenImage]="user.cover"></div>
+    <div id="profile-picture">
+      <app-profile-picture [user]="user" [large]="true" [appOpenImage]="user.profilePicture"></app-profile-picture>
+    </div>
+  </div>
+
+  <div id="header" class="flex column">
+    <h1 id="name" class="no-margin-bottom gutter">{{ user.name }}</h1>
+    <div id="since" class="gutter">
+      member since {{ time.getYear(user.date) }}
+      - {{ ideas?.length }} idea{{ ideas && ideas.length > 1 ? 's' : '' }}
+    </div>
+
+    <app-external-links
+        [is-logged-in-user]="user.isUser"
+        [external-links]="user.externalLinks"
+        (add)="addExternalLink($event)"
+        (delete)="deleteExternalLink($event)"
+        ></app-external-links>
+
+    <div id="bio" class="gutter" [innerHTML]="user.bio"></div>
+  </div>
+
+  <app-idea-list [ideas]="ideas" (sort-by-change)="onSortByChange($event)"></app-idea-list>
+
+</div>
+}

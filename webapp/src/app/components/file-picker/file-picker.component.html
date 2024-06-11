@@ -1,0 +1,7 @@
+<div id="container" (click)="onClick()">
+
+  <input id="input" type="file" accept="image/png,image/jpeg" (change)="onChange($event)" #input>
+
+  <ng-content></ng-content>
+
+</div>

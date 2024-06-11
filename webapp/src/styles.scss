@@ -1,0 +1,30 @@
+@use 'app/styles/animation.scss';
+@use 'app/styles/background.scss';
+@use 'app/styles/color.scss';
+@use 'app/styles/cursor.scss';
+@use 'app/styles/layout.scss';
+@use 'app/styles/scroll.scss';
+@use 'app/styles/size.scss';
+@use 'app/styles/text.scss';
+@use 'app/styles/forms.scss';
+
+@use '@angular/material' as mat;
+@include mat.core();
+$my-typography: mat.define-typography-config();
+@include mat.typography-hierarchy($my-typography);
+$sonddr-webapp-primary: mat.define-palette(mat.$indigo-palette);
+$sonddr-webapp-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$sonddr-webapp-warn: mat.define-palette(mat.$red-palette);
+$sonddr-webapp-theme: mat.define-dark-theme((
+  color: (
+    primary: $sonddr-webapp-primary,
+    accent: $sonddr-webapp-accent,
+    warn: $sonddr-webapp-warn,
+  )
+));
+@include mat.all-component-themes($sonddr-webapp-theme);
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* {box-sizing: border-box;}
+

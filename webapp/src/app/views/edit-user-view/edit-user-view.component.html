@@ -1,0 +1,40 @@
+<div id="container">
+
+  <app-top-bar [left-item]="welcome ? 'close_home' : 'close'">
+    <h2 class="no-margin-bottom">{{ welcome ? "Welcome!" : "Edit my profile" }}</h2>
+  </app-top-bar>
+
+  <div id="cover">
+
+    <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()"
+      [class.lowkey]="coverPreview"></div>
+
+    <div id="upload">
+      <app-file-picker (file-change)="onCoverChange($event)">
+        <div id="button" class="flex column" mat-ripple [matRippleCentered]="true" [matRippleUnbounded]="true"
+          matRippleSize="20px">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Upload a cover</span>
+        </div>
+      </app-file-picker>
+    </div>
+
+    <div id="profile-picture">
+      <app-file-picker (file-change)="onProfilePictureChange($event)">
+        <app-profile-picture [user]="user" [large]="true"
+          [override]="profilePicturePreview ? 'url('+profilePicturePreview+')' : ''"></app-profile-picture>
+      </app-file-picker>
+    </div>
+
+  </div>
+
+  <div id="form" class="flex column gap">
+    <input id="name" type="text" placeholder="Choose a name" (keyup)="refreshFabDisplay()" [(ngModel)]="name"
+      (focus)="onInputFocus()" (blur)="onInputBlur()" (keydown.tab)="onNameTab($event)">
+
+    <app-editor placeholder="Write a short bio..." [text-only]="true" (keyup)="refreshFabDisplay()"
+      (focus)="onInputFocus()" (blur)="onInputBlur()"></app-editor>
+
+  </div>
+
+</div>

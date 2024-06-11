@@ -1,0 +1,24 @@
+:root {
+    --duration: 300ms;
+    --expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.expo-out {
+  transition: var(--duration);
+  transition-timing-function: var(--expo-out);
+}
+
+.swipe-up {
+  animation-duration: var(--duration);
+  animation-timing-function: var(--expo-out);
+  animation-name: swipe-up;
+}
+
+@keyframes swipe-up {
+    0% {
+      transform: translateY(100px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+}

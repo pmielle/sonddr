@@ -1,0 +1,41 @@
+#container {
+  position: relative;
+
+  &.mobile {
+    position: fixed;
+    right: var(--spacing);
+    bottom: calc(var(--spacing) + var(--nav-bar-height));
+    z-index: 99;
+  }
+
+  &.out-of-sight {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+
+    &.mobile {
+      transform: translateX(calc(var(--spacing) + 56px));
+    }
+  }
+
+  &.updating {
+    opacity: 0;
+
+    button {
+      transform: rotate(30deg);
+    }
+  }
+
+  #label {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    text-align: center;
+    width: var(--nav-bar-width);
+    transform: translate(-50%, calc(100% + var(--small-spacing)));
+
+    &.mobile {
+      display: none;
+    }
+  }
+}

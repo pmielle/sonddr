@@ -1,0 +1,38 @@
+@if (ideas?.length) {
+<div id="container">
+
+  @if (!hideSortBy && shouldDisplaySortBy()) {
+  <div id="sort-by" class="flex">
+    <button [mat-menu-trigger-for]="menu" mat-button>
+      <span>Sort by</span>
+      <mat-icon>sort</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="updateSortBy('recent')">Recent</button>
+      <button mat-menu-item (click)="updateSortBy('popular')">Popular</button>
+    </mat-menu>
+  </div>
+  }
+
+  <div id="first-section-header-background" [style.backgroundColor]="stuckBackgroundColor"></div>
+
+  @for (s of sections; track s) {
+  <div class="section">
+    <!-- 111px and not 101 because #tabs has 10px top on desktop -->
+    <div class="section-header flex row justify-start gutter"
+      [style.backgroundColor]="s.stuck ? color.transparentColor(stuckBackgroundColor, .66) : 'transparent'"
+      [class.invisible]="!s.header" appIntersection
+      [rootMargin]="(screen.isMobile$|async) ? '-49px 0px 0px 0px' : '-111px 0px 0px 0px'"
+      (isIntersecting)="s.stuck = !$event">
+      <span>{{ s.header }}</span>
+    </div>
+    <div class="section-content" [class.mobile]="screen.isMobile$ | async">
+      @for (i of s.ideas; track i.id) {
+      <app-idea-card [idea]="i"></app-idea-card>
+      }
+    </div>
+  </div>
+  }
+
+</div>
+}

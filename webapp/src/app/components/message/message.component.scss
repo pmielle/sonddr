@@ -1,0 +1,37 @@
+#container {
+  --radius: var(--spacing);
+  width: 100%;
+  flex-direction: row;
+
+  #bubble {
+    border-radius: var(--radius);
+    border-bottom-left-radius: 0;
+    background-color: var(--grey);
+    padding: 5px 10px;
+    max-width: 80%;
+  }
+
+  &.from-user {
+    flex-direction: row-reverse;
+
+    #bubble {
+      background-color: var(--blue);
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: 0;
+    }
+
+  }
+
+  &.deleted {
+
+    #bubble p {
+      opacity: 0.5;
+    }
+
+  }
+
+  &.mobile {
+    user-select: none;
+  }
+
+}

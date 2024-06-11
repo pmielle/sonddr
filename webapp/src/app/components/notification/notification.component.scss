@@ -1,0 +1,23 @@
+#container {
+    padding-left: calc(32px + 2 * var(--gutter));
+    padding-right: var(--gutter);
+    padding-top: calc(0.5 * var(--spacing));
+    padding-bottom: calc(0.5 * var(--spacing));
+
+    #content {
+        position: relative;
+
+        app-notification-image {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform: translate(calc(-100% - var(--gutter)), calc(-50% + 16px / 2));
+            pointer-events: none;
+        }
+
+    }
+
+    #ago {
+        opacity: 0.5;
+    }
+}

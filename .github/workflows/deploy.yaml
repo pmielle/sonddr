@@ -4,7 +4,194 @@ on:
       - master
 
 jobs:
-  pull_and_reinit:
+
+  build-webapp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build webapp
+        run: docker build --build-context shared=./shared/ --target prod -t sonddr-webapp ./webapp/
+      - name: Save .tar
+        run: docker save sonddr-webapp -o ./sonddr-webapp.tar
+      - name: Store artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: webapp-image
+          path: ./sonddr-webapp.tar
+
+  build-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build api
+        run: docker build --build-context shared=./shared/ -t sonddr-api ./api/
+      - name: Save .tar
+        run: docker save sonddr-api -o ./sonddr-api.tar
+      - name: Store artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: api-image
+          path: ./sonddr-api.tar
+
+  build-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build auth
+        run: docker build -t sonddr-auth ./auth/
+      - name: Save .tar
+        run: docker save sonddr-auth -o ./sonddr-auth.tar
+      - name: Store artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: auth-image
+          path: ./sonddr-auth.tar
+
+  build-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build database
+        run: docker build -t sonddr-database ./database/
+      - name: Save .tar
+        run: docker save sonddr-database -o ./sonddr-database.tar
+      - name: Store artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: database-image
+          path: ./sonddr-database.tar
+
+  build-reverse-proxy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build reverse-proxy
+        run: docker build -t sonddr-reverse-proxy ./reverse-proxy/
+      - name: Save .tar
+        run: docker save sonddr-reverse-proxy -o ./sonddr-reverse-proxy.tar
+      - name: Store artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: reverse-proxy-image
+          path: ./sonddr-reverse-proxy.tar
+
+  push-webapp: 
+    needs: build-webapp
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v4
+        with: 
+          name: webapp-image
+      - name: Load image
+        run: docker load -i ./sonddr-webapp.tar
+      - name: Login to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag
+        run: docker tag sonddr-webapp ghcr.io/pmielle/sonddr-webapp:latest
+      - name: Push
+        run: docker push ghcr.io/pmielle/sonddr-webapp:latest
+
+  push-api: 
+    needs: build-api
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v4
+        with: 
+          name: api-image
+      - name: Load image
+        run: docker load -i ./sonddr-api.tar
+      - name: Login to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag
+        run: docker tag sonddr-api ghcr.io/pmielle/sonddr-api:latest
+      - name: Push
+        run: docker push ghcr.io/pmielle/sonddr-api:latest
+
+  push-auth: 
+    needs: build-auth
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v4
+        with: 
+          name: auth-image
+      - name: Load image
+        run: docker load -i ./sonddr-auth.tar
+      - name: Login to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag
+        run: docker tag sonddr-auth ghcr.io/pmielle/sonddr-auth:latest
+      - name: Push
+        run: docker push ghcr.io/pmielle/sonddr-auth:latest
+
+  push-database: 
+    needs: build-database
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v4
+        with: 
+          name: database-image
+      - name: Load image
+        run: docker load -i ./sonddr-database.tar
+      - name: Login to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag
+        run: docker tag sonddr-database ghcr.io/pmielle/sonddr-database:latest
+      - name: Push
+        run: docker push ghcr.io/pmielle/sonddr-database:latest
+
+  push-reverse-proxy: 
+    needs: build-reverse-proxy
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v4
+        with: 
+          name: reverse-proxy-image
+      - name: Load image
+        run: docker load -i ./sonddr-reverse-proxy.tar
+      - name: Login to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag
+        run: docker tag sonddr-reverse-proxy ghcr.io/pmielle/sonddr-reverse-proxy:latest
+      - name: Push
+        run: docker push ghcr.io/pmielle/sonddr-reverse-proxy:latest
+
+  update:
+    needs: [push-webapp, push-api, push-auth, push-database, push-reverse-proxy]
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1.0.2
@@ -13,9 +200,4 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script_stop: true
-          script: |
-            cd /srv/sonddr
-            git pull --recurse-submodules
-            git submodule update --recursive
-            sudo -E ./devctl.sh reinit api  # need env
-            sudo -E ./devctl.sh reinit webapp
+          script: sudo docker compose -f /srv/sonddr/deployment/compose.yaml up --pull always -d

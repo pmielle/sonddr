@@ -1,0 +1,5 @@
+<div id="tabs" [ngClass]="{'mobile': screen.isMobile$ | async, 'hidden-nav-bar': mainNav.isNavBarHidden}">
+    <router-outlet></router-outlet>
+</div>
+<app-nav-bar></app-nav-bar>
+<app-fab [class.hidden]="!(screen.isMobile$ | async)"></app-fab>

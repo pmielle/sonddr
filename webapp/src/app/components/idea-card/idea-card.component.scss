@@ -1,0 +1,46 @@
+#cover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-color: var(--grey);
+
+    #goals {
+        position: absolute;
+        bottom: 10px;
+        left: calc(32px + 2 * var(--gutter));
+        gap: 10px;
+    }
+
+    app-like-counter {
+        position: absolute;
+        bottom: 10px;
+        right: var(--gutter);
+    }
+}
+
+#bottom {
+    width: 100%;
+    gap: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    #title {
+        margin-left: calc(32px + var(--gutter));
+    }
+
+    #author {
+        position: relative;
+        margin-left: calc(32px + var(--gutter));
+
+        p {
+            opacity: 0.5;
+        }
+
+        app-profile-picture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translate(calc(-100% - 10px), -7px);
+        }
+    }
+}

@@ -1,0 +1,11 @@
+input, textarea {
+    all: unset;
+    box-sizing: border-box;
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  display: block; /* For Firefox */
+}

@@ -1,0 +1,17 @@
+#container {
+
+    #header {
+        position: relative;
+        padding-top: var(--spacing);
+        padding-bottom: var(--spacing);
+
+        #background {
+            position: absolute;
+            z-index: -1;
+            top: calc(-1 * var(--top-bar-height));
+            height: calc(100% + var(--top-bar-height));
+            width: 100%;
+            left: 0;
+        }
+    }
+}

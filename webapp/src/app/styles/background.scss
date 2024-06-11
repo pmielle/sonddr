@@ -1,0 +1,16 @@
+:root {
+  --cover-gradient: linear-gradient(to bottom, var(--transparent-background-color), transparent 50%);
+}
+
+.bg {
+    background-repeat: no-repeat;
+    background-position: center;
+
+    &.contain { background-size: contain; }
+    &.cover { background-size: cover; }
+}
+
+.frosted {
+    background-color: var(--transparent-background-color);
+    backdrop-filter: blur(5px);
+}

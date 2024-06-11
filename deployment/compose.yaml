@@ -1,0 +1,36 @@
+services:
+
+  webapp:
+    container_name: webapp
+    image: ghcr.io/pmielle/sonddr-webapp:latest
+
+  api: 
+    container_name: api
+    image: ghcr.io/pmielle/sonddr-api:latest
+    depends_on: 
+      - database
+    env_file: 
+      - ./.env
+
+  auth:
+    container_name: auth
+    image: ghcr.io/pmielle/sonddr-auth:latest
+    env_file: 
+      - ./.env
+
+  database:
+    container_name: database
+    image: ghcr.io/pmielle/sonddr-database:latest
+    extra_hosts: 
+      database: 127.0.0.1
+
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: ghcr.io/pmielle/sonddr-reverse-proxy:latest
+    depends_on: 
+      - webapp
+      - api
+      - auth
+      - database
+    ports: 
+      - "80:80"
