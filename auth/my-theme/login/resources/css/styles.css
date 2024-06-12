@@ -7,10 +7,11 @@ html {
 }
 
 body { 
-	margin: 20px;
+	margin: 32px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	max-width: 500px;
 }
 
 hr, h4, #kc-form, header, #kc-header { display: none; }
