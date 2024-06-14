@@ -71,7 +71,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Build reverse-proxy
-        run: docker build -t sonddr-reverse-proxy ./reverse-proxy/
+        run: docker build --target prod -t sonddr-reverse-proxy ./reverse-proxy/
       - name: Save .tar
         run: docker save sonddr-reverse-proxy -o ./sonddr-reverse-proxy.tar
       - name: Store artifact

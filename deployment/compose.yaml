@@ -34,3 +34,5 @@ services:
       - database
     ports: 
       - "80:80"
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt/
