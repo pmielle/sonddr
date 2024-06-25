@@ -816,10 +816,10 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://${SONDDR_AUTHORITY}/*"
+        "https://${SONDDR_AUTHORITY}/*"
       ],
       "webOrigins": [
-        "http://${SONDDR_AUTHORITY}"
+        "https://${SONDDR_AUTHORITY}"
       ],
       "notBefore": 0,
       "bearerOnly": false,

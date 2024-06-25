@@ -29,5 +29,5 @@ services:
     image: !reset
     build: 
       context: ../reverse-proxy/
-      target: dev
-    volumes: !reset []
+    volumes:
+      - ../letsencrypt:/etc/letsencrypt/
