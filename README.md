@@ -11,6 +11,7 @@ SONDDR_GOOGLE_SECRET='toto'
 KEYCLOAK_ADMIN='admin'
 KEYCLOAK_ADMIN_PASSWORD='admin'
 ```
+If you are using a self-signed certificate, consider adding `NODE_TLS_REJECT_UNAUTHORIZED='0'`
 
 2) use `-f deployment/compose-dev.yaml` to:
 - build the containers instead of using the ones from ghcr.io
