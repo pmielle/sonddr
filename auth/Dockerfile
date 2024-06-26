@@ -8,4 +8,4 @@ COPY my-theme/ /opt/keycloak/themes/my-theme/
 # start-dev needs environment variables:
 # - KEYCLOAK_ADMIN
 # - KEYCLOAK_ADMIN_PASSWORD
-CMD ["start-dev", "--import-realm", "--http-relative-path", "/auth"]
+CMD ["start-dev", "--import-realm", "--http-relative-path", "/auth", "--proxy", "edge"]

@@ -27,4 +27,7 @@ services:
 
   reverse-proxy:
     image: !reset
-    build: ../reverse-proxy/
+    build: 
+      context: ../reverse-proxy/
+    volumes:
+      - ../letsencrypt:/etc/letsencrypt/
