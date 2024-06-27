@@ -41,7 +41,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Build auth
-        run: docker build -t sonddr-auth ./auth/
+        run: docker build --target prod -t sonddr-auth ./auth/
       - name: Save .tar
         run: docker save sonddr-auth -o ./sonddr-auth.tar
       - name: Store artifact

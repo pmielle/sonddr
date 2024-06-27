@@ -19,7 +19,9 @@ services:
 
   auth: 
     image: !reset
-    build: ../auth/
+    build:
+      context: ../auth/
+      target: dev
 
   database:
     image: !reset
