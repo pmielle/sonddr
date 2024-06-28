@@ -4,8 +4,8 @@
 
 1) setup a dev ssl certificate with a letsencrypt file tree:
 ```
-letsencrypt/live/<your_hostname>/privkey.pem
-letsencrypt/live/<your_hostname>/fullchain.pem
+deployment/letsencrypt/live/<your_hostname>/privkey.pem
+deployment/letsencrypt/live/<your_hostname>/fullchain.pem
 ```
 
 2) create `deployment/.env` with the following variables:

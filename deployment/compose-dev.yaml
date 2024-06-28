@@ -32,4 +32,4 @@ services:
     build: 
       context: ../reverse-proxy/
     volumes:
-      - ../letsencrypt:/etc/letsencrypt/
+      - ./letsencrypt:/etc/letsencrypt/
