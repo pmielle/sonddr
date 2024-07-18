@@ -142,7 +142,7 @@ export class EditUserViewComponent {
         this.welcome ? `/` : `/ideas/user/${this.user!.id}`,
         { skipLocationChange: this.welcome ? false : true }
       );
-    }, 100); // otherwise doesn't refresh for some reason
+    }, 333); // otherwise doesn't refresh for some reason
   }
 
   onProfilePictureChange(file: File) {
