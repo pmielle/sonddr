@@ -1,6 +1,8 @@
 volumes: 
   uploads:
     name: uploads
+  mongo-data:
+    name: mongo-data
 
 services:
 
@@ -31,6 +33,10 @@ services:
     image: ghcr.io/pmielle/sonddr-database:latest
     extra_hosts: 
       database: 127.0.0.1
+    volumes:
+      - type: volume
+        source: mongo-data
+        target: /data/db
 
   reverse-proxy:
     container_name: reverse-proxy
