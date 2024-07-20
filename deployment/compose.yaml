@@ -1,3 +1,7 @@
+volumes: 
+  uploads:
+    name: uploads
+
 services:
 
   webapp:
@@ -11,6 +15,10 @@ services:
       - database
     env_file: 
       - ./.env
+    volumes:
+      - type: volume
+        source: uploads
+        target: /uploads
 
   auth:
     container_name: auth
@@ -36,4 +44,6 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /etc/letsencrypt/:/etc/letsencrypt/
+      - type: bind
+        source: /etc/letsencrypt/
+        target: /etc/letsencrypt/
