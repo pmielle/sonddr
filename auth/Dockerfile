@@ -10,10 +10,10 @@ FROM base as dev
 # start-dev needs environment variables:
 # - KEYCLOAK_ADMIN
 # - KEYCLOAK_ADMIN_PASSWORD
-CMD ["start-dev", "--import-realm", "--http-relative-path", "/auth", "--proxy", "edge"]
+CMD ["start-dev", "--import-realm", "--http-relative-path", "/auth", "--proxy", "edge", "--db", "postgres", "--db-url-host", "auth-database", "--db-username", "$POSTGRES_USER", "--db-password", "$POSTGRES_PASSWORD"]
 
 FROM base as prod
 # start needs environment variables:
 # - KEYCLOAK_ADMIN
 # - KEYCLOAK_ADMIN_PASSWORD
-CMD ["start", "--import-realm", "--http-relative-path", "/auth", "--proxy", "edge", "--hostname", "$SONDDR_AUTHORITY"]
+CMD ["start", "--import-realm", "--http-relative-path", "/auth", "--proxy", "edge", "--hostname", "$SONDDR_AUTHORITY", "--db", "postgres", "--db-url-host", "auth-database", "--db-username", "$POSTGRES_USER", "--db-password", "$POSTGRES_PASSWORD"]

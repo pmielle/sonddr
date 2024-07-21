@@ -9,6 +9,7 @@ services:
         - shared=../shared/
     volumes:
       - ../webapp/:/srv/sonddr/
+    restart: !reset
 
   api:
     image: !reset
@@ -16,16 +17,22 @@ services:
       context: ../api/
       additional_contexts:
         - shared=../shared/
+    restart: !reset
 
   auth: 
     image: !reset
     build:
       context: ../auth/
       target: dev
+    restart: !reset
+
+  auth-database:
+    restart: !reset
 
   database:
     image: !reset
     build: ../database/
+    restart: !reset
 
   reverse-proxy:
     image: !reset
@@ -33,3 +40,4 @@ services:
       context: ../reverse-proxy/
     volumes:
       - ./letsencrypt:/etc/letsencrypt/
+    restart: !reset

@@ -1,8 +1,21 @@
+volumes: 
+  
+  uploads:
+    name: uploads
+
+  mongo-data:
+    name: mongo-data
+
+  postgres-data:
+    name: postgres-data
+
+
 services:
 
   webapp:
     container_name: webapp
     image: ghcr.io/pmielle/sonddr-webapp:latest
+    restart: unless-stopped
 
   api: 
     container_name: api
@@ -11,18 +24,42 @@ services:
       - database
     env_file: 
       - ./.env
+    volumes:
+      - type: volume
+        source: uploads
+        target: /uploads
+    restart: unless-stopped
 
   auth:
     container_name: auth
     image: ghcr.io/pmielle/sonddr-auth:latest
+    depends_on:
+      - auth-database
     env_file: 
       - ./.env
+    restart: unless-stopped
+
+  auth-database:
+    container_name: auth-database
+    image: postgres
+    env_file:
+      - ./.env
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+    restart: unless-stopped
 
   database:
     container_name: database
     image: ghcr.io/pmielle/sonddr-database:latest
     extra_hosts: 
       database: 127.0.0.1
+    volumes:
+      - type: volume
+        source: mongo-data
+        target: /data/db
+    restart: unless-stopped
 
   reverse-proxy:
     container_name: reverse-proxy
@@ -36,4 +73,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /etc/letsencrypt/:/etc/letsencrypt/
+      - type: bind
+        source: /etc/letsencrypt/
+        target: /etc/letsencrypt/
+    restart: unless-stopped

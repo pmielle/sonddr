@@ -6,7 +6,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 
 const b_in_mb = 1048576;
 
-export const uploadPath = "uploads";
+export const uploadPath = "/uploads";
 
 export const multer_upload = multer({
 	storage: multer.memoryStorage(),
