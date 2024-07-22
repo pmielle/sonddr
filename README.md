@@ -17,6 +17,11 @@ SONDDR_GOOGLE_SECRET='toto'
 KEYCLOAK_ADMIN='admin'
 KEYCLOAK_ADMIN_PASSWORD='admin'
 NODE_TLS_REJECT_UNAUTHORIZED='0'
+POSTGRES_USER='postgres'
+POSTGRES_PASSWORD='postgres'
+POSTGRES_DB='keycloak'
+GF_SECURITY_ADMIN_USER='grafana'
+GF_SECURITY_ADMIN_PASSWORD='grafana'
 ```
 
 3) use `-f deployment/compose-dev.yaml` to:
