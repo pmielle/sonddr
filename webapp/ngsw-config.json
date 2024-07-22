@@ -29,6 +29,7 @@
   ],
   "navigationUrls": [
     "!/auth/**",
-    "!/api/**"
+    "!/api/**",
+    "!/monitoring/**"
   ]
 }

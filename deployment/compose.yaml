@@ -12,11 +12,15 @@ volumes:
 
 services:
 
+  # webapp
+  # ---------------------------------------------
   webapp:
     container_name: webapp
     image: ghcr.io/pmielle/sonddr-webapp:latest
     restart: unless-stopped
 
+  # api
+  # ---------------------------------------------
   api: 
     container_name: api
     image: ghcr.io/pmielle/sonddr-api:latest
@@ -30,6 +34,8 @@ services:
         target: /uploads
     restart: unless-stopped
 
+  # auth
+  # ---------------------------------------------
   auth:
     container_name: auth
     image: ghcr.io/pmielle/sonddr-auth:latest
@@ -50,6 +56,8 @@ services:
         target: /var/lib/postgresql/data
     restart: unless-stopped
 
+  # database
+  # ---------------------------------------------
   database:
     container_name: database
     image: ghcr.io/pmielle/sonddr-database:latest
@@ -61,6 +69,8 @@ services:
         target: /data/db
     restart: unless-stopped
 
+  # reverse-proxy
+  # ---------------------------------------------
   reverse-proxy:
     container_name: reverse-proxy
     image: ghcr.io/pmielle/sonddr-reverse-proxy:latest
@@ -69,6 +79,7 @@ services:
       - api
       - auth
       - database
+      - monitoring-database
     ports: 
       - "80:80"
       - "443:443"
@@ -77,3 +88,35 @@ services:
         source: /etc/letsencrypt/
         target: /etc/letsencrypt/
     restart: unless-stopped
+
+  # monitoring
+  # ---------------------------------------------
+  docker-scraper:
+    container_name: docker-scraper
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    privileged: true
+    volumes: 
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    devices: 
+      - /dev/kmsg:/dev/kmsg
+
+  monitoring-database:
+    container_name: monitoring-database
+    build:
+      context: ../monitoring/database
+    depends_on:
+      - docker-scraper
+
+  viewer:
+    container_name: viewer
+    build:
+      context: ../monitoring/viewer
+    env_file:
+      - ./.env
+    depends_on:
+      - monitoring-database
