@@ -9,6 +9,9 @@ volumes:
   postgres-data:
     name: postgres-data
 
+  prometheus-data:
+    name: prometheus-data
+
 
 services:
 
@@ -104,6 +107,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     devices: 
       - /dev/kmsg:/dev/kmsg
+    restart: unless-stopped
 
   monitoring-database:
     container_name: monitoring-database
@@ -111,6 +115,11 @@ services:
       context: ../monitoring/database
     depends_on:
       - docker-scraper
+    volumes: 
+      - type: volume
+        source: prometheus-data
+        target: /prometheus
+    restart: unless-stopped
 
   viewer:
     container_name: viewer
@@ -120,3 +129,4 @@ services:
       - ./.env
     depends_on:
       - monitoring-database
+    restart: unless-stopped
