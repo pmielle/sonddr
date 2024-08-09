@@ -29,6 +29,7 @@
       }
 
     #page-content {
+      --left-margin: calc(32px + 2 * var(--gutter));
         padding-top: var(--large-spacing);
 
         #header {
@@ -36,13 +37,13 @@
             gap: var(--spacing);
 
             #title {
-                margin-left: calc(32px + 2 * var(--gutter));
+                margin-left: var(--left-margin);
                 margin-right: var(--gutter);
             }
 
             #author {
                 position: relative;
-                margin-left: calc(32px + 2 * var(--gutter));
+                margin-left: var(--left-margin);
 
                 #author-name { font-weight: bold; }
                 #date { opacity: 0.5; }
@@ -54,6 +55,11 @@
                     transform: translate(calc(-100% - 10px), -7px);
                 }
             }
+
+            // app-support-requests {
+            //   display: block;
+            //   width: 100%;
+            // }
         }
 
         #content {

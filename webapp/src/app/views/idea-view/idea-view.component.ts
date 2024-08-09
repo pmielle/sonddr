@@ -1,7 +1,7 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Comment, ExternalLink, Idea, placeholder_id } from 'sonddr-shared';
+import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
@@ -35,6 +35,7 @@ export class IdeaViewComponent implements OnDestroy {
   popupSub?: Subscription;
   idea?: Idea;
   comments?: Comment[];
+  volunteers?: Volunteer[];
 
   // lifecycle hooks
   // --------------------------------------------
@@ -47,6 +48,7 @@ export class IdeaViewComponent implements OnDestroy {
         this.setHasCheered(i.userHasCheered, true);
       });
       this.http.getComments("recent", id, undefined).then(c => this.comments = c);
+      this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
     this.fabClickSub = this.mainNav.fabClick.subscribe(() => this.toggleCheer());
   }
@@ -61,6 +63,11 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  addFinancing(e: any) {
+    console.log("add financing")
+    console.log(e)
+  }
+
   onInputFocus() {
     this.mainNav.hideFab();
   }
@@ -152,6 +159,35 @@ export class IdeaViewComponent implements OnDestroy {
     return this.http.deleteCheer(this.idea.id, user.id);
   }
 
+  addVolunteer(description: string) {
+    if (!this.idea) { throw new Error("Cannot add volunteer if idea is not loaded"); }
+    if (!this.volunteers) { throw new Error("Cannot add volunteer if volunteers are not loaded"); }
+    const volunteerPlaceholder = this.makeVolunteerPlaceholder(description, this.idea);
+    this.volunteers = [...this.volunteers, volunteerPlaceholder];
+    this.http.createVolunteer(this.idea.id, description)
+      .then(id => this.updateVolunteerPlaceholder(id));
+  }
+
+  makeVolunteerPlaceholder(description: string, idea: Idea): Volunteer {
+    const user = this.userData.user$.getValue();
+    if (!user) { throw new Error("Cannot create volunteer if user is not logged in"); }
+    return {
+      id: placeholder_id,
+      idea: idea,
+      description: description,
+      candidates: [],
+    };
+  }
+
+  updateVolunteerPlaceholder(id: string) {
+    if (!this.volunteers) { throw new Error("Cannot replace volunteer placeholder if volunteers is undefined"); }
+    const indexOfPlaceholder = this.volunteers.findIndex(c => c.id === placeholder_id);
+    if (indexOfPlaceholder === -1) { throw new Error(`Found no comment with id ${placeholder_id}`); }
+    const newVolunteers = [...this.volunteers];  // otherwise same reference, and @Input is not updated
+    newVolunteers[indexOfPlaceholder].id = id;
+    this.volunteers = newVolunteers;
+  }
+
   deleteComment(commentId: string) {
     this.comments = this.comments?.filter(c => c.id !== commentId);
     this.http.deleteComment(commentId);
@@ -161,9 +197,7 @@ export class IdeaViewComponent implements OnDestroy {
     if (!this.idea) { throw new Error("Cannot post comment if idea is not loaded"); }
     if (!this.comments) { throw new Error("Cannot post comment if comments are not loaded"); }
     const placeholderComment = this.makePlaceholderComment(body, this.idea.id);
-    const newComments = [...this.comments];  // otherwise same reference, and @Input is not updated
-    newComments.unshift(placeholderComment);
-    this.comments = newComments;
+    this.comments = [...this.comments, placeholderComment];  // otherwise same reference, and @Input is not updated
     this.http.postComment(this.idea.id, body).then(async insertedId => {
       const comment = await this.http.getComment(insertedId);
       this.replacePlaceholderComment(comment);

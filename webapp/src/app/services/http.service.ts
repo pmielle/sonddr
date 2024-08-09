@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink } from 'sonddr-shared';
+import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink, Volunteer } from 'sonddr-shared';
 import { SortBy } from '../components/idea-list/idea-list.component';
 import { lastValueFrom } from 'rxjs';
 
@@ -187,6 +187,19 @@ export class HttpService {
     if (goalId) { uri += `&goalId=${goalId}`; }
     if (authorId) { uri += `&authorId=${authorId}`; }
     return this._get<Idea[]>(uri);
+  }
+
+  async createVolunteer(ideaId: string, description: string): Promise<string> {
+    return this._post("volunteers", {ideaId: ideaId, description: description});
+  }
+
+  async getVolunteers(ideaId?: string, userId?: string): Promise<Volunteer[]> {
+    let uri = "volunteers";
+    const filters: string[] = [];
+    if (ideaId) { filters.push(`&ideaId=${ideaId}`); }
+    if (userId) { filters.push(`&authorId=${userId}`); }
+    if (filters.length) { uri += "?" + filters.join("&"); }
+    return this._get<Volunteer[]>(uri);
   }
 
   async getComments(sortBy: SortBy, ideaId?: string, authorId?: string): Promise<Comment[]> {

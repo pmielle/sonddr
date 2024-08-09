@@ -49,6 +49,13 @@
         (delete)="deleteExternalLink($event)"
       ></app-external-links>
 
+      <app-support-requests
+        [is-logged-in-user]="idea?.author?.isUser"
+        [volunteers]="volunteers"
+        (add-volunteer)="addVolunteer($event)"
+        (add-financing)="addFinancing($event)"
+      ></app-support-requests>
+
     </div>
 
     <div id="content" [innerHTML]="idea?.content"></div>

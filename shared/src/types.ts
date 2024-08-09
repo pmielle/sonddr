@@ -48,6 +48,22 @@ export type DbIdea = {
     cover?: string,
 };
 
+export type DbVolunteer = {
+    id: string,
+    ideaId: string,
+    userId?: string, // undef means not fulfilled yet
+    description: string,
+    candidateIds: string[],
+};
+
+export type Volunteer = {
+    id: string,
+    idea: Idea,
+    user?: User,
+    description: string,
+    candidates: User[],
+};
+
 export type Comment = {
     id: string,
     author: User,

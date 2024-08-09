@@ -16,6 +16,7 @@ import { getUser, getUsers, patchUser, putUser } from "./handlers/users.js";
 import { deleteVote, putVote } from "./handlers/votes.js";
 import { deleteCheer, getCheer, putCheer } from "./handlers/cheers.js";
 import { deleteComment, getComment, getComments, postComment } from "./handlers/comments.js";
+import { deleteVolunteer, getVolunteers, postVolunteer } from "./handlers/volunteers.js";
 import { getDiscussion, getDiscussions, patchDiscussion, postDiscussion } from "./handlers/discussions.js";
 import { getNotifications, patchNotification } from "./handlers/notifications.js";
 import { startAllTriggers } from "./triggers.js";
@@ -228,6 +229,40 @@ router.put('/cheers/:id',
 	async (req, res, next) => {
 		try {
 			await putCheer(req, res, next);
+		} catch (err) {
+			next(err);
+		}
+	});
+
+// volunteers
+router.post('/volunteers',
+	keycloak.protect(),
+	fetchUserId,
+	async (req, res, next) => {
+		try {
+			await postVolunteer(req, res, next);
+		} catch (err) {
+			next(err);
+		}
+	});
+
+router.delete('/volunteers/:id',
+	keycloak.protect(),
+	fetchUserId,
+	async (req, res, next) => {
+		try {
+			await deleteVolunteer(req, res, next);
+		} catch (err) {
+			next(err);
+		}
+	});
+
+router.get('/volunteers',
+	keycloak.protect(),
+	fetchUserId,
+	async (req, res, next) => {
+		try {
+			await getVolunteers(req, res, next);
 		} catch (err) {
 			next(err);
 		}

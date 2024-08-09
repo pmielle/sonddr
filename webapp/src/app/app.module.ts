@@ -53,6 +53,8 @@ import { ExternalLinksComponent } from './components/external-links/external-lin
 import { EditUserViewComponent } from './views/edit-user-view/edit-user-view.component';
 import { OpenImageDirective } from './directives/open-image.directive';
 import { DetailsViewComponent } from './views/details-view/details-view.component';
+import { SupportRequestsComponent } from './components/support-requests/support-requests.component';
+import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add-volunteer-popup.component';
 
 
 @NgModule({
@@ -98,6 +100,8 @@ import { DetailsViewComponent } from './views/details-view/details-view.componen
     EditUserViewComponent,
     OpenImageDirective,
     DetailsViewComponent,
+    SupportRequestsComponent,
+    AddVolunteerPopupComponent,
   ],
   imports: [
     BrowserModule,
