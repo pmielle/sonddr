@@ -8,6 +8,9 @@
       <button mat-menu-item (click)="onEditClick()">Edit</button>
       <button mat-menu-item (click)="onDeleteClick()">Delete</button>
     </mat-menu>
+    } @else {
+    <app-profile-picture class="pointer" [user]="userData.user$|async"
+      (click)="userData.goToProfile()"></app-profile-picture>
     }
   </app-top-bar>
 

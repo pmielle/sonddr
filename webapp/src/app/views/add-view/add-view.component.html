@@ -40,8 +40,13 @@
     <input id="title" type="text" placeholder="Choose a title" (keyup)="refreshFabDisplay()" [(ngModel)]="title"
       (focus)="onInputFocus()" (blur)="onInputBlur()" (keydown.tab)="onTitleTab($event)">
 
-    <app-editor placeholder="Explain your idea..." (keyup)="refreshFabDisplay()" (focus)="onInputFocus()"
-      (blur)="onInputBlur()"></app-editor>
+
+    <div id="editor">
+      <app-profile-picture class="pointer" [class.mobile]="screen.isMobile$|async"
+                           [user]="userData.user$|async"></app-profile-picture>
+      <app-editor placeholder="Explain your idea..." (keyup)="refreshFabDisplay()"
+                  (focus)="onInputFocus()" (blur)="onInputBlur()"></app-editor>
+    </div>
 
   </div>
 
