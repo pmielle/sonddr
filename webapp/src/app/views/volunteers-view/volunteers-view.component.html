@@ -4,43 +4,77 @@
 
 <div id="content">
 
-  @for(v of openPositions; track v.id) {
-  <div class="open-position flex column gap align-stretch">
-    <div class="flex gap align-start gutter">
-      <img src="assets/empty-profile-picture.png" class="empty-pp">
-      <p class="desc no-margin-bottom">{{ v.description }}</p>
-    </div>
+  @if(openPositions.length) {
 
-    @if(isAdmin) {
-    @if (v.candidates && v.candidates.length) {
-    <div class="candidates gutter flex column gap">
-    @for (c of v.candidates; track c.id) {
-      <div class="candidate flex gap">
-        <app-profile-picture [user]="c"></app-profile-picture>
-        <span>{{ c.name }}</span>
-        <div class="spacer"></div>
-        <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, c)"></app-chip>
-        <app-chip icon="close" color="var(--red)" [no-label]="true" (click)="onRefuse(v, c)"></app-chip>
+  <div id="open-positions" class="flex column gap">
+
+    @for(v of openPositions; track v.id) {
+
+    <div class="open-position">
+      <div class="flex gap align-start gutter">
+        <img src="assets/empty-profile-picture.png" class="empty-pp">
+        <div class="right-part">
+          <p class="desc">{{ v.description }}</p>
+          @if(! isAdmin) {
+          @if (didApply(v)) {
+          <app-chip label="Applied" [border]="true" icon="check" [clickable]="false"></app-chip>
+          } @else {
+          <app-chip label="Apply" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
+          }
+          }
+        </div>
       </div>
-    }
+
+      @if(isAdmin) {
+      @if (v.candidates && v.candidates.length) {
+      <div class="candidates gutter flex column gap">
+
+        @for (c of v.candidates; track c.id) {
+
+        <div class="candidate flex gap">
+          <app-profile-picture [user]="c"></app-profile-picture>
+          <span>{{ c.name }}</span>
+          <div class="spacer"></div>
+          <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, c)"></app-chip>
+          <app-chip icon="close" color="var(--red)" [no-label]="true" (click)="onRefuse(v, c)"></app-chip>
+        </div>
+
+        }
+
+      </div>
+      }
+      }
+
     </div>
-    }
-    } @else {
-    @if (didApply(v)) {
-    <app-chip class="apply" label="Applied" [border]="true" icon="check" [clickable]="false"></app-chip>
-    } @else {
-    <app-chip class="apply" label="Apply" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
-    }
     }
 
   </div>
+
   }
 
   @if(filledPositions.length) {
-  <span>Filled</span>
-  @for(v of filledPositions; track v.id) {
-  <p>{{ v.description }}</p>
-  }
+  <div id="sep" class="flex justify-start gutter">
+    <span>Filled</span>
+  </div>
+
+  <div id="filled-positions" class="flex column gap gutter">
+
+    @for(v of filledPositions; track v.id) {
+
+    <div class="filled flex gap align-start">
+      <app-profile-picture [user]="v.user"></app-profile-picture>
+      <div class="right-part">
+        <p class="name">{{ v.user!.name }}</p>
+        <p>{{ v.description }}</p>
+        @if(isAdmin) {
+        <app-chip label="Remove" icon="close" color="var(--red)"></app-chip>
+        }
+      </div>
+    </div>
+
+    }
+
+  </div>
   }
 
 </div>

@@ -1,8 +1,10 @@
-#content {
-  margin-top: var(--large-spacing);
+#content { margin-top: var(--large-spacing); }
+
+#open-positions {
+  margin-bottom: var(--spacing);
 
   .open-position {
-    margin-bottom: var(--spacing);
+    width: 100%;
 
     .empty-pp {
       width: 32px;
@@ -14,14 +16,11 @@
       flex: 1;
     }
 
-    .apply {
-      align-self: flex-start;
-      margin-left: calc(32px + var(--spacing));
-    }
-
   }
 
   .candidates {
+    margin-top: var(--small-spacing);
+    margin-bottom: var(--spacing);
     background-color: var(--darker-background-color);
     padding-top: var(--spacing);
     padding-bottom: var(--spacing);
@@ -31,6 +30,25 @@
     }
 
   }
+}
 
+.right-part {
+  flex: 1;
+
+  .name {
+    margin-top: 5px;
+    margin-bottom: var(--small-spacing);
+    font-weight: bold;
+  }
+}
+
+#sep {
+  height: 48px;
+}
+
+#filled-positions {
+  margin-top: var(--spacing);
+
+  .filled { width: 100%; }
 }
 
