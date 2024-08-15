@@ -32,8 +32,8 @@
         @for (c of v.candidates; track c.id) {
 
         <div class="candidate flex gap">
-          <app-profile-picture [user]="c"></app-profile-picture>
-          <span>{{ c.name }}</span>
+          <app-profile-picture [user]="c" [routerLink]="['/', 'ideas', 'user', c.id]"></app-profile-picture>
+          <span class="pointer" [routerLink]="['/', 'ideas', 'user', c.id]">{{ c.name }}</span>
           <div class="spacer"></div>
           <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, c)"></app-chip>
           <app-chip icon="close" color="var(--red)" [no-label]="true" (click)="onRefuse(v, c)"></app-chip>
@@ -69,9 +69,9 @@
     @for(v of filledPositions; track v.id) {
 
     <div class="filled flex gap align-start" [cdkContextMenuTriggerFor]="filledPositionsMenu">
-      <app-profile-picture [user]="v.user"></app-profile-picture>
+      <app-profile-picture [user]="v.user" [routerLink]="['/', 'ideas', 'user', v.user!.id]"></app-profile-picture>
       <div class="right-part">
-        <p class="name">{{ v.user!.name }}</p>
+        <p class="name" [routerLink]="['/', 'ideas', 'user', v.user!.id]">{{ v.user!.name }}</p>
         <p>{{ v.description }}</p>
         <ng-template #filledPositionsMenu>
           <div cdkMenu>
