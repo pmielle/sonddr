@@ -63,11 +63,6 @@ export function watchCollection<T>(path: string, filter?: Filter | Filter[]): Ob
 				case "update": {
 					const dbDocBefore = change.fullDocumentBeforeChange;
 					const dbDocAfter = change.fullDocument;
-
-					console.log("UPDATE");
-					console.log(dbDocBefore);
-					console.log("-------------------------");
-
 					const docBefore = _convertDbDocToDoc(dbDocBefore);
 					const docAfter = _convertDbDocToDoc(dbDocAfter);
 					const docId = docAfter.id;
