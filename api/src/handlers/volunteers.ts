@@ -55,8 +55,18 @@ export async function patchVolunteer(req: Request, res: Response, next: NextFunc
 	const candidateToAdd = req.body["addCandidate"];
 	const acceptCandidate = req.body["acceptCandidate"];
 	const refuseCandidate = req.body["refuseCandidate"];
+	const removeUser = req.body["removeUser"];
 	const v = await getDocument<DbVolunteer>(path)
 		.then(dbDoc => reviveVolunteer(dbDoc, userId));
+
+	// remove current user
+	if (removeUser && isAdmin(userId, v)) {
+		await patchDocument(path, {
+			field: 'userId',
+			operator: 'unset',
+			value: '',
+		});
+	}
 
 	// find candidates to add or remove
 	if (candidateToRemove && isAdmin(userId, v)) {

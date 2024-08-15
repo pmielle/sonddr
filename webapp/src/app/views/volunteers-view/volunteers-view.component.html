@@ -67,7 +67,7 @@
         <p class="name">{{ v.user!.name }}</p>
         <p>{{ v.description }}</p>
         @if(isAdmin) {
-        <app-chip label="Remove" icon="close" color="var(--red)"></app-chip>
+        <app-chip label="Remove" icon="close" color="var(--red)" (click)="onRemove(v)"></app-chip>
         }
       </div>
     </div>

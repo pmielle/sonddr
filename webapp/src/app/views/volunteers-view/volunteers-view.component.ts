@@ -52,6 +52,12 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     this._updateOpenPosition(v);
   }
 
+  onRemove(v: Volunteer) {
+    this.http.removeVolunteerUser(v.id);
+    v.user = undefined;
+    this._openPosition(v);
+  }
+
   onAccept(v: Volunteer, c: User) {
     this.http.acceptVolunteerCandidate(v.id, c.id);
     v.user = c;
@@ -84,6 +90,14 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   _updateOpenPosition(v: Volunteer) {
     const i = this.openPositions.findIndex(volunteer => volunteer.id === v.id);
     this.openPositions[i] = v;
+    this.openPositions = [...this.openPositions];
+  }
+
+  _openPosition(v: Volunteer) {
+    const i = this.filledPositions.findIndex(volunteer => volunteer.id === v.id);
+    this.filledPositions.splice(i, 1);
+    this.openPositions.push(v);
+    this.filledPositions = [...this.filledPositions];
     this.openPositions = [...this.openPositions];
   }
 
