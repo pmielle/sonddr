@@ -1,0 +1,91 @@
+<app-top-bar left-item="close">
+  <h2 class="no-margin-bottom">Volunteers</h2>
+</app-top-bar>
+
+<div id="content">
+
+  @if(openPositions.length) {
+
+  <div id="open-positions" class="flex column gap">
+
+    @for(v of openPositions; track v.id) {
+
+    <div class="open-position" [cdkContextMenuTriggerFor]="openPositionsMenu">
+      <div class="flex gap align-start gutter">
+        <img src="assets/empty-profile-picture.png" class="empty-pp">
+        <div class="right-part">
+          <p class="desc">{{ v.description }}</p>
+          @if(! isAdmin) {
+          @if (didApply(v)) {
+          <app-chip label="Applied" [border]="true" icon="check" (click)="onCancel(v)"></app-chip>
+          } @else {
+          <app-chip label="Apply" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
+          }
+          }
+        </div>
+      </div>
+
+      @if(isAdmin) {
+      @if (v.candidates && v.candidates.length) {
+      <div class="candidates gutter flex column gap">
+
+        @for (c of v.candidates; track c.id) {
+
+        <div class="candidate flex gap">
+          <app-profile-picture [user]="c" [routerLink]="['/', 'ideas', 'user', c.id]"></app-profile-picture>
+          <span class="pointer" [routerLink]="['/', 'ideas', 'user', c.id]">{{ c.name }}</span>
+          <div class="spacer"></div>
+          <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, c)"></app-chip>
+          <app-chip icon="close" color="var(--red)" [no-label]="true" (click)="onRefuse(v, c)"></app-chip>
+        </div>
+
+        }
+
+      </div>
+      }  <!-- if candidates -->
+      }  <!-- isAdmin -->
+
+      <ng-template #openPositionsMenu>
+        <div cdkMenu>
+          @if(isAdmin) {
+          <button mat-flat-button cdkMenuItem (click)="onDelete(v)">Delete</button>
+          }
+        </div>
+      </ng-template>
+    </div>
+    }  <!-- for openPositions -->
+
+  </div>
+
+  }  <!-- if openPositions -->
+
+  @if(filledPositions.length) {
+  <div id="sep" class="flex justify-start gutter">
+    <span>Filled</span>
+  </div>
+
+  <div id="filled-positions" class="flex column gap gutter">
+
+    @for(v of filledPositions; track v.id) {
+
+    <div class="filled flex gap align-start" [cdkContextMenuTriggerFor]="filledPositionsMenu">
+      <app-profile-picture [user]="v.user" [routerLink]="['/', 'ideas', 'user', v.user!.id]"></app-profile-picture>
+      <div class="right-part">
+        <p class="name" [routerLink]="['/', 'ideas', 'user', v.user!.id]">{{ v.user!.name }}</p>
+        <p>{{ v.description }}</p>
+        <ng-template #filledPositionsMenu>
+          <div cdkMenu>
+            @if(isAdmin) {
+            <button mat-flat-button cdkMenuItem (click)="onRemove(v)">Remove</button>
+            }
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    }
+
+  </div>
+  }
+
+</div>

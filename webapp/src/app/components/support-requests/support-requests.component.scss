@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  width: 100%;
+  --border-radius: 20px;
+  --half-width: calc(50% - var(--spacing) / 2);
+  --height: 64px;
+}
+
+#requests {
+  height: var(--height);
+  width: 100%;
+  padding-left: calc(32px + 2 * var(--gutter));
+  padding-right: var(--gutter);
+
+  #volunteers {
+    height: 100%;
+    padding: 0 20px;
+    background-color: var(--lighter-background-color);
+    border-radius: var(--border-radius);
+    width: var(--half-width);
+  }
+
+  #add-request {
+    height: 100%;
+    padding: 0 20px;
+    border-radius: var(--border-radius);
+    background-color: var(--foreground-color);
+    color: var(--background-color);
+    min-width: var(--half-width);
+
+    &.collapsed {
+      min-width: initial;
+      width: var(--height);
+
+      span { display: none; }
+    }
+  }
+
+}

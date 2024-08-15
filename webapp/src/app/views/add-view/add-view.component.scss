@@ -44,5 +44,20 @@
       font-weight: bold;
     }
 
+    #editor {
+      position: relative;
+      width: 100%;
+
+      app-profile-picture {
+        position: absolute;
+        top: calc(-6px + 58px);
+        left: calc(-1 * (32px + var(--gutter)));
+
+        &.mobile {
+          top: -6px;
+        }
+      }
+    }
+
   }
 }

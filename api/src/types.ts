@@ -13,6 +13,6 @@ export type Filter = {
 
 export type Patch = {
     field: string,
-    operator: "set"|"inc"|"addToSet"|"pull",
+    operator: "set"|"inc"|"addToSet"|"pull"|"unset",
     value: any,
 };

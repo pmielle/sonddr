@@ -1,5 +1,64 @@
-import { DbDiscussion, DbMessage, User, DbUser, Discussion, Doc, Message, Change } from "sonddr-shared";
+import { DbDiscussion, DbMessage, User, DbUser, Discussion, Doc, Message, Change, DbVolunteer, Volunteer, DbIdea, Idea, Goal } from "sonddr-shared";
 import { getDocuments } from "./database.js";
+
+// volunteers
+// --------------------------------------------
+export async function reviveVolunteer(dbDoc: DbVolunteer, userId: string): Promise<Volunteer> {
+    return (await reviveVolunteers([dbDoc], userId))[0];
+}
+
+// userId is the id of the logged-in user
+export async function reviveVolunteers(dbDocs: DbVolunteer[], userId: string): Promise<Volunteer[]> {
+    if (dbDocs.length == 0) { return []; }
+    // get users
+    let ideasToGet = _getUnique(dbDocs, "ideaId");
+    let usersToGet = _getUnique(dbDocs, "userId").concat(_getUniqueInArray(dbDocs, "candidateIds"));
+    const [users, ideas] = await Promise.all([
+	    getDocuments<DbUser>("users", undefined, { field: "id", operator: "in", value: usersToGet })
+	    	.then(dbUsers => reviveUsers(dbUsers, userId)),
+	    getDocuments<DbIdea>("ideas", undefined, {field: "id", operator: "in", value: ideasToGet})
+	    	.then(async dbIdeas => await reviveIdeas(dbIdeas, userId)),
+    ]);
+    // convert dbDocs into docs
+    const docs: Volunteer[] = dbDocs.map((dbDoc) => {
+        const {userId, ideaId, candidateIds, ...data} = dbDoc;
+        data["user"] = users.find(u => u.id === userId);
+        data["idea"] = ideas.find(u => u.id === ideaId);
+	data["candidates"] = users.filter(u => candidateIds.includes(u.id));
+        return data as any;
+    });
+    // return
+    return docs;
+}
+
+
+// ideas
+// --------------------------------------------
+export async function reviveIdea(dbDoc: DbIdea, userId: string): Promise<Idea> {
+    return (await reviveIdeas([dbDoc], userId))[0];
+}
+
+// userId is the id of the logged-in user
+export async function reviveIdeas(dbDocs: DbIdea[], userId: string): Promise<Idea[]> {
+    if (dbDocs.length == 0) { return []; }
+    // get users and goals
+    let usersToGet = _getUnique(dbDocs, "authorId");
+    let goalsToGet = _getUniqueInArray(dbDocs, "goalIds");
+    const [users, goals] = await Promise.all([
+	    getDocuments<DbUser>("users", undefined, {field: "id", operator: "in", value: usersToGet})
+	    	.then(dbUsers => reviveUsers(dbUsers, userId)),
+	    getDocuments<Goal>("goals", undefined, {field: "id", operator: "in", value: goalsToGet}),
+    ]);
+    // convert dbDocs into docs
+    const docs: Idea[] = dbDocs.map((dbDoc) => {
+        const {authorId, goalIds, ...data} = dbDoc;
+        data["author"] = users.find(u => u.id === authorId);
+        data["goals"] = goals.filter(g => goalIds.includes(g.id));
+        return data as any;
+    });
+    // return
+    return docs;
+}
 
 
 // users

@@ -1,0 +1,29 @@
+@if(volunteers && volunteers.length || isLoggedInUser) {
+<div id="requests" class="flex gap justify-start">
+
+  @if(volunteers && volunteers.length) {
+  <div id="volunteers" class="flex justify-start small-gap pointer" [routerLink]="['/', 'ideas', 'volunteers', getIdeaId()]">
+    <mat-icon>emoji_people</mat-icon>
+    <span id="volunteers-label">{{ countUnattributedVolunteers() }} / {{ volunteers.length }}</span>
+  </div>
+  } <!-- @if volunteers && volunteers.length -->
+
+  @if (isLoggedInUser) {
+  <div
+      id="add-request"
+      class="flex small-gap justify-start pointer"
+      [class.collapsed]="volunteers && volunteers.length"
+      matRipple
+      [mat-menu-trigger-for]="menu"
+      >
+      <mat-icon>add</mat-icon>
+      <span>Request support</span>
+  </div>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openVolunteerPopup()">Volunteer</button>
+    <button mat-menu-item (click)="openFinancingPopup()">Financing</button>
+  </mat-menu>
+  } <!-- @if isLoggedInUser -->
+
+</div>
+}

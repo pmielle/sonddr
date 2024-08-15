@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink } from 'sonddr-shared';
+import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink, Volunteer } from 'sonddr-shared';
 import { SortBy } from '../components/idea-list/idea-list.component';
 import { lastValueFrom } from 'rxjs';
 
@@ -25,6 +25,30 @@ export class HttpService {
 
   // public methods
   // --------------------------------------------
+  async addVolunteerCandidate(volunteerId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {addCandidate: true});
+  }
+
+  async removeVolunteerCandidate(volunteerId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {removeCandidate: true});
+  }
+
+  async acceptVolunteerCandidate(volunteerId: string, candidateId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {acceptCandidate: candidateId});
+  }
+
+  async refuseVolunteerCandidate(volunteerId: string, candidateId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {refuseCandidate: candidateId});
+  }
+
+  async removeVolunteerUser(volunteerId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {removeUser: true})
+  }
+
+  async deleteVolunteer(volunteerId: string) {
+    return this._delete(`volunteers/${volunteerId}`);
+  }
+
   async editUser(userId: string, name?: string, bio?: string, cover?: File, profilePicture?: File) {
     const formData = new FormData();
     if (name !== undefined) { formData.append("name", name); }
@@ -187,6 +211,19 @@ export class HttpService {
     if (goalId) { uri += `&goalId=${goalId}`; }
     if (authorId) { uri += `&authorId=${authorId}`; }
     return this._get<Idea[]>(uri);
+  }
+
+  async createVolunteer(ideaId: string, description: string): Promise<string> {
+    return this._post("volunteers", {ideaId: ideaId, description: description});
+  }
+
+  async getVolunteers(ideaId?: string, userId?: string): Promise<Volunteer[]> {
+    let uri = "volunteers";
+    const filters: string[] = [];
+    if (ideaId) { filters.push(`&ideaId=${ideaId}`); }
+    if (userId) { filters.push(`&authorId=${userId}`); }
+    if (filters.length) { uri += "?" + filters.join("&"); }
+    return this._get<Volunteer[]>(uri);
   }
 
   async getComments(sortBy: SortBy, ideaId?: string, authorId?: string): Promise<Comment[]> {

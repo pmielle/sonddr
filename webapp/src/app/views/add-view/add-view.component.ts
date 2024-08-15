@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { EditorComponent } from 'src/app/components/editor/editor.component';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 @Component({
   selector: 'app-add-view',
@@ -23,6 +24,7 @@ export class AddViewComponent {
   auth = inject(AuthService);
   mainNav = inject(MainNavService);
   router = inject(Router);
+  userData = inject(UserDataService);
 
   // attributes
   // --------------------------------------------

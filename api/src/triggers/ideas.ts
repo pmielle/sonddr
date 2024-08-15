@@ -9,6 +9,7 @@ export function watchIdeas() {
 	// when an idea is deleted, delete:
 	// - its images; cover and content imgs
 	// - its comments
+	// - its volunteers
 	watchCollection<Idea>("ideas").pipe(
 		filter(change => change.type === "delete")
 	).subscribe(async (change) => {
@@ -21,5 +22,7 @@ export function watchIdeas() {
 		}
 		// delete its comments
 		deleteDocuments(`comments`, { field: "ideaId", operator: "eq", value: ideaId });
+		// delete its volunteers
+		deleteDocuments(`volunteers`, { field: "ideaId", operator: "eq", value: ideaId });
 	});
 }

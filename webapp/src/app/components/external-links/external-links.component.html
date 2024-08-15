@@ -14,8 +14,8 @@
     } <!-- @for externalLinks -->
     @if (isLoggedInUser) {
     <app-chip
-        label="Add"
         icon="add"
+        [no-label]="true"
         foreground-color="var(--background-color)"
         color="var(--foreground-color)"
         [mat-menu-trigger-for]="menu"

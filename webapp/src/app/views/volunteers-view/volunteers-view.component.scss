@@ -1,0 +1,54 @@
+#content { margin-top: var(--large-spacing); }
+
+#open-positions {
+  margin-bottom: var(--spacing);
+
+  .open-position {
+    width: 100%;
+
+    .empty-pp {
+      width: 32px;
+      height: 32px;
+      border-radius: 99px;
+    }
+
+    .desc {
+      flex: 1;
+    }
+
+  }
+
+  .candidates {
+    margin-top: var(--small-spacing);
+    margin-bottom: var(--spacing);
+    background-color: var(--darker-background-color);
+    padding-top: var(--spacing);
+    padding-bottom: var(--spacing);
+
+    .candidate {
+      width: 100%;
+    }
+
+  }
+}
+
+.right-part {
+  flex: 1;
+
+  .name {
+    margin-top: 5px;
+    margin-bottom: var(--small-spacing);
+    font-weight: bold;
+  }
+}
+
+#sep {
+  height: 48px;
+}
+
+#filled-positions {
+  margin-top: var(--spacing);
+
+  .filled { width: 100%; }
+}
+

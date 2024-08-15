@@ -8,6 +8,9 @@
       <button mat-menu-item (click)="onEditClick()">Edit</button>
       <button mat-menu-item (click)="onDeleteClick()">Delete</button>
     </mat-menu>
+    } @else {
+    <app-profile-picture class="pointer" [user]="userData.user$|async"
+      (click)="userData.goToProfile()"></app-profile-picture>
     }
   </app-top-bar>
 
@@ -48,6 +51,13 @@
         (add)="addExternalLink($event)"
         (delete)="deleteExternalLink($event)"
       ></app-external-links>
+
+      <app-support-requests
+        [is-logged-in-user]="idea?.author?.isUser"
+        [volunteers]="volunteers"
+        (add-volunteer)="addVolunteer($event)"
+        (add-financing)="addFinancing($event)"
+      ></app-support-requests>
 
     </div>
 
