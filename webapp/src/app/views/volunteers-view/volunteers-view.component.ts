@@ -72,8 +72,15 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
 
   onApply(v: Volunteer) {
     this.http.addVolunteerCandidate(v.id);
-    const userId = this.userData.user$.getValue()!;
-    v.candidates.push(userId);
+    const user = this.userData.user$.getValue()!;
+    v.candidates.push(user);
+    this._updateOpenPosition(v);
+  }
+
+  onCancel(v: Volunteer) {
+    this.http.removeVolunteerCandidate(v.id);
+    const user = this.userData.user$.getValue()!;
+    v.candidates = v.candidates.filter(u => u.id !== user.id);
     this._updateOpenPosition(v);
   }
 

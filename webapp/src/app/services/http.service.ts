@@ -29,6 +29,10 @@ export class HttpService {
     return this._patch(`volunteers/${volunteerId}`, {addCandidate: true});
   }
 
+  async removeVolunteerCandidate(volunteerId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {removeCandidate: true});
+  }
+
   async acceptVolunteerCandidate(volunteerId: string, candidateId: string) {
     return this._patch(`volunteers/${volunteerId}`, {acceptCandidate: candidateId});
   }

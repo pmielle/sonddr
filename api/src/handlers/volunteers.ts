@@ -51,8 +51,8 @@ export async function patchVolunteer(req: Request, res: Response, next: NextFunc
 
 	const userId = req["userId"];
 	const path = _getReqPath(req);
-	const candidateToRemove = req.body["removeCandidate"];
-	const candidateToAdd = req.body["addCandidate"];
+	const removeCandidate = req.body["removeCandidate"];
+	const addCandidate = req.body["addCandidate"];
 	const acceptCandidate = req.body["acceptCandidate"];
 	const refuseCandidate = req.body["refuseCandidate"];
 	const removeUser = req.body["removeUser"];
@@ -68,15 +68,15 @@ export async function patchVolunteer(req: Request, res: Response, next: NextFunc
 		});
 	}
 
-	// find candidates to add or remove
-	if (candidateToRemove && isAdmin(userId, v)) {
+	// add or remove self from the list of candidates
+	if (removeCandidate) {
 		await patchDocument(path, {
 			field: 'candidateIds',
 			operator: 'pull',
-			value: candidateToRemove,
+			value: userId,
 		});
 	}
-	if (candidateToAdd) {
+	if (addCandidate) {
 		await patchDocument(path, {
 			field: 'candidateIds',
 			operator: 'addToSet',

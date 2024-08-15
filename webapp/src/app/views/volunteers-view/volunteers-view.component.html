@@ -17,7 +17,7 @@
           <p class="desc">{{ v.description }}</p>
           @if(! isAdmin) {
           @if (didApply(v)) {
-          <app-chip label="Applied" [border]="true" icon="check" [clickable]="false"></app-chip>
+          <app-chip label="Applied" [border]="true" icon="check" (click)="onCancel(v)"></app-chip>
           } @else {
           <app-chip label="Apply" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
           }
