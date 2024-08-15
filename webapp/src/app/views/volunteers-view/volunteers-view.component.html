@@ -10,7 +10,7 @@
 
     @for(v of openPositions; track v.id) {
 
-    <div class="open-position">
+    <div class="open-position" [cdkContextMenuTriggerFor]="openPositionsMenu">
       <div class="flex gap align-start gutter">
         <img src="assets/empty-profile-picture.png" class="empty-pp">
         <div class="right-part">
@@ -42,15 +42,22 @@
         }
 
       </div>
-      }
-      }
+      }  <!-- if candidates -->
+      }  <!-- isAdmin -->
 
+      <ng-template #openPositionsMenu>
+        <div cdkMenu>
+          @if(isAdmin) {
+          <button mat-flat-button cdkMenuItem (click)="onDelete(v)">Delete</button>
+          }
+        </div>
+      </ng-template>
     </div>
-    }
+    }  <!-- for openPositions -->
 
   </div>
 
-  }
+  }  <!-- if openPositions -->
 
   @if(filledPositions.length) {
   <div id="sep" class="flex justify-start gutter">
@@ -61,14 +68,18 @@
 
     @for(v of filledPositions; track v.id) {
 
-    <div class="filled flex gap align-start">
+    <div class="filled flex gap align-start" [cdkContextMenuTriggerFor]="filledPositionsMenu">
       <app-profile-picture [user]="v.user"></app-profile-picture>
       <div class="right-part">
         <p class="name">{{ v.user!.name }}</p>
         <p>{{ v.description }}</p>
-        @if(isAdmin) {
-        <app-chip label="Remove" icon="close" color="var(--red)" (click)="onRemove(v)"></app-chip>
-        }
+        <ng-template #filledPositionsMenu>
+          <div cdkMenu>
+            @if(isAdmin) {
+            <button mat-flat-button cdkMenuItem (click)="onRemove(v)">Remove</button>
+            }
+          </div>
+        </ng-template>
       </div>
     </div>
 

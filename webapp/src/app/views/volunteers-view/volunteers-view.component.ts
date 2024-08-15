@@ -52,6 +52,11 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     this._updateOpenPosition(v);
   }
 
+  onDelete(v: Volunteer) {
+    this.http.deleteVolunteer(v.id);
+    this._deletePosition(v.id);
+  }
+
   onRemove(v: Volunteer) {
     this.http.removeVolunteerUser(v.id);
     v.user = undefined;
@@ -84,6 +89,21 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
       } else {
         this.openPositions.push(volunteer);
       }
+    }
+  }
+
+  _deletePosition(id: string) {
+    let i = this.openPositions.findIndex(volunteer => volunteer.id === id);
+    if (i >= 0) {
+      this.openPositions.splice(i, 1);
+      this.openPositions = [...this.openPositions];
+      return;
+    }
+    i = this.filledPositions.findIndex(volunteer => volunteer.id === id);
+    if (i >= 0) {
+      this.filledPositions.splice(i, 1);
+      this.filledPositions = [...this.filledPositions];
+      return;
     }
   }
 

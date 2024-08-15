@@ -41,6 +41,9 @@ export class HttpService {
     return this._patch(`volunteers/${volunteerId}`, {removeUser: true})
   }
 
+  async deleteVolunteer(volunteerId: string) {
+    return this._delete(`volunteers/${volunteerId}`);
+  }
 
   async editUser(userId: string, name?: string, bio?: string, cover?: File, profilePicture?: File) {
     const formData = new FormData();
