@@ -16,7 +16,7 @@ import { getUser, getUsers, patchUser, putUser } from "./handlers/users.js";
 import { deleteVote, putVote } from "./handlers/votes.js";
 import { deleteCheer, getCheer, putCheer } from "./handlers/cheers.js";
 import { deleteComment, getComment, getComments, postComment } from "./handlers/comments.js";
-import { deleteVolunteer, getVolunteers, postVolunteer } from "./handlers/volunteers.js";
+import { deleteVolunteer, getVolunteers, patchVolunteer, postVolunteer } from "./handlers/volunteers.js";
 import { getDiscussion, getDiscussions, patchDiscussion, postDiscussion } from "./handlers/discussions.js";
 import { getNotifications, patchNotification } from "./handlers/notifications.js";
 import { startAllTriggers } from "./triggers.js";
@@ -263,6 +263,17 @@ router.get('/volunteers',
 	async (req, res, next) => {
 		try {
 			await getVolunteers(req, res, next);
+		} catch (err) {
+			next(err);
+		}
+	});
+
+router.patch('/volunteers/:id',
+	keycloak.protect(),
+	fetchUserId,
+	async (req, res, next) => {
+		try {
+			await patchVolunteer(req, res, next);
 		} catch (err) {
 			next(err);
 		}

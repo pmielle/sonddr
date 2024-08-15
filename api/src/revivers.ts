@@ -24,7 +24,7 @@ export async function reviveVolunteers(dbDocs: DbVolunteer[], userId: string): P
         const {userId, ideaId, candidateIds, ...data} = dbDoc;
         data["user"] = users.find(u => u.id === userId);
         data["idea"] = ideas.find(u => u.id === ideaId);
-	data["candidateIds"] = users.find(u => candidateIds.includes(u.id));
+	data["candidates"] = users.filter(u => candidateIds.includes(u.id));
         return data as any;
     });
     // return

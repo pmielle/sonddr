@@ -197,6 +197,8 @@ export class MainNavService {
       this.fabMode$.next(undefined);
     } else if (url.startsWith("/ideas/details/")) {
       this.fabMode$.next(undefined);
+    } else if (url.startsWith("/ideas/volunteers/")) {
+      this.fabMode$.next(undefined);
     } else {
       console.error(`cannot set fab mobe: ${url} is not an exepected url`);
       this.fabMode$.next(undefined);

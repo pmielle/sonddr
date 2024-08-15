@@ -25,6 +25,14 @@ export class HttpService {
 
   // public methods
   // --------------------------------------------
+  async addVolunteerCandidate(volunteerId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {addCandidate: true});
+  }
+
+  async acceptVolunteerCandidate(volunteerId: string, candidateId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {acceptCandidate: candidateId});
+  }
+
   async editUser(userId: string, name?: string, bio?: string, cover?: File, profilePicture?: File) {
     const formData = new FormData();
     if (name !== undefined) { formData.append("name", name); }

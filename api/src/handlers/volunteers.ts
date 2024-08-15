@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { DbIdea, DbVolunteer } from "sonddr-shared";
+import { DbIdea, DbVolunteer, Volunteer } from "sonddr-shared";
 import { deleteDocument, getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
 import { _getFromReqBody, _getReqPath, _getUnique } from "../handlers.js";
 import { reviveUser, reviveUsers, reviveVolunteer, reviveVolunteers } from "../revivers.js";
@@ -49,14 +49,17 @@ export async function getVolunteers(req: Request, res: Response, next: NextFunct
 
 export async function patchVolunteer(req: Request, res: Response, next: NextFunction) {
 
+	const userId = req["userId"];
+	const path = _getReqPath(req);
 	const candidateToRemove = req.body["removeCandidate"];
 	const candidateToAdd = req.body["addCandidate"];
 	const acceptCandidate = req.body["acceptCandidate"];
 	const refuseCandidate = req.body["refuseCandidate"];
-	const path = _getReqPath(req);
+	const v = await getDocument<DbVolunteer>(path)
+		.then(dbDoc => reviveVolunteer(dbDoc, userId));
 
 	// find candidates to add or remove
-	if (candidateToRemove) {
+	if (candidateToRemove && isAdmin(userId, v)) {
 		await patchDocument(path, {
 			field: 'candidateIds',
 			operator: 'pull',
@@ -67,19 +70,19 @@ export async function patchVolunteer(req: Request, res: Response, next: NextFunc
 		await patchDocument(path, {
 			field: 'candidateIds',
 			operator: 'addToSet',
-			value: candidateToAdd,
+			value: userId,
 		});
 	}
 
 	// accept or refuse a candidate
-	if (refuseCandidate && canAcceptOrRefuseCandidate(req)) {
+	if (refuseCandidate && isAdmin(userId, v)) {
 		await patchDocument(path, {
 			field: 'candidateIds',
 			operator: 'pull',
 			value: refuseCandidate,
 		});
 	}
-	if (acceptCandidate && canAcceptOrRefuseCandidate(req)) {
+	if (acceptCandidate && isAdmin(userId, v)) {
 		await Promise.all([
 			patchDocument(path, {
 				field: 'userId',
@@ -100,11 +103,8 @@ export async function patchVolunteer(req: Request, res: Response, next: NextFunc
 
 // private
 // --------------------------------------------
-async function canAcceptOrRefuseCandidate(req: Request) {
-	const userId = req["userId"];
-	const ideaId = _getFromReqBody("ideaId", req);
-	const dbIdea = await getDocument<DbIdea>(`ideas/${ideaId}`);
-	if (dbIdea.authorId !== userId) {
+async function isAdmin(userId: string, v: Volunteer) {
+	if (v.idea.author.id !== userId) {
 		throw new Error("Unauthorized");
 	}
 }

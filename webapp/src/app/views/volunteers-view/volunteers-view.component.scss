@@ -1,0 +1,36 @@
+#content {
+  margin-top: var(--large-spacing);
+
+  .open-position {
+    margin-bottom: var(--spacing);
+
+    .empty-pp {
+      width: 32px;
+      height: 32px;
+      border-radius: 99px;
+    }
+
+    .desc {
+      flex: 1;
+    }
+
+    .apply {
+      align-self: flex-start;
+      margin-left: calc(32px + var(--spacing));
+    }
+
+  }
+
+  .candidates {
+    background-color: var(--darker-background-color);
+    padding-top: var(--spacing);
+    padding-bottom: var(--spacing);
+
+    .candidate {
+      width: 100%;
+    }
+
+  }
+
+}
+

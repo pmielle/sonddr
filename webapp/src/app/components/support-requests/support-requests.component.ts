@@ -24,6 +24,10 @@ export class SupportRequestsComponent implements OnDestroy {
       this.popupSub?.unsubscribe();
   }
 
+  getIdeaId(): string {
+    return this.volunteers![0].idea.id;
+  }
+
   openFinancingPopup() {
     console.log("TODO");
   }

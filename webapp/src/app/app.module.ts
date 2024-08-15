@@ -55,6 +55,7 @@ import { OpenImageDirective } from './directives/open-image.directive';
 import { DetailsViewComponent } from './views/details-view/details-view.component';
 import { SupportRequestsComponent } from './components/support-requests/support-requests.component';
 import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add-volunteer-popup.component';
+import { VolunteersViewComponent } from './views/volunteers-view/volunteers-view.component';
 
 
 @NgModule({
@@ -102,6 +103,7 @@ import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add
     DetailsViewComponent,
     SupportRequestsComponent,
     AddVolunteerPopupComponent,
+    VolunteersViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -126,6 +128,7 @@ import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add
         {path: "add", component: AddViewComponent},
         {path: "user/:id", component: UserViewComponent},
         {path: "user-edit/:id", component: EditUserViewComponent},
+        {path: "volunteers/:id", component: VolunteersViewComponent},
       ]},
       {path: "search", component: SearchViewComponent},
       {path: "messages", component: MessagesTabComponent, children: [

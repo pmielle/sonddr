@@ -1,0 +1,46 @@
+<app-top-bar left-item="close">
+  <h2 class="no-margin-bottom">Volunteers</h2>
+</app-top-bar>
+
+<div id="content">
+
+  @for(v of openPositions; track v.id) {
+  <div class="open-position flex column gap align-stretch">
+    <div class="flex gap align-start gutter">
+      <img src="assets/empty-profile-picture.png" class="empty-pp">
+      <p class="desc no-margin-bottom">{{ v.description }}</p>
+    </div>
+
+    @if(isAdmin) {
+    @if (v.candidates && v.candidates.length) {
+    <div class="candidates gutter flex column gap">
+    @for (c of v.candidates; track c.id) {
+      <div class="candidate flex gap">
+        <app-profile-picture [user]="c"></app-profile-picture>
+        <span>{{ c.name }}</span>
+        <div class="spacer"></div>
+        <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, c)"></app-chip>
+        <app-chip icon="close" color="var(--red)" [no-label]="true"></app-chip>
+      </div>
+    }
+    </div>
+    }
+    } @else {
+    @if (didApply(v)) {
+    <app-chip class="apply" label="Applied" [border]="true" icon="check" [clickable]="false"></app-chip>
+    } @else {
+    <app-chip class="apply" label="Apply" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
+    }
+    }
+
+  </div>
+  }
+
+  @if(filledPositions.length) {
+  <span>Filled</span>
+  @for(v of filledPositions; track v.id) {
+  <p>{{ v.description }}</p>
+  }
+  }
+
+</div>
