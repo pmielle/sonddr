@@ -33,6 +33,10 @@ export class HttpService {
     return this._patch(`volunteers/${volunteerId}`, {acceptCandidate: candidateId});
   }
 
+  async refuseVolunteerCandidate(volunteerId: string, candidateId: string) {
+    return this._patch(`volunteers/${volunteerId}`, {refuseCandidate: candidateId});
+  }
+
   async editUser(userId: string, name?: string, bio?: string, cover?: File, profilePicture?: File) {
     const formData = new FormData();
     if (name !== undefined) { formData.append("name", name); }

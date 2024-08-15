@@ -46,6 +46,12 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  onRefuse(v: Volunteer, c: User) {
+    this.http.refuseVolunteerCandidate(v.id, c.id);
+    v.candidates = v.candidates.filter(u => u.id !== c.id);
+    this._updateOpenPosition(v);
+  }
+
   onAccept(v: Volunteer, c: User) {
     this.http.acceptVolunteerCandidate(v.id, c.id);
     v.user = c;

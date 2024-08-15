@@ -20,7 +20,7 @@
         <span>{{ c.name }}</span>
         <div class="spacer"></div>
         <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, c)"></app-chip>
-        <app-chip icon="close" color="var(--red)" [no-label]="true"></app-chip>
+        <app-chip icon="close" color="var(--red)" [no-label]="true" (click)="onRefuse(v, c)"></app-chip>
       </div>
     }
     </div>
