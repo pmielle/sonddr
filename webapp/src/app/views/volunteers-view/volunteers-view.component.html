@@ -74,9 +74,10 @@
         <p class="name" [routerLink]="['/', 'ideas', 'user', v.user!.id]">{{ v.user!.name }}</p>
         <p>{{ v.description }}</p>
         <ng-template #filledPositionsMenu>
-          <div cdkMenu>
+          <div cdkMenu class="flex column">
             @if(isAdmin) {
             <button mat-flat-button cdkMenuItem (click)="onRemove(v)">Remove</button>
+            <button mat-flat-button cdkMenuItem (click)="onDelete(v)">Delete</button>
             }
           </div>
         </ng-template>
