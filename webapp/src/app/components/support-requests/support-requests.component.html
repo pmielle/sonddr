@@ -25,7 +25,9 @@
       <span>Request support</span>
   </div>
   <mat-menu #menu="matMenu">
+    @if(! (volunteers && volunteers.length)) {
     <button mat-menu-item (click)="openVolunteerPopup()">Volunteer</button>
+    }
     <button mat-menu-item (click)="openFinancingPopup()">Financing</button>
   </mat-menu>
   } <!-- @if isLoggedInUser -->

@@ -176,6 +176,13 @@ export class MainNavService {
         label: "Done",
         action: () => {this.fabClick.next();}
       });
+    } else if (url.startsWith("/ideas/volunteers/")) {
+      this.fabMode$.next({
+        icon: "add",
+        color: "var(--primary-color)",
+        label: "Request",
+        action: () => {this.fabClick.next();}
+      });
     } else if (url.startsWith("/ideas/user/")) {
       this.fabMode$.next(undefined); // handled by the view depending on who the user is
     } else if (url.startsWith("/ideas/idea/")) {
@@ -196,8 +203,6 @@ export class MainNavService {
     } else if (url === "/") {
       this.fabMode$.next(undefined);
     } else if (url.startsWith("/ideas/details/")) {
-      this.fabMode$.next(undefined);
-    } else if (url.startsWith("/ideas/volunteers/")) {
       this.fabMode$.next(undefined);
     } else {
       console.error(`cannot set fab mobe: ${url} is not an exepected url`);

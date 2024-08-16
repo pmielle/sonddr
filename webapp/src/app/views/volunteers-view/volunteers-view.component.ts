@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { User, Volunteer } from 'sonddr-shared';
+import { Idea, User, Volunteer, placeholder_id } from 'sonddr-shared';
+import { AddVolunteerPopupComponent } from 'src/app/components/add-volunteer-popup/add-volunteer-popup.component';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { UserDataService } from 'src/app/services/user-data.service';
@@ -13,33 +15,82 @@ import { UserDataService } from 'src/app/services/user-data.service';
 })
 export class VolunteersViewComponent implements OnInit, OnDestroy {
 
+  // dependencies
+  // --------------------------------------------
   http = inject(HttpService);
   route = inject(ActivatedRoute);
   mainNav = inject(MainNavService);
   userData = inject(UserDataService);
   router = inject(Router);
-  routeSub?: Subscription;
+  dialog = inject(MatDialog);
+
+  // attributes
+  // --------------------------------------------
   openPositions: Volunteer[] = [];
   filledPositions: Volunteer[] = [];
   isAdmin: boolean = false;
+  idea?: Idea;
   expandedCandidates: Map<string, boolean> = new Map();
-  ideaId?: string;
+  routeSub?: Subscription;
+  popupSub?: Subscription;
+  fabClickSub?: Subscription;
 
+  // lifecycle hooks
+  // --------------------------------------------
   ngOnInit(): void {
     this.routeSub = this.route.paramMap.subscribe((map) => {
       const id = map.get("id")!;
-      this.ideaId = id;
       this.http.getVolunteers(id).then(v => {
-        this.setIsAdmin(v[0]);
+        this.idea = v[0].idea;
+        this.setIsAdmin(); // do this after setting this.idea
         this.setVolunteers(v)
       });
     });
     setTimeout(() => this.mainNav.hideNavBar(), 100); // otherwise NG0100
+    this.fabClickSub = this.mainNav.fabClick.subscribe(() => this.openVolunteerPopup());
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe;
     this.mainNav.showNavBar();
+    this.popupSub?.unsubscribe();
+    this.fabClickSub?.unsubscribe();
+  }
+
+  // methods
+  // --------------------------------------------
+  openVolunteerPopup() {
+    const dialogRef = this.dialog.open(AddVolunteerPopupComponent);
+    this.popupSub = dialogRef.afterClosed().subscribe((description) => {
+      if (description) {
+        this.addVolunteer(description);
+      }
+    });
+  }
+
+  addVolunteer(description: string) {
+    const volunteerPlaceholder = this.makeVolunteerPlaceholder(description);
+    this.openPositions = [...this.openPositions, volunteerPlaceholder];
+    this.http.createVolunteer(this.idea!.id, description)
+      .then(id => this.updateVolunteerPlaceholder(id));
+  }
+
+  makeVolunteerPlaceholder(description: string): Volunteer {
+    const user = this.userData.user$.getValue();
+    if (!user) { throw new Error("Cannot create volunteer if user is not logged in"); }
+    return {
+      id: placeholder_id,
+      idea: this.idea!,
+      description: description,
+      candidates: [],
+    };
+  }
+
+  updateVolunteerPlaceholder(id: string) {
+    const indexOfPlaceholder = this.openPositions.findIndex(c => c.id === placeholder_id);
+    if (indexOfPlaceholder === -1) { throw new Error(`Found no volunteers with id ${placeholder_id}`); }
+    this.openPositions[indexOfPlaceholder].id = id;
+    this.openPositions = [...this.openPositions];  // otherwise does not update
   }
 
   isExpanded(v: Volunteer): boolean {
@@ -61,48 +112,47 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   onRefuse(v: Volunteer, c: User) {
     this.http.refuseVolunteerCandidate(v.id, c.id);
     v.candidates = v.candidates.filter(u => u.id !== c.id);
-    this._updateOpenPosition(v);
+    this.updateOpenPosition(v);
   }
 
   onDelete(v: Volunteer) {
     this.http.deleteVolunteer(v.id).then(() => {
       if (this.filledPositions.length + this.openPositions.length == 0) {
-        this.router.navigateByUrl(`/ideas/idea/${this.ideaId}`);
+        this.router.navigateByUrl(`/ideas/idea/${this.idea!.id}`);
       }
     });
-    this._deletePosition(v.id);
+    this.deletePosition(v.id);
   }
 
   onRemove(v: Volunteer) {
     this.http.removeVolunteerUser(v.id);
     v.user = undefined;
-    this._openPosition(v);
+    this.openPosition(v);
   }
 
   onAccept(v: Volunteer, c: User) {
     this.http.acceptVolunteerCandidate(v.id, c.id);
     v.user = c;
     v.candidates = [];
-    this._fillPosition(v);
+    this.fillPosition(v);
   }
 
   onApply(v: Volunteer) {
     this.http.addVolunteerCandidate(v.id);
     const user = this.userData.user$.getValue()!;
     v.candidates.push(user);
-    this._updateOpenPosition(v);
+    this.updateOpenPosition(v);
   }
 
   onCancel(v: Volunteer) {
     this.http.removeVolunteerCandidate(v.id);
     const user = this.userData.user$.getValue()!;
     v.candidates = v.candidates.filter(u => u.id !== user.id);
-    this._updateOpenPosition(v);
+    this.updateOpenPosition(v);
   }
 
-  // any volunteer works
-  setIsAdmin(volunteer: Volunteer) {
-    this.isAdmin = volunteer.idea.author.isUser;
+  setIsAdmin() {
+    this.isAdmin = this.idea!.author.isUser;
   }
 
   setVolunteers(volunteers: Volunteer[]) {
@@ -115,7 +165,7 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  _deletePosition(id: string) {
+  deletePosition(id: string) {
     let i = this.openPositions.findIndex(volunteer => volunteer.id === id);
     if (i >= 0) {
       this.openPositions.splice(i, 1);
@@ -130,13 +180,13 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  _updateOpenPosition(v: Volunteer) {
+  updateOpenPosition(v: Volunteer) {
     const i = this.openPositions.findIndex(volunteer => volunteer.id === v.id);
     this.openPositions[i] = v;
     this.openPositions = [...this.openPositions];
   }
 
-  _openPosition(v: Volunteer) {
+  openPosition(v: Volunteer) {
     const i = this.filledPositions.findIndex(volunteer => volunteer.id === v.id);
     this.filledPositions.splice(i, 1);
     this.openPositions.push(v);
@@ -144,7 +194,7 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     this.openPositions = [...this.openPositions];
   }
 
-  _fillPosition(v: Volunteer) {
+  fillPosition(v: Volunteer) {
     const i = this.openPositions.findIndex(volunteer => volunteer.id === v.id);
     this.openPositions.splice(i, 1);
     this.filledPositions.push(v);
