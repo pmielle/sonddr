@@ -32,7 +32,18 @@ export class SupportRequestsComponent implements OnDestroy {
     console.log("TODO");
   }
 
-  countUnattributedVolunteers() {
+  // 0 - 100
+  chooseVolunteerMeterPercent(): number {
+    return this.volunteers?.length
+      ? this.countAttributedVolunteers() / this.volunteers.length * 100
+      : 0;
+  }
+
+  chooseOkVolunteers(): boolean {
+    return this.countAttributedVolunteers() == this.volunteers?.length;
+  }
+
+  countAttributedVolunteers() {
     return this.volunteers!.reduce((sum, current) => current.user === undefined ? sum : sum + 1, 0);
   }
 

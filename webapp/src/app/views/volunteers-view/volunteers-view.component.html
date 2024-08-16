@@ -30,7 +30,6 @@
       <div class="candidates gutter flex column gap">
 
         @if (isExpanded(v)) {
-
         @for (c of v.candidates; track c.id) {
 
         <div class="candidate flex gap">
@@ -42,7 +41,6 @@
         </div>
 
         }
-
         } @else {
 
         <div class="candidate flex gap">
@@ -63,9 +61,7 @@
             (click)="onExpand(v)"
             ></app-chip>
         }
-
         } <!-- else (isExpanded) -->
-
 
       </div>
       }  <!-- if candidates -->
