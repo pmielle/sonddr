@@ -10,14 +10,16 @@ export function watchVolunteers() {
 	watchCollection<DbVolunteer>("volunteers").subscribe(async (change) => {
 		if (change.type === "delete") {
 			const userId = change.docBefore.userId;
-			const dbIdea = await getDocument<DbIdea>(`ideas/${change.docBefore.ideaId}`);
-			const notificationPayload = {
-				toIds: [userId],
-				date: new Date(),
-				readByIds: [],
-				content: `Your volunteer position for ${dbIdea.title} has been deleted.`,
-			};
-			postDocument(`notifications`, notificationPayload);
+			if (userId) {
+				const dbIdea = await getDocument<DbIdea>(`ideas/${change.docBefore.ideaId}`);
+				const notificationPayload = {
+					toIds: [userId],
+					date: new Date(),
+					readByIds: [],
+					content: `Your volunteer position for ${dbIdea.title} has been deleted.`,
+				};
+				postDocument(`notifications`, notificationPayload);
+			}
 		} else if (change.type === "update") {
 
 			const dbIdea = await getDocument<DbIdea>(`ideas/${change.docBefore.ideaId}`);
