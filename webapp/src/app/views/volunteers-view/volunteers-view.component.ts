@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { User, Volunteer } from 'sonddr-shared';
 import { HttpService } from 'src/app/services/http.service';
@@ -17,15 +17,18 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   route = inject(ActivatedRoute);
   mainNav = inject(MainNavService);
   userData = inject(UserDataService);
+  router = inject(Router);
   routeSub?: Subscription;
   openPositions: Volunteer[] = [];
   filledPositions: Volunteer[] = [];
   isAdmin: boolean = false;
   expandedCandidates: Map<string, boolean> = new Map();
+  ideaId?: string;
 
   ngOnInit(): void {
     this.routeSub = this.route.paramMap.subscribe((map) => {
       const id = map.get("id")!;
+      this.ideaId = id;
       this.http.getVolunteers(id).then(v => {
         this.setIsAdmin(v[0]);
         this.setVolunteers(v)
@@ -62,7 +65,11 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   }
 
   onDelete(v: Volunteer) {
-    this.http.deleteVolunteer(v.id);
+    this.http.deleteVolunteer(v.id).then(() => {
+      if (this.filledPositions.length + this.openPositions.length == 0) {
+        this.router.navigateByUrl(`/ideas/idea/${this.ideaId}`);
+      }
+    });
     this._deletePosition(v.id);
   }
 
