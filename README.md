@@ -2,13 +2,13 @@
 
 ## local development
 
-1) setup a dev ssl certificate with a letsencrypt file tree:
+- setup a dev ssl certificate with a letsencrypt file tree:
 ```
 deployment/letsencrypt/live/<your_hostname>/privkey.pem
 deployment/letsencrypt/live/<your_hostname>/fullchain.pem
 ```
 
-2) create `deployment/.env` with the following variables:
+- create `deployment/.env` with the following variables:
 ```bash
 SONDDR_AUTHORITY='<your_hostname>'
 KEYCLOAK_URL='https://<your_hostname>/auth'
@@ -24,6 +24,10 @@ GF_SECURITY_ADMIN_USER='grafana'
 GF_SECURITY_ADMIN_PASSWORD='grafana'
 ```
 
-3) use `-f deployment/compose-dev.yaml` to:
+- add `<your_ip> <your_hostname>` to `/etc/hosts` if you are on a hotspot
+
+use `-f deployment/compose-dev.yaml` to:
 - build the containers instead of using the ones from ghcr.io
 - trigger `ng serve` and mount the webapp source code to be able to iterate more easily
+
+

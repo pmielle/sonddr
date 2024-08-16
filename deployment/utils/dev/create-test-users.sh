@@ -9,4 +9,8 @@ docker exec auth bash -c "
 	/opt/keycloak/bin/kcadm.sh set-password --target-realm sonddr --username test --new-password test
 	/opt/keycloak/bin/kcadm.sh create users --target-realm sonddr -s username=test2 -s enabled=true
 	/opt/keycloak/bin/kcadm.sh set-password --target-realm sonddr --username test2 --new-password test2
+	/opt/keycloak/bin/kcadm.sh create users --target-realm sonddr -s username=test3 -s enabled=true
+	/opt/keycloak/bin/kcadm.sh set-password --target-realm sonddr --username test3 --new-password test3
+	/opt/keycloak/bin/kcadm.sh create users --target-realm sonddr -s username=test4 -s enabled=true
+	/opt/keycloak/bin/kcadm.sh set-password --target-realm sonddr --username test4 --new-password test4
 	"
