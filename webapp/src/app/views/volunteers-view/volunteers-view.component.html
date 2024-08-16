@@ -29,6 +29,8 @@
       @if (v.candidates && v.candidates.length) {
       <div class="candidates gutter flex column gap">
 
+        @if (isExpanded(v)) {
+
         @for (c of v.candidates; track c.id) {
 
         <div class="candidate flex gap">
@@ -40,6 +42,30 @@
         </div>
 
         }
+
+        } @else {
+
+        <div class="candidate flex gap">
+          <app-profile-picture [user]="v.candidates[0]" [routerLink]="['/', 'ideas', 'user', v.candidates[0].id]"></app-profile-picture>
+          <span class="pointer" [routerLink]="['/', 'ideas', 'user', v.candidates[0].id]">{{ v.candidates[0].name }}</span>
+          <div class="spacer"></div>
+          <app-chip icon="check" color="var(--green)" [no-label]="true" (click)="onAccept(v, v.candidates[0])"></app-chip>
+          <app-chip icon="close" color="var(--red)" [no-label]="true" (click)="onRefuse(v, v.candidates[0])"></app-chip>
+        </div>
+
+        @if(v.candidates.length > 1) {
+        <app-chip
+            id="more-candidates"
+            icon="keyboard_arrow_down"
+            [label]="'See ' + (v.candidates.length - 1) + ' other candidates'"
+            color="var(--foreground-color)"
+            foreground-color="var(--background-color)"
+            (click)="onExpand(v)"
+            ></app-chip>
+        }
+
+        } <!-- else (isExpanded) -->
+
 
       </div>
       }  <!-- if candidates -->

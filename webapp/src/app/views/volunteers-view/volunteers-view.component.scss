@@ -29,6 +29,11 @@
       width: 100%;
     }
 
+    #more-candidates {
+      align-self: flex-start;
+      margin-left: calc(32px + var(--spacing));
+    }
+
   }
 }
 

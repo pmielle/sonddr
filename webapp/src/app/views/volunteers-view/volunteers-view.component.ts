@@ -21,6 +21,7 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   openPositions: Volunteer[] = [];
   filledPositions: Volunteer[] = [];
   isAdmin: boolean = false;
+  expandedCandidates: Map<string, boolean> = new Map();
 
   ngOnInit(): void {
     this.routeSub = this.route.paramMap.subscribe((map) => {
@@ -36,6 +37,14 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe;
     this.mainNav.showNavBar();
+  }
+
+  isExpanded(v: Volunteer): boolean {
+    return (this.expandedCandidates.has(v.id) && this.expandedCandidates.get(v.id) === true);
+  }
+
+  onExpand(v: Volunteer) {
+    this.expandedCandidates.set(v.id, true);
   }
 
   didApply(v: Volunteer) {
