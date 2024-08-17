@@ -1,9 +1,11 @@
 import { Request } from "express";
+import { Doc } from "sonddr-shared";
 
-
-export function _getUnique<T, U extends keyof T>(collection: T[], key: U): T[U][] {
+export function _getUnique<T extends Doc, U extends keyof T>(collection: T[], key: U): T[U][] {
 	return Array.from(collection.reduce((result, current) => {
-		result.add(current[key] as T[U]);
+		if (key in current) {  // key might be optional
+			result.add(current[key] as T[U]);
+		}
 		return result;
 	}, new Set<T[U]>).values());
 }

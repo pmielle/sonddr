@@ -26,8 +26,5 @@ GF_SECURITY_ADMIN_PASSWORD='grafana'
 
 - add `<your_ip> <your_hostname>` to `/etc/hosts` if you are on a hotspot
 
-use `-f deployment/compose-dev.yaml` to:
-- build the containers instead of using the ones from ghcr.io
-- trigger `ng serve` and mount the webapp source code to be able to iterate more easily
-
+- use `-f deployment/compose-dev.yaml` to build the containers instead of using the ones from ghcr.io and trigger `ng serve` and mount the webapp source code to iterate more easily
 

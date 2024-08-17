@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import { filter as rxFilter } from "rxjs";
 
 import { Change, Notification, ping_str } from "sonddr-shared";
-import { SSE } from "../sse.js";
+import { SSE } from "../types/sse.js";
 import { getDocuments, patchDocument } from "../database.js";
-import { _getFromReqBody, _getReqPath, _getUnique } from "../handlers.js";
-import { notificationsChanges$ } from "../triggers.js";
+import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
+import { notificationsChanges$ } from "../triggers/triggers.js";
 
 
-export async function getNotifications(req: Request, res: Response, next: NextFunction) {
+export async function getNotifications(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const sse = new SSE(res);
 	const docs = await getDocuments<Notification>(
@@ -29,7 +29,7 @@ export async function getNotifications(req: Request, res: Response, next: NextFu
 	});
 }
 
-export async function patchNotification(req: Request, res: Response, next: NextFunction) {
+export async function patchNotification(req: Request, res: Response, _: NextFunction) {
 	await patchDocument(
 		_getReqPath(req),
 		{ field: 'readByIds', operator: 'addToSet', value: req["userId"] }

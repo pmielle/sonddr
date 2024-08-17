@@ -1,12 +1,8 @@
 import crypto from "crypto";
 import { MongoClient, ObjectId, BSON } from "mongodb";
 import { Observable } from "rxjs";
-
 import { Change, Doc } from "sonddr-shared";
-import { NotFoundError, Filter, Order, Patch } from "./types.js";
-
-
-
+import { NotFoundError, Filter, Order, Patch } from "./types/types.js";
 
 const mongoHost = "database";
 const mongoPort = 27017;

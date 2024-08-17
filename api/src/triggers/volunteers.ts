@@ -1,6 +1,5 @@
 import { DbVolunteer, DbIdea, DbUser, } from "sonddr-shared";
-import { deleteDocuments, getDocument, postDocument, watchCollection } from "./../database.js";
-import { reviveUser } from "./../revivers.js";
+import { getDocument, postDocument, watchCollection } from "./../database.js";
 
 export function watchVolunteers() {
 	// - upon deletion: notify the assigned user if any

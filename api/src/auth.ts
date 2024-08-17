@@ -37,7 +37,7 @@ export async function authenticateIncomingMessage(incomingMessage: IncomingMessa
 	incomingMessage["userId"] = makeMongoId(profile["sub"]).toString();
 }
 
-export async function authenticateRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function authenticateRequest(req: Request, _: Response, next: NextFunction): Promise<void> {
 	const url = new URL(req.url, `http://${req.headers.host}`);
 		const token = url.searchParams.get("token");
 	let profile = await keycloak.grantManager.userInfo(token);

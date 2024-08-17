@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 
 import { DbUser } from "sonddr-shared";
-import { _getFromReqBody, _getReqPath } from "../handlers.js";
+import { _getFromReqBody, _getReqPath } from "../utils.js";
 import { getDocument, getDocuments, patchDocument, putDocument } from "../database.js";
-import { Filter, Patch } from "../types.js";
-import { reviveUser, reviveUsers } from "../revivers.js";
+import { Filter, Patch } from "../types/types.js";
+import { reviveUser, reviveUsers } from "../revivers/users.js";
 
 
-export async function putUser(req: Request, res: Response, next: NextFunction) {
+export async function putUser(req: Request, res: Response, _: NextFunction) {
 	const payload = {
 		id: req["userId"],
 		name: _getFromReqBody("name", req),
@@ -21,13 +21,13 @@ export async function putUser(req: Request, res: Response, next: NextFunction) {
 	res.send();
 }
 
-export async function getUser(req: Request, res: Response, next: NextFunction) {
+export async function getUser(req: Request, res: Response, _: NextFunction) {
 	const doc = await getDocument<DbUser>(_getReqPath(req))
 		.then(dbDoc => reviveUser(dbDoc, req["userId"]));
 	res.json(doc);
 }
 
-export async function getUsers(req: Request, res: Response, next: NextFunction) {
+export async function getUsers(req: Request, res: Response, _: NextFunction) {
 	const regex = req.query.regex;
 	const filters: Filter[] = [];
 	if (regex) {
@@ -41,7 +41,7 @@ export async function getUsers(req: Request, res: Response, next: NextFunction) 
 	res.json(users);
 }
 
-export async function patchUser(req: Request, res: Response, next: NextFunction) {
+export async function patchUser(req: Request, res: Response, _: NextFunction) {
 	// only the user is allowed to edits its external links
 	const path = _getReqPath(req);
 	const userId = req.params["id"];

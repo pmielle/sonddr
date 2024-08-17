@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 
 import { Cheer, DbIdea, DbUser, Goal, Idea, makeCheerId } from "sonddr-shared";
-import { Filter, NotFoundError, Patch } from "../types.js";
+import { Filter, NotFoundError, Patch } from "../types/types.js";
 import { deleteDocument, getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
-import { _getFromReqBody, _getReqPath, _getUnique, _getUniqueInArray } from "../handlers.js";
-import { basePath } from "../routes.js";
+import { _getFromReqBody, _getReqPath, _getUnique, _getUniqueInArray } from "../utils.js";
+import { basePath } from "../routes/routes.js";
 import { uploadPath } from "../uploads.js";
-import { reviveUser, reviveUsers } from "../revivers.js";
+import { reviveUser, reviveUsers } from "../revivers/users.js";
 
 
-export async function getIdeas(req: Request, res: Response, next: NextFunction) {
+export async function getIdeas(req: Request, res: Response, _: NextFunction) {
 	const order = req.query.order || "date";
 	const goalId = req.query.goalId;
 	const authorId = req.query.authorId;
@@ -55,7 +55,7 @@ export async function getIdeas(req: Request, res: Response, next: NextFunction) 
 	res.json(docs);
 }
 
-export async function getIdea(req: Request, res: Response, next: NextFunction) {
+export async function getIdea(req: Request, res: Response, _: NextFunction) {
 	const dbDoc = await getDocument<DbIdea>(_getReqPath(req));
 	const cheerId = makeCheerId(dbDoc.id, req["userId"]);
 	const [author, goals, userHasCheered] = await Promise.all([
@@ -76,7 +76,7 @@ export async function getIdea(req: Request, res: Response, next: NextFunction) {
 	res.json(data);
 }
 
-export async function postIdea(req: Request, res: Response, next: NextFunction) {
+export async function postIdea(req: Request, res: Response, _: NextFunction) {
 	let content = _getFromReqBody<string>("content", req);
 	const cover: Express.Multer.File | undefined = req.files["cover"]?.pop();
 	const images: Express.Multer.File[] | undefined = req.files["images"];
@@ -100,14 +100,14 @@ export async function postIdea(req: Request, res: Response, next: NextFunction) 
 	res.json({ insertedId: insertedId });
 }
 
-export async function deleteIdea(req: Request, res: Response, next: NextFunction) {
+export async function deleteIdea(req: Request, res: Response, _: NextFunction) {
 	const idea = await getDocument<DbIdea>(_getReqPath(req));
 	if (idea.authorId !== req["userId"]) { throw new Error("Unauthorized"); }
 	await deleteDocument(_getReqPath(req));
 	res.send();
 }
 
-export async function patchIdea(req: Request, res: Response, next: NextFunction) {
+export async function patchIdea(req: Request, res: Response, _: NextFunction) {
 	// only the idea author is allowed to edit
 	const path = _getReqPath(req);
 	const idea = await getDocument<DbIdea>(path);

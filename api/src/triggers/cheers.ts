@@ -1,6 +1,6 @@
 import { Cheer, DbIdea, DbUser } from "sonddr-shared";
 import { getDocument, patchDocument, postDocument, watchCollection } from "../database.js";
-import { reviveUser } from "../revivers.js";
+import { reviveUser } from "../revivers/users.js";
 
 
 export function watchCheers() {

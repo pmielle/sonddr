@@ -1,10 +1,10 @@
 import { WebSocket } from "ws";
 import { Subscription, filter as rxFilter, switchMap } from "rxjs";
-
 import { Change, DbMessage, Message, placeholder_id } from "sonddr-shared";
-import { getDocuments } from "./database.js";
-import { reviveChange, reviveMessage, reviveMessages } from "./revivers.js";
-import { messagesChanges$ } from "./triggers.js";
+import { getDocuments } from "../database.js";
+import { messagesChanges$ } from "../triggers/triggers.js";
+import { reviveMessage, reviveMessages } from "../revivers/messages.js";
+import { reviveChange } from "../revivers/changes.js";
 
 
 export class ChatRoomManager {

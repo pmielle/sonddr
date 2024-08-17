@@ -1,16 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import { map, filter as rxFilter, switchMap } from "rxjs";
+import { filter as rxFilter, switchMap } from "rxjs";
 
 import { Change, DbDiscussion, Discussion, User, ping_str } from "sonddr-shared";
 import { getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
-import { _getFromReqBody, _getReqPath, _getUnique } from "../handlers.js";
-import { reviveChange, reviveDiscussion, reviveDiscussions } from "../revivers.js";
-import { discussionsChanges$ } from "../triggers.js";
-import { Filter } from "../types.js";
-import { SSE } from "../sse.js";
+import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
+import { reviveDiscussion, reviveDiscussions } from "../revivers/discussions.js";
+import { reviveChange, } from "../revivers/changes.js";
+import { discussionsChanges$ } from "../triggers/triggers.js";
+import { Filter } from "../types/types.js";
+import { SSE } from "../types/sse.js";
 
 
-export async function getDiscussions(req: Request, res: Response, next: NextFunction) {
+export async function getDiscussions(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const filter: Filter = { field: "userIds", operator: "in", value: [userId] };
 	const sse = new SSE(res);
@@ -33,7 +34,7 @@ export async function getDiscussions(req: Request, res: Response, next: NextFunc
 	});
 }
 
-export async function postDiscussion(req: Request, res: Response, next: NextFunction) {
+export async function postDiscussion(req: Request, res: Response, _: NextFunction) {
 	const fromUserId = req["userId"];
 	const toUserId = _getFromReqBody("toUserId", req);
 	const firstMessageContent = _getFromReqBody("firstMessageContent", req);
@@ -61,7 +62,7 @@ export async function postDiscussion(req: Request, res: Response, next: NextFunc
 	res.json({ insertedId: discussionId });
 }
 
-export async function patchDiscussion(req: Request, res: Response, next: NextFunction) {
+export async function patchDiscussion(req: Request, res: Response, _: NextFunction) {
 	await patchDocument(
 		_getReqPath(req),
 		{ field: 'readByIds', operator: 'addToSet', value: req["userId"] }
@@ -69,7 +70,7 @@ export async function patchDiscussion(req: Request, res: Response, next: NextFun
 	res.send();
 }
 
-export async function getDiscussion(req: Request, res: Response, next: NextFunction) {
+export async function getDiscussion(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const doc = await getDocument<DbDiscussion>(_getReqPath(req))
 		.then(dbDoc => reviveDiscussion(dbDoc, userId));

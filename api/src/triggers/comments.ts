@@ -1,6 +1,6 @@
 import { DbComment, DbIdea, DbUser, } from "sonddr-shared";
 import { deleteDocuments, getDocument, postDocument, watchCollection } from "./../database.js";
-import { reviveUser } from "./../revivers.js";
+import { reviveUser } from "../revivers/users.js";
 
 export function watchComments() {
 	// - upon deletion : delete its associated votes
@@ -13,7 +13,7 @@ export function watchComments() {
 			const dbComment = change.docAfter;
 			const [commentAuthor, idea] = await Promise.all([
 				getDocument<DbUser>(`users/${dbComment.authorId}`).then(dbDoc => reviveUser(dbDoc, undefined)),
-					getDocument<DbIdea>(`ideas/${dbComment.ideaId}`),
+				getDocument<DbIdea>(`ideas/${dbComment.ideaId}`),
 			]);
 			if (commentAuthor.id === idea.authorId) { return; }  // do not notify
 			const notificationPayload = {

@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 
 import { Comment, DbComment, DbUser, Vote, makeVoteId } from "sonddr-shared";
 import { deleteDocument, getDocument, getDocuments, postDocument } from "../database.js";
-import { _getFromReqBody, _getReqPath, _getUnique } from "../handlers.js";
-import { reviveUser, reviveUsers } from "../revivers.js";
-import { Filter, NotFoundError } from "../types.js";
+import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
+import { reviveUser, reviveUsers } from "../revivers/users.js";
+import { Filter, NotFoundError } from "../types/types.js";
 
 
-export async function postComment(req: Request, res: Response, next: NextFunction) {
+export async function postComment(req: Request, res: Response, _: NextFunction) {
 	const payload = {
 		ideaId: _getFromReqBody("ideaId", req),
 		content: _getFromReqBody("content", req),
@@ -19,14 +19,14 @@ export async function postComment(req: Request, res: Response, next: NextFunctio
 	res.json({ insertedId: insertedId });
 }
 
-export async function deleteComment(req: Request, res: Response, next: NextFunction) {
+export async function deleteComment(req: Request, res: Response, _: NextFunction) {
 	const comment = await getDocument<DbComment>(_getReqPath(req));
 	if (comment.authorId !== req["userId"]) { throw new Error("Unauthorized"); }
 	await deleteDocument(_getReqPath(req));
 	res.send();
 }
 
-export async function getComments(req: Request, res: Response, next: NextFunction) {
+export async function getComments(req: Request, res: Response, _: NextFunction) {
 	const order = req.query.order || "date";
 	const ideaId = req.query.ideaId;
 	const authorId = req.query.authorId;
@@ -67,7 +67,7 @@ export async function getComments(req: Request, res: Response, next: NextFunctio
 	res.json(docs);
 }
 
-export async function getComment(req: Request, res: Response, next: NextFunction) {
+export async function getComment(req: Request, res: Response, _: NextFunction) {
 	const dbDoc = await getDocument<DbComment>(_getReqPath(req));
 	const user = await getDocument<DbUser>(`users/${dbDoc.authorId}`)
 		.then(dbDoc => reviveUser(dbDoc, req["userId"]));

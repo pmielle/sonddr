@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 
 import { DbIdea, DbVolunteer, Volunteer } from "sonddr-shared";
 import { deleteDocument, getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
-import { _getFromReqBody, _getReqPath, _getUnique } from "../handlers.js";
-import { reviveUser, reviveUsers, reviveVolunteer, reviveVolunteers } from "../revivers.js";
-import { Filter } from "../types.js";
+import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
+import { Filter } from "../types/types.js";
+import { reviveVolunteer, reviveVolunteers } from "../revivers/volunteers.js";
 
 
-export async function postVolunteer(req: Request, res: Response, next: NextFunction) {
+export async function postVolunteer(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const ideaId = _getFromReqBody("ideaId", req);
 	const dbIdea = await getDocument<DbIdea>(`ideas/${ideaId}`);
@@ -23,7 +23,7 @@ export async function postVolunteer(req: Request, res: Response, next: NextFunct
 	res.json({ insertedId: insertedId });
 }
 
-export async function deleteVolunteer(req: Request, res: Response, next: NextFunction) {
+export async function deleteVolunteer(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const volunteer = await getDocument<DbVolunteer>(_getReqPath(req))
 		.then(dbVolunteer => reviveVolunteer(dbVolunteer, userId));
@@ -34,7 +34,7 @@ export async function deleteVolunteer(req: Request, res: Response, next: NextFun
 	res.send();
 }
 
-export async function getVolunteers(req: Request, res: Response, next: NextFunction) {
+export async function getVolunteers(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const ideaIdFilter = req.query.ideaId;
 	const userIdFilter = req.query.userId;
@@ -47,7 +47,7 @@ export async function getVolunteers(req: Request, res: Response, next: NextFunct
 	res.json(docs);
 }
 
-export async function patchVolunteer(req: Request, res: Response, next: NextFunction) {
+export async function patchVolunteer(req: Request, res: Response, _: NextFunction) {
 
 	const userId = req["userId"];
 	const path = _getReqPath(req);
