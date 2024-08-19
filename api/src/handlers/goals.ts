@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-
 import { Goal } from "sonddr-shared";
 import { getDocument, getDocuments } from "../database.js";
 import { _getReqPath } from "../utils.js";
-
 
 export async function getGoals(req: Request, res: Response, _: NextFunction) {
 	const docs = await getDocuments<Goal>(_getReqPath(req), { field: "order", desc: false });

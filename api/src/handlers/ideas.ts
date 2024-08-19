@@ -1,13 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
-import { Cheer, DbIdea, DbUser, Goal, Idea, makeCheerId } from "sonddr-shared";
-import { Filter, NotFoundError, Patch } from "../types/types.js";
+import { DbIdea } from "sonddr-shared";
+import { Filter, Patch } from "../types/types.js";
 import { deleteDocument, getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
 import { _getFromReqBody, _getReqPath, _getUnique, _getUniqueInArray } from "../utils.js";
-import { basePath } from "../routes/routes.js";
-import { uploadPath } from "../uploads.js";
-import { reviveUser, reviveUsers } from "../revivers/users.js";
-
+import { reviveIdea, reviveIdeas } from "../revivers/ideas.js";
 
 export async function getIdeas(req: Request, res: Response, _: NextFunction) {
 	const order = req.query.order || "date";
@@ -24,56 +20,18 @@ export async function getIdeas(req: Request, res: Response, _: NextFunction) {
 	if (regex) {
 		filters.push({ field: "title", operator: "regex", value: regex });
 	}
-	const dbDocs = await getDocuments<DbIdea>(
+	const docs = await getDocuments<DbIdea>(
 		_getReqPath(req),
 		{ field: order as string, desc: true },
 		filters
-	);
-	if (dbDocs.length == 0) {
-		res.json([]);
-		return;
-	}
-	const authorsToGet = _getUnique(dbDocs, "authorId");
-	const goalsToGet = _getUniqueInArray(dbDocs, "goalIds");
-	const cheersToGet = _getUnique(dbDocs, "id");
-	const [authors, goals, cheers] = await Promise.all([
-		getDocuments<DbUser>("users", undefined, { field: "id", operator: "in", value: authorsToGet })
-			.then(dbDocs => reviveUsers(dbDocs, req["userId"])),
-		getDocuments<Goal>("goals", undefined, { field: "id", operator: "in", value: goalsToGet }),
-		getDocuments<Cheer>("cheers", undefined, [
-			{ field: "ideaId", operator: "in", value: cheersToGet },
-			{ field: "authorId", operator: "eq", value: req["userId"] },
-		]),
-	]);
-	const docs: Idea[] = dbDocs.map((dbDoc) => {
-		const { authorId, goalIds, ...data } = dbDoc;
-		data["author"] = authors.find(u => u.id === authorId);
-		data["goals"] = goals.filter(g => goalIds.includes(g.id));
-		data["userHasCheered"] = cheers.find(c => c.ideaId === dbDoc.id) ? true : false;
-		return data as any;
-	});
+	).then(dbDocs => reviveIdeas(dbDocs, req["userId"]));
 	res.json(docs);
 }
 
 export async function getIdea(req: Request, res: Response, _: NextFunction) {
-	const dbDoc = await getDocument<DbIdea>(_getReqPath(req));
-	const cheerId = makeCheerId(dbDoc.id, req["userId"]);
-	const [author, goals, userHasCheered] = await Promise.all([
-		getDocument<DbUser>(`users/${dbDoc.authorId}`).then(dbDoc => reviveUser(dbDoc, req["userId"])),
-		getDocuments<Goal>("goals", undefined, { field: "id", operator: "in", value: dbDoc.goalIds }),
-		getDocument<Cheer>(`cheers/${cheerId}`)
-			.then(() => true)
-			.catch<boolean>(err => {
-				if (!(err instanceof NotFoundError)) { throw err; }
-				return false;
-			}),
-	]);
-	const { authorId, goalIds, ...data } = dbDoc;
-	data["author"] = author;
-	data["goals"] = goals;
-	data["userHasCheered"] = userHasCheered;
-	data["content"] = _fixImageSources(data["content"]);
-	res.json(data);
+	const doc = await getDocument<DbIdea>(_getReqPath(req))
+		.then(dbDoc => reviveIdea(dbDoc, req["userId"]));
+	res.json(doc);
 }
 
 export async function postIdea(req: Request, res: Response, _: NextFunction) {
@@ -159,14 +117,5 @@ export async function patchIdea(req: Request, res: Response, _: NextFunction) {
 
 	// respond
 	res.send();
-}
-
-// private
-// --------------------------------------------
-function _fixImageSources(content: string) {
-	return content.replaceAll(
-		/<img src="(.+?)">/g,
-		`<img src="${basePath}/${uploadPath}/$1">`
-	);
 }
 

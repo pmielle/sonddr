@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
 import { DbIdea, DbVolunteer, Volunteer } from "sonddr-shared";
 import { deleteDocument, getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
 import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
 import { Filter } from "../types/types.js";
 import { reviveVolunteer, reviveVolunteers } from "../revivers/volunteers.js";
-
 
 export async function postVolunteer(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
@@ -41,9 +39,8 @@ export async function getVolunteers(req: Request, res: Response, _: NextFunction
 	const filters: Filter[] = [];
 	if (ideaIdFilter) { filters.push({ field: "ideaId", operator: "eq", value: ideaIdFilter }); }
 	if (userIdFilter) { filters.push({ field: "userId", operator: "eq", value: userIdFilter }); }
-	const dbDocs = await getDocuments<DbVolunteer>(_getReqPath(req), undefined, filters);
-	if (dbDocs.length == 0) { res.json([]); return; }
-	const docs = await reviveVolunteers(dbDocs, userId);
+	const docs = await getDocuments<DbVolunteer>(_getReqPath(req), undefined, filters)
+		.then(dbDocs => reviveVolunteers(dbDocs, userId));
 	res.json(docs);
 }
 

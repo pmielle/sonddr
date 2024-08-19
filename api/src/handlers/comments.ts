@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
-import { Comment, DbComment, DbUser, Vote, makeVoteId } from "sonddr-shared";
+import { DbComment, } from "sonddr-shared";
 import { deleteDocument, getDocument, getDocuments, postDocument } from "../database.js";
 import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
-import { reviveUser, reviveUsers } from "../revivers/users.js";
-import { Filter, NotFoundError } from "../types/types.js";
-
+import { Filter, } from "../types/types.js";
+import { reviveComment, reviveComments } from "../revivers/comments.js";
 
 export async function postComment(req: Request, res: Response, _: NextFunction) {
 	const payload = {
@@ -37,46 +35,16 @@ export async function getComments(req: Request, res: Response, _: NextFunction) 
 	if (authorId) {
 		filters.push({ field: "authorId", operator: "eq", value: authorId });
 	}
-	const dbDocs = await getDocuments<DbComment>(
+	const docs = await getDocuments<DbComment>(
 		_getReqPath(req),
 		{ field: order as string, desc: true },
 		filters
-	);
-	if (dbDocs.length == 0) {
-		res.json([]);
-		return;
-	}
-	const authorsToGet = _getUnique(dbDocs, "authorId");
-	const votesToGet = _getUnique(dbDocs, "id");
-	const [authors, votes] = await Promise.all([
-		getDocuments<DbUser>("users", undefined, { field: "id", operator: "in", value: authorsToGet })
-			.then(dbDocs => reviveUsers(dbDocs, req["userId"])),
-		getDocuments<Vote>("votes", undefined, [
-			{ field: "commentId", operator: "in", value: votesToGet },
-			{ field: "authorId", operator: "eq", value: req["userId"] },
-		]),
-	]);
-
-	const docs: Comment[] = dbDocs.map((dbDoc) => {
-		const { authorId, ...data } = dbDoc;
-		data["author"] = authors.find(u => u.id === authorId);
-		const vote = votes.find(v => v.commentId === dbDoc.id);  // might be undefined
-		data["userVote"] = vote ? vote.value : undefined;
-		return data as any;
-	});
+	).then(dbDocs => reviveComments(dbDocs, req["userId"]));
 	res.json(docs);
 }
 
 export async function getComment(req: Request, res: Response, _: NextFunction) {
-	const dbDoc = await getDocument<DbComment>(_getReqPath(req));
-	const user = await getDocument<DbUser>(`users/${dbDoc.authorId}`)
-		.then(dbDoc => reviveUser(dbDoc, req["userId"]));
-	const { authorId, ...doc } = dbDoc;
-	doc["author"] = user;
-	try {
-		const voteId = makeVoteId(dbDoc.id, req["userId"]);
-		const vote = await getDocument<Vote>(`votes/${voteId}`);
-		doc["userVote"] = vote.value;
-	} catch (err) { if (!(err instanceof NotFoundError)) { throw err; } }
+	const doc = await getDocument<DbComment>(_getReqPath(req))
+		.then(dbDoc => reviveComment(dbDoc, req["userId"]));
 	res.json(doc);
 }

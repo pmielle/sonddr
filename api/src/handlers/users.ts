@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
 import { DbUser } from "sonddr-shared";
 import { _getFromReqBody, _getReqPath } from "../utils.js";
 import { getDocument, getDocuments, patchDocument, putDocument } from "../database.js";
 import { Filter, Patch } from "../types/types.js";
 import { reviveUser, reviveUsers } from "../revivers/users.js";
-
 
 export async function putUser(req: Request, res: Response, _: NextFunction) {
 	const payload = {
@@ -78,3 +76,4 @@ export async function patchUser(req: Request, res: Response, _: NextFunction) {
 	}
 	res.send();
 }
+

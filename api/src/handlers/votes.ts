@@ -3,7 +3,6 @@ import { deleteDocument, getDocument, putDocument } from "../database.js";
 import { Vote, makeVoteId } from "sonddr-shared";
 import { _getFromReqBody, _getReqPath } from "../utils.js";
 
-
 export async function putVote(req: Request, res: Response, _: NextFunction) {
 	const value = _getFromReqBody<number>("value", req);
 	if (![1, -1].includes(value)) { throw new Error(`Value must be 1 or -1`); }
