@@ -1,6 +1,8 @@
 #tabs {
   position: fixed;
   overflow: scroll;
+  max-width: 1300px;
+  min-width: 350px;
 
   &:not(.mobile) {
     --left-padding: calc(var(--nav-bar-width) + 2 * var(--spacing));

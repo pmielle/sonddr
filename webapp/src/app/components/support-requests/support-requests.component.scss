@@ -20,6 +20,7 @@
     background-color: var(--lighter-background-color);
     border-radius: var(--border-radius);
     width: var(--half-width);
+    max-width: 350px;
 
     #volunteers-meter {
       position: absolute;
@@ -45,7 +46,6 @@
     border-radius: var(--border-radius);
     background-color: var(--foreground-color);
     color: var(--background-color);
-    min-width: var(--half-width);
 
     &.collapsed {
       min-width: initial;
