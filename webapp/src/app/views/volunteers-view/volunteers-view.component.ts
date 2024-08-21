@@ -60,7 +60,9 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   // methods
   // --------------------------------------------
   openVolunteerPopup() {
-    const dialogRef = this.dialog.open(AddVolunteerPopupComponent);
+    const dialogRef = this.dialog.open(AddVolunteerPopupComponent, {
+      panelClass: "custom-popup",
+    });
     this.popupSub = dialogRef.afterClosed().subscribe((description) => {
       if (description) {
         this.addVolunteer(description);
