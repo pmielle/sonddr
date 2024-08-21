@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from "express";
-import session from "express-session";
 import chalk from "chalk";
 import { createServer } from "http";
 import { NotFoundError } from "./types/types.js";
@@ -9,6 +8,7 @@ import { _getReqPath } from "./utils.js";
 import { init_keycloak, keycloak } from "./auth.js";
 import { startAllTriggers } from "./triggers/triggers.js";
 import { addWebsockets } from "./websockets.js";
+import { init_session } from "./sessions.js";
 
 const port = 3000;
 const app = express();
@@ -19,18 +19,12 @@ app.use(express.json());  // otherwise req.body is undefined
 
 // store
 // --------------------------------------------
-const memoryStore = new session.MemoryStore();
-app.use(session({
-	secret: 'some secret',
-	saveUninitialized: true,
-	resave: false,
-	store: memoryStore,
-}));
+const store = await init_session(app);
 
 
 // authentication
 // ----------------------------------------------
-init_keycloak(memoryStore);
+init_keycloak(store);
 app.use(keycloak.middleware());
 
 

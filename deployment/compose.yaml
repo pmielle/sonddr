@@ -29,12 +29,18 @@ services:
     image: ghcr.io/pmielle/sonddr-api:latest
     depends_on: 
       - database
+      - sessions-database
     env_file: 
       - ./.env
     volumes:
       - type: volume
         source: uploads
         target: /uploads
+    restart: unless-stopped
+
+  sessions-database:
+    container_name: sessions-database
+    image: redis
     restart: unless-stopped
 
   # auth
