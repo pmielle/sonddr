@@ -40,7 +40,10 @@ export class ExternalLinksComponent {
   }
 
   addExternalLink(type: string) {
-    const dialogRef = this.dialog.open(AddExternalLinkPopupComponent, { data: { type: type } });
+    const dialogRef = this.dialog.open(AddExternalLinkPopupComponent, {
+      data: { type: type },
+      panelClass: "custom-popup",
+    });
     this.popupSub = dialogRef.afterClosed().subscribe((url) => {
       if (url) {
         const link: ExternalLink = {

@@ -2,9 +2,10 @@
   <div id="header" class="flex gap justify-start">
     <h2 class="no-margin-bottom">Volunteer</h2>
   </div>
-  <input id="description-input" type="text" placeholder="e.g. A photograph"  [(ngModel)]="value">
+  <textarea id="description-input" placeholder="Explain who you need" [(ngModel)]="value"></textarea>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
+  <div class="spacer"></div>
   <button mat-raised-button mat-dialog-close [mat-dialog-close]="value" color="primary">Open position</button>
 </mat-dialog-actions>
