@@ -19,6 +19,9 @@ services:
         - shared=../shared/
     restart: !reset
 
+  sessions-database:
+    restart: !reset
+
   auth: 
     image: !reset
     build:

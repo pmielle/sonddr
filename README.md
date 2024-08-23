@@ -22,7 +22,6 @@ POSTGRES_PASSWORD='postgres'
 POSTGRES_DB='keycloak'
 GF_SECURITY_ADMIN_USER='grafana'
 GF_SECURITY_ADMIN_PASSWORD='grafana'
-REDIS_NAME='sessions'
 ```
 
 - add `<your_ip> <your_hostname>` to `/etc/hosts` if you are on a hotspot
