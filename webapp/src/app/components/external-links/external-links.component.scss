@@ -8,5 +8,9 @@
   #external-link-label {
     opacity: 0.5;
     margin-left: calc(32px + 2 * var(--gutter));
+
+    &.higher {
+      margin-top: -6px;
+    }
   }
 }

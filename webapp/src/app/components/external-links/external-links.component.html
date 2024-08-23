@@ -27,6 +27,6 @@
     </mat-menu>
     } <!-- @if isLoggedInUser -->
   </app-h-scroll>
-  <div id="external-link-label">External links</div>
+  <div id="external-link-label" [class.higher]="externalLinks?.length">External links</div>
 </div>
 } <!-- @if externalLinks -->

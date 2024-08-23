@@ -44,19 +44,23 @@
         </p>
       </div>
 
+      @if(idea?.externalLinks && idea?.externalLinks?.length || idea?.author?.isUser) {
       <app-external-links
         [is-logged-in-user]="idea?.author?.isUser"
         [external-links]="idea?.externalLinks"
         (add)="addExternalLink($event)"
         (delete)="deleteExternalLink($event)"
       ></app-external-links>
+      }
 
+      @if(volunteers && volunteers.length || idea?.author?.isUser) {
       <app-support-requests
         [is-logged-in-user]="idea?.author?.isUser"
         [volunteers]="volunteers"
         (add-volunteer)="addVolunteer($event)"
         (add-financing)="addFinancing($event)"
       ></app-support-requests>
+      }
 
     </div>
 
