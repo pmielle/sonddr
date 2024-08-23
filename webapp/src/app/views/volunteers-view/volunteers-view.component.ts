@@ -155,6 +155,11 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
 
   setIsAdmin() {
     this.isAdmin = this.idea!.author.isUser;
+    if (this.isAdmin) {
+      this.mainNav.setAddVolunteerFab();
+    } else {
+      this.mainNav.setUndefinedFab();
+    }
   }
 
   setVolunteers(volunteers: Volunteer[]) {

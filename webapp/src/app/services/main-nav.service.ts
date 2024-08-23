@@ -63,6 +63,15 @@ export class MainNavService {
     });
   }
 
+  setAddVolunteerFab() {
+    this.fabMode$.next({
+      icon: "add",
+      color: "var(--primary-color)",
+      label: "Request",
+      action: () => {this.fabClick.next();}
+    });
+  }
+
   setOtherUserFab(userId: string) {
     this.fabMode$.next({
         icon: "add",
@@ -177,21 +186,11 @@ export class MainNavService {
         action: () => {this.fabClick.next();}
       });
     } else if (url.startsWith("/ideas/volunteers/")) {
-      this.fabMode$.next({
-        icon: "add",
-        color: "var(--primary-color)",
-        label: "Request",
-        action: () => {this.fabClick.next();}
-      });
+      this.fabMode$.next(undefined); // handled by the view depending on who the user is
     } else if (url.startsWith("/ideas/user/")) {
       this.fabMode$.next(undefined); // handled by the view depending on who the user is
     } else if (url.startsWith("/ideas/idea/")) {
-      this.fabMode$.next({
-        icon: "favorite_outline",
-        color: "var(--primary-color)",
-        label: "Cheer",
-        action: () => console.log("placeholder click..."),
-      });  // handled by the view depending on the cheering status
+      this.fabMode$.next(undefined); // handled by the view depending on who the user is
     }else if (url.startsWith("/messages/new-discussion")) {
       this.fabMode$.next(undefined);
     } else if (url.startsWith("/messages/discussion/")) {

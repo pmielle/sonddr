@@ -1,5 +1,6 @@
 import { DbVolunteer, DbIdea, DbUser, } from "sonddr-shared";
 import { getDocument, postDocument, watchCollection } from "./../database.js";
+import { NotFoundError } from "../types/types.js";
 
 export function watchVolunteers() {
 	// - upon deletion: notify the assigned user if any
@@ -10,7 +11,14 @@ export function watchVolunteers() {
 		if (change.type === "delete") {
 			const userId = change.docBefore.userId;
 			if (userId) {
-				const dbIdea = await getDocument<DbIdea>(`ideas/${change.docBefore.ideaId}`);
+				let dbIdea: DbIdea;
+				try {
+					dbIdea = await getDocument<DbIdea>(`ideas/${change.docBefore.ideaId}`);
+				} catch (err) {
+					// if an idea gets deleted, then its volunteers are deleted too
+					// in that case, we don't wanna notify anyone
+					if (err instanceof NotFoundError) { return; }
+				}
 				const notificationPayload = {
 					toIds: [userId],
 					date: new Date(),
