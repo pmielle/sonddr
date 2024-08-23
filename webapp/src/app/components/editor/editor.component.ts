@@ -145,6 +145,8 @@ export class EditorComponent {
     this.moveTo(newDiv);
     // keep track of inserted images
     this.images.set(id, file);
+    // refresh the content since there has been no "keyup" event to do it
+    this.refreshContent();
   }
 
   formatList(listTag: string): void {
