@@ -19,12 +19,24 @@
             background-color: var(--grey);
         }
 
-        #bottom-strip {
+        #goals {
+          position: absolute;
+          gap: 10px;
+          bottom: 10px;
+          left: calc(2 * var(--gutter) + 32px);
+
+          app-goal-chip:nth-of-type(3) { z-index: 6; }
+          app-goal-chip:nth-of-type(4) { z-index: 5; position: absolute; left: 0px; }
+          app-goal-chip:nth-of-type(5) { z-index: 4; position: absolute; left: calc(2 * (34px + 10px) + calc(1 * 20px)); }
+          app-goal-chip:nth-of-type(6) { z-index: 3; position: absolute; left: calc(2 * (34px + 10px) + calc(2 * 20px)); }
+          app-goal-chip:nth-of-type(7) { z-index: 2; position: absolute; left: calc(2 * (34px + 10px) + calc(3 * 20px)); }
+          app-goal-chip:nth-of-type(8) { z-index: 1; position: absolute; left: calc(2 * (34px + 10px) + calc(4 * 20px)); }
+        }
+
+        app-like-counter {
           position: absolute;
           bottom: 10px;
-          width: 100%;
-          padding-left: calc(2 * var(--gutter) + 32px);
-          padding-right: var(--gutter);
+          right: var(--gutter);
         }
       }
 
