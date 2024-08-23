@@ -86,7 +86,7 @@ export async function patchIdea(req: Request, res: Response, _: NextFunction) {
 			);
 		});
 		// images that were already present should be re-formatted to remove any prefix added by the frontend
-		content = content.replace(/<img src=".*\/(\w+)">/g, `<img src="$1">`);
+		content = content.replace(/<img src=".*\/(.*)">/g, `<img src="$1">`);
 	}
 	let patches: Patch[] = [];
 	if (content !== undefined) { patches.push({ operator: "set", field: "content", value: content }); }
