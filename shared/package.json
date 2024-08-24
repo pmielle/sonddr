@@ -19,6 +19,6 @@
   "homepage": "https://github.com/pmielle/sonddr-shared#readme",
   "type": "module",
   "dependencies": {
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   }
 }
