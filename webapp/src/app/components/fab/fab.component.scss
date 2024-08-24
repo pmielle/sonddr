@@ -8,21 +8,13 @@
     z-index: 99;
   }
 
-  &.out-of-sight {
+  &.out-of-sight, &.updating {
     opacity: 0;
     pointer-events: none;
     transform: translateY(10px);
 
     &.mobile {
       transform: translateX(calc(var(--spacing) + 56px));
-    }
-  }
-
-  &.updating {
-    opacity: 0;
-
-    button {
-      transform: rotate(30deg);
     }
   }
 
