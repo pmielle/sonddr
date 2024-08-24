@@ -9,7 +9,7 @@
     left: var(--left-padding);
     top: 10px;
     width: calc(100vw - var(--left-padding) - 10px);
-    height: calc(100vh - 20px);
+    height: calc(100vh - 20px - 30px);
     border-radius: var(--spacing);
   }
 
@@ -20,4 +20,15 @@
     height: 100vh;
     padding-bottom: var(--nav-bar-height);
   }
+
+}
+
+#notice {
+  position: fixed;
+  color: orange;
+  bottom: 10px;
+  left: var(--gutter);
+  pointer-events: none;
+  font-size: 8px;
+  z-index: 99;
 }
