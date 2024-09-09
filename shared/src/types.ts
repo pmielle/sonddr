@@ -1,9 +1,9 @@
 export type Draft = {
     id: string,
-    title: string,
+    title?: string,
     authorId: string,
-    goalIds: string[],
-    content: string,
+    goalIds?: string[],
+    content?: string,
 };
 
 export type PostResponse = {

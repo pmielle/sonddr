@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { fetchUserId, keycloak } from "../auth.js";
+import { deleteDraft, getDrafts, patchDraft, postDraft } from "../handlers/drafts.js";
 
 export function addDraftsRoutes(router: Router) {
 

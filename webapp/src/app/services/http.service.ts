@@ -46,6 +46,15 @@ export class HttpService {
     return this._get<Draft[]>(uri);
   }
 
+  async createDraft(title?: string, content?: string, goals?: Goal[]): Promise<string> {
+    const payload = {
+      title: title,
+      content: content,
+      goalIds: goals !== undefined ? JSON.stringify(goals.map(g => g.id)) : undefined,
+    };
+    return this._post(`/drafts`, payload);
+  }
+
   // </drafts>
 
   async addVolunteerCandidate(volunteerId: string) {

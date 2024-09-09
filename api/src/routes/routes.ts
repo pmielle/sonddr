@@ -8,6 +8,7 @@ import { addCommentsRoutes } from "./comments.js";
 import { addNotificationsRoutes } from "./notifications.js";
 import { addDiscussionsRoutes } from "./discussions.js";
 import { addVolunteersRoutes } from "./volunteers.js";
+import { addDraftsRoutes } from "./drafts.js";
 
 export const basePath = "/api";
 export const wsBasePath = "/api/ws";
@@ -22,4 +23,5 @@ export function addRoutes(router: Router) {
 	addNotificationsRoutes(router);
 	addDiscussionsRoutes(router);
 	addVolunteersRoutes(router);
+	addDraftsRoutes(router);
 }
