@@ -56,6 +56,7 @@ import { DetailsViewComponent } from './views/details-view/details-view.componen
 import { SupportRequestsComponent } from './components/support-requests/support-requests.component';
 import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add-volunteer-popup.component';
 import { VolunteersViewComponent } from './views/volunteers-view/volunteers-view.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -118,6 +119,7 @@ import { VolunteersViewComponent } from './views/volunteers-view/volunteers-view
     CdkMenuModule,
     FormsModule,
     MatDialogModule,
+    MatSnackBarModule,
     RouterModule.forRoot([
       {path: "", redirectTo: "ideas", pathMatch: "full"},
       {path: "ideas", component: IdeasTabComponent, children: [

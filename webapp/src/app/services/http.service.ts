@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink, Volunteer } from 'sonddr-shared';
+import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink, Volunteer, Draft } from 'sonddr-shared';
 import { SortBy } from '../components/idea-list/idea-list.component';
 import { lastValueFrom } from 'rxjs';
 
@@ -25,6 +25,38 @@ export class HttpService {
 
   // public methods
   // --------------------------------------------
+
+  // <drafts>
+
+  async deleteDraft(draftId: string): Promise<void> {
+    return this._delete(`/drafts/${draftId}`);
+  }
+
+  async editDraft(draftId: string, title?: string, content?: string, goals?: Goal[]) {
+    const payload = {
+      title: title,
+      content: content,
+      goalIds: goals !== undefined ? JSON.stringify(goals.map(g => g.id)) : undefined,
+    };
+    this._patch(`/drafts/${draftId}`, payload);
+  }
+
+  async getDrafts(authorId: string): Promise<Draft[]> {
+    let uri = `drafts?authorId=${authorId}`;
+    return this._get<Draft[]>(uri);
+  }
+
+  async createDraft(title?: string, content?: string, goals?: Goal[]): Promise<string> {
+    const payload = {
+      title: title,
+      content: content,
+      goalIds: goals !== undefined ? JSON.stringify(goals.map(g => g.id)) : undefined,
+    };
+    return this._post(`/drafts`, payload);
+  }
+
+  // </drafts>
+
   async addVolunteerCandidate(volunteerId: string) {
     return this._patch(`volunteers/${volunteerId}`, {addCandidate: true});
   }
