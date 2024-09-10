@@ -112,7 +112,7 @@ export type User = {
     profilePicture?: string,
 };
 
-export const externalLinkTypes = ["x", "instagram", "discord", "slack", "googledrive"] as const;
+export const externalLinkTypes = ["x", "instagram", "discord", "slack", "googledrive", "github"] as const;
 export type ExternalLinkType = typeof externalLinkTypes[number]; // https://jaketrent.com/post/loop-typescript-union-type/
 
 export type ExternalLink = {
