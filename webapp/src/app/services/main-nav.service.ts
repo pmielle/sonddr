@@ -51,22 +51,14 @@ export class MainNavService implements OnDestroy {
   // methods
   // --------------------------------------------
   onScroll(el: Element) {
-    if (
-      el.scrollHeight === el.clientHeight + el.scrollTop
-      && this.fullScreen$.getValue() === true
-    ) {
-      this.fullScreen$.next(false);
-    } else if (
-      this.previousScroll > el.scrollTop
-      && this.fullScreen$.getValue() == true
-    ) {
-      this.fullScreen$.next(false);
-    } else if (
-      this.previousScroll < el.scrollTop
-      && this.fullScreen$.getValue() === false
-      && el.scrollTop > 200
-    ) {
-      this.fullScreen$.next(true);
+    if (el.scrollTop < 200) {
+      if (this.fullScreen$.getValue() === true ) { this.fullScreen$.next(false); }
+    } else if (el.scrollTop + el.clientHeight > el.scrollHeight - 100) {
+      if (this.fullScreen$.getValue() === true) { this.fullScreen$.next(false); }
+    } else if (this.previousScroll > el.scrollTop) {
+      if (this.fullScreen$.getValue() === true) { this.fullScreen$.next(false); }
+    } else if (this.previousScroll < el.scrollTop) {
+      if (this.fullScreen$.getValue() === false) { this.fullScreen$.next(true); }
     }
     this.previousScroll = el.scrollTop;
   }
