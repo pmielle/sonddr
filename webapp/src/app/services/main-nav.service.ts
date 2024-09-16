@@ -14,7 +14,7 @@ export type FabMode = {
 @Injectable({
   providedIn: 'root'
 })
-export class MainNavService {
+export class MainNavService implements OnDestroy {
 
   // dependencies
   // --------------------------------------------
@@ -33,7 +33,8 @@ export class MainNavService {
   fabMode$ = new BehaviorSubject<FabMode|undefined>(undefined);
   routerSub?: Subscription;
   navigated = false;
-
+  previousScroll = 0;
+  fullScreen$ = new BehaviorSubject<boolean>(false);
 
   // lifecycle hooks
   // --------------------------------------------
@@ -43,8 +44,33 @@ export class MainNavService {
     );
   }
 
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
+  }
+
   // methods
   // --------------------------------------------
+  onScroll(el: Element) {
+    if (
+      el.scrollHeight === el.clientHeight + el.scrollTop
+      && this.fullScreen$.getValue() === true
+    ) {
+      this.fullScreen$.next(false);
+    } else if (
+      this.previousScroll > el.scrollTop
+      && this.fullScreen$.getValue() == true
+    ) {
+      this.fullScreen$.next(false);
+    } else if (
+      this.previousScroll < el.scrollTop
+      && this.fullScreen$.getValue() === false
+      && el.scrollTop > 200
+    ) {
+      this.fullScreen$.next(true);
+    }
+    this.previousScroll = el.scrollTop;
+  }
+
   setCheerFab() {
     this.fabMode$.next({
       icon: "favorite_outline",

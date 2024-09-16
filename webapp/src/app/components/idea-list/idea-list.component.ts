@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { Idea } from 'sonddr-shared';
 import { ColorService } from 'src/app/services/color.service';
+import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
 
@@ -24,6 +25,7 @@ export class IdeaListComponent implements OnChanges {
   screen = inject(ScreenSizeService);
   color = inject(ColorService);
   time = inject(TimeService);
+  mainNav = inject(MainNavService);
 
   // i/o
   // --------------------------------------------
@@ -59,7 +61,7 @@ export class IdeaListComponent implements OnChanges {
       const aDayAgo = this.time.getNDaysBefore(now, 1);
       const aWeekAgo = this.time.getNDaysBefore(now, 7);
       ideas.forEach(i => {
-        let sectionIndex = i.date > aDayAgo ? 0 
+        let sectionIndex = i.date > aDayAgo ? 0
           : i.date > aWeekAgo ? 1
           : 2;
         sections[sectionIndex].ideas.push(i);

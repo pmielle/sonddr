@@ -27,7 +27,12 @@
             height: var(--header-height);
             z-index: 1;
             backdrop-filter: blur(5px);
+            transition: transform var(--duration);
 
+            &.out-of-sight {
+              // transform: translateY(-100%);
+              transform: translateY(calc(-100% - var(--top-bar-height)));
+            }
 
             &.invisible {
                 opacity: 0;

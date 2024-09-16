@@ -21,7 +21,8 @@
     <!-- 111px and not 101 because #tabs has 10px top on desktop -->
     <div class="section-header flex row justify-start gutter"
       [style.backgroundColor]="s.stuck ? color.transparentColor(stuckBackgroundColor, .66) : 'transparent'"
-      [class.invisible]="!s.header" appIntersection
+      [ngClass]="{'invisible': !s.header, 'out-of-sight': mainNav.fullScreen$ | async}"
+      appIntersection
       [rootMargin]="(screen.isMobile$|async) ? '-49px 0px 0px 0px' : '-111px 0px 0px 0px'"
       (isIntersecting)="s.stuck = !$event">
       <span>{{ s.header }}</span>

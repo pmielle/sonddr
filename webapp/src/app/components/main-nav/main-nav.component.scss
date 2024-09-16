@@ -22,13 +22,3 @@
   }
 
 }
-
-#notice {
-  position: fixed;
-  color: orange;
-  bottom: 10px;
-  left: var(--gutter);
-  pointer-events: none;
-  font-size: 8px;
-  z-index: 99;
-}
