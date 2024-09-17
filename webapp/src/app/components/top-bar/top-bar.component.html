@@ -1,6 +1,6 @@
 <div id="container" class="gutter frosted flex column justify-end"
   [style.backgroundColor]=" opaque || stuck ? color.transparentColor(this.backgroundColor, .66) : 'transparent'"
-  [class]="{'frosted': stuck, 'mobile': (screen.isMobile$ | async), 'out-of-sight': mainNav.fullScreen$ | async}" (click)="onClick()">
+  [class]="{'frosted': stuck, 'mobile': (screen.isMobile$ | async), 'out-of-sight': mainNav.fullScreen$ | async}" (click)="onClick($event)">
 
   <div id="content" class="flex justify-start">
 

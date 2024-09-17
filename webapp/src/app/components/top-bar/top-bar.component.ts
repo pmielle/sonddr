@@ -47,7 +47,9 @@ export class TopBarComponent {
     this.router.navigateByUrl("/");
   }
 
-  onClick() {
+  onClick(e: Event) {
+    // mat menu does not stopPropagation
+    if ((e.target as Element).tagName === "SPAN") { return; }
     if (this.reverseScroll) {
       this.mainNav.scrollToBottom(true);
     } else {
