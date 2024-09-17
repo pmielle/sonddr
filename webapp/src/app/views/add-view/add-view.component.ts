@@ -280,6 +280,9 @@ export class AddViewComponent {
         this.cover,
         this.editor.images,
       );
+      if (this.draft) {
+        this.http.deleteDraft(this.draft.id);
+      }
       this.router.navigateByUrl(
         `/ideas/idea/${id}`,
         {replaceUrl: true}
