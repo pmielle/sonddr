@@ -1,7 +1,7 @@
 @if (displayedMode) {
 <div id="container" class="expo-out" [class]="{
         'mobile': screen.isMobile$|async,
-        'out-of-sight': hidden,
+        'out-of-sight': hidden || mainNav.isFabHidden,
         'disabled': mainNav.isFabDisabled,
         'updating': updating
     }">
