@@ -40,7 +40,7 @@ export async function postIdea(req: Request, res: Response, _: NextFunction) {
 	const images: Express.Multer.File[] | undefined = req.files["images"];
 	images?.forEach((image) => {
 		content = content.replace(
-			new RegExp(`<img src=".+?" id="${image.originalname}">`),
+			new RegExp(`<img src="[^"]+" id="${image.originalname}">`),
 			`<img src="${image.filename}">`
 		);
 	});
@@ -81,12 +81,12 @@ export async function patchIdea(req: Request, res: Response, _: NextFunction) {
 		const images: Express.Multer.File[] | undefined = req.files?.["images"];
 		images?.forEach((image) => {
 			content = content.replace(
-				new RegExp(`<img src=".+?" id="${image.originalname}">`),
+				new RegExp(`<img src="[^"]+" id="${image.originalname}">`),
 				`<img src="${image.filename}">`
 			);
 		});
 		// images that were already present should be re-formatted to remove any prefix added by the frontend
-		content = content.replace(/<img src=".*\/(.*)">/g, `<img src="$1">`);
+		content = content.replace(/<img src="[^"]+\/([^"]+)">/g, `<img src="$1">`);
 	}
 	let patches: Patch[] = [];
 	if (content !== undefined) { patches.push({ operator: "set", field: "content", value: content }); }

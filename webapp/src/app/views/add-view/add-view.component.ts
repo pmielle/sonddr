@@ -122,7 +122,10 @@ export class AddViewComponent {
     this.mainNav.restoreFab();
 
     // stop any draft save
-    if (this.draftTimeout) { clearInterval(this.draftTimeout); }
+    if (this.draftTimeout) {
+      clearInterval(this.draftTimeout);
+      this.refreshDraft();
+    }
 
   }
 
