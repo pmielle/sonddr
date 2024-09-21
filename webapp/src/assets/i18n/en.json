@@ -1,5 +1,6 @@
 {
   "misc": {
+    "comment": "Comment",
     "unread": "unread",
     "new-discussion": "New discussion",
     "new-idea": "New idea",
@@ -22,6 +23,13 @@
     "earlier": "Earlier",
     "apply": "Apply",
     "applied": "Applied"
+  },
+  "placeholder": {
+    "what-do-you-think": "What do you think?",
+    "choose-a-title": "Choose a title",
+    "explain-your-idea": "Explain your idea",
+    "to": "To",
+    "your-message": "Your message"
   },
   "fab": {
     "cheer": "Cheer",

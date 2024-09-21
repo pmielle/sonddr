@@ -1,5 +1,6 @@
 {
   "misc": {
+    "comment": "Commente",
     "unread": "non lus",
     "new-discussion": "Nouvelle discussion",
     "new-idea": "Nouvelle idée",
@@ -22,6 +23,13 @@
     "earlier": "Plus tôt",
     "apply": "Se proposer",
     "applied": "Envoyé"
+  },
+  "placeholder": {
+    "what-do-you-think": "Qu'est-ce que tu en penses?",
+    "choose-a-title": "Choisis un titre",
+    "explain-your-idea": "Explique ton idée",
+    "to": "À",
+    "your-message": "Ton message"
   },
   "fab": {
     "cheer": "Soutenir",

@@ -18,7 +18,7 @@
       } @else {
       <input
         type="text"
-        placeholder="To:"
+        [placeholder]="t('placeholder.to') + ':'"
         [(ngModel)]="searchString"
         (keyup)="onInputKeyup($event)"
       />
@@ -48,7 +48,7 @@
     <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
     <input
       type="text"
-      placeholder="Your message"
+      [placeholder]="t('placeholder.your-message')"
       [(ngModel)]="content"
       (focus)="onInputFocus()"
       (blur)="onInputBlur()"

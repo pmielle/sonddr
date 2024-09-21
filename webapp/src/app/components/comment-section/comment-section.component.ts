@@ -3,6 +3,7 @@ import { Comment } from 'sonddr-shared';
 import { ColorService } from 'src/app/services/color.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
+import { TranslationService } from 'src/app/services/translation.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 
 export type SortBy = "recent" | "popular";
@@ -26,6 +27,7 @@ export class CommentSectionComponent {
   color = inject(ColorService);
   time = inject(TimeService);
   userData = inject(UserDataService);
+  i18n = inject(TranslationService);
 
   // i/o
   // --------------------------------------------
@@ -80,8 +82,8 @@ export class CommentSectionComponent {
 
   splitCommentsIntoSections(comments: Comment[]): ListSection[] {
     let sections: ListSection[] = [
-      this._initSection(this.sortBy == "recent" ? "Today" : "Top 10"),
-      this._initSection(this.sortBy == "recent" ? "This week" : "Top 50"),
+      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.today') : this.i18n.get('sort-by.popular.top-10')),
+      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.this-week') : this.i18n.get('sort-by.popular.top-50')),
       this._initSection("")
     ];
     if (this.sortBy == "recent") {
