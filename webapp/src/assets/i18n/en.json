@@ -1,11 +1,85 @@
 {
-  "all-ideas": "Sonddr is a place to share and contribute to each other ideas to make the world a little (or a lot) better. Feel free to share yours! You can hop in or off a project at any time, so no pressure.",
-  "no-poverty": "The recent pandemic pushed tens of millions into poverty worldwide and although extreme poverty (<2.15$/day) has been decreasing over the last generation, it is starting to stagnate.",
-  "health-and-well-being": "We live in a world in which 10 children die every minute. But a significant part of these deaths, as well as many other; such as communicable diseases or substance abuse, are preventable.",
-  "reduced-inequalities": "Both within and among countries, many domains such as health and education are strike by inequalities. And although global economic inequality is starting to go down, there is still a long way to go.",
-  "sustainability": "The recent economic progress has been accompanied by waste production and natural resource consumption in all sectors of the economy at a much faster rate than either population or GDP growth.",
-  "preserved-ecosystems": "The current human-caused climate change has devastating impacts on biodiversity. The current rate of extinction of species is a thousand times too high: we already are in a 6th extinction event.",
-  "peace-and-justice": "2022 witnessed an unprecedented 50% increase in conflict-related civilian deaths. In the meantime, violence and corruption runs rampant in a justice that is often too slow or malfunctioning.",
-  "decent-work": "In too many places, having a job does not guarantee the ability to escape from poverty. And even when it does, a lot more work is still needed to do to achieve a sustained and sustainable workplace.",
-  "quality-education": "Getting a proper education has been proven to be one of the most powerful vehicles for development. And although primary and secondary school completion rates are rising, the pace is slow and uneven."
+  "fab": {
+    "cheer": "Cheer",
+    "share-an-idea": "Share\nan idea",
+    "share": "Share",
+    "start-a-discussion": "Start a\ndiscussion"
+
+  },
+  "misc": {
+    "unread": "unread",
+    "new-discussion": "New discussion",
+    "new-idea": "New idea",
+    "edit-idea": "Edit idea",
+    "add-a-goal": "Add a goal",
+    "upload-a-cover": "Upload a cover",
+    "external-links": "External links",
+    "cancel": "Cancel",
+    "add-link": "Add link",
+    "member-since": "Member since",
+    "ideas": "ideas",
+    "my-profile": "My profile",
+    "request-support": "Request support",
+    "volunteer": "Volunteer",
+    "financing": "financing",
+    "edit": "Edit",
+    "delete": "Delete",
+    "open-position": "Open position",
+    "learn-more": "Learn more"
+  },
+  "nav-bar": {
+    "ideas": "Ideas",
+    "search": "Search",
+    "messages": "Messages",
+    "notifications": "Notifications"
+  },
+  "sort-by": {
+    "label": "Sort by",
+    "recent": {
+      "today": "Today",
+      "this-week": "This week"
+    },
+    "popular": {
+      "Top 10",
+      "Top 50"
+    }
+  },
+  "goals": {
+    "all-ideas": {
+      "header": "Sonddr is a place to share and contribute to each other ideas to make the world a little (or a lot) better. Feel free to share yours! You can hop in or off a project at any time, so no pressure.",
+      "title": "All ideas"
+    },
+    "no-poverty": {
+      "header": "The recent pandemic pushed tens of millions into poverty worldwide and although extreme poverty (<2.15$/day) has been decreasing over the last generation, it is starting to stagnate.",
+      "title": "No poverty"
+    },
+    "health-and-well-being": {
+      "header": "We live in a world in which 10 children die every minute. But a significant part of these deaths, as well as many other; such as communicable diseases or substance abuse, are preventable.",
+      "title": "Health and well-being"
+    },
+    "reduced-inequalities": {
+      "header": "Both within and among countries, many domains such as health and education are strike by inequalities. And although global economic inequality is starting to go down, there is still a long way to go.",
+      "title": "Reduced inequalities"
+    },
+    "sustainability": {
+      "header": "The recent economic progress has been accompanied by waste production and natural resource consumption in all sectors of the economy at a much faster rate than either population or GDP growth."
+      "title": "Sustainability",
+    },
+    "preserved-ecosystems": {
+      "title": "The current human-caused climate change has devastating impacts on biodiversity. The current rate of extinction of species is a thousand times too high: we already are in a 6th extinction event."
+      "header": "Preserved ecosystems",
+    },
+    "peace-and-justice": {
+      "header": "2022 witnessed an unprecedented 50% increase in conflict-related civilian deaths. In the meantime, violence and corruption runs rampant in a justice that is often too slow or malfunctioning."
+      "title": "Peace and justice",
+    },
+    "decent-work": {
+      "header": "In too many places, having a job does not guarantee the ability to escape from poverty. And even when it does, a lot more work is still needed to do to achieve a sustained and sustainable workplace."
+      "title": "Decent work",
+    },
+    "quality-education": {
+      "header": "Getting a proper education has been proven to be one of the most powerful vehicles for development. And although primary and secondary school completion rates are rising, the pace is slow and uneven."
+      "title": "Quality education",
+    }
+  }
 }
