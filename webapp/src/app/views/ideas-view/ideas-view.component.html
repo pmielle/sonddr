@@ -14,7 +14,7 @@
     <h1 id="title" class="gutter">All ideas</h1>
     }
 
-    <p class="gutter">Sonddr is a place to share and contribute to each other ideas to make the world a little (or a lot) better. Feel free to share yours! You can hop in or off a project at any time, so no pressure.</p>
+    <p class="gutter" *transloco="let t">{{ t('all-ideas') }}</p>
 
     <app-h-scroll>
       @for (g of goals; track g.id) {

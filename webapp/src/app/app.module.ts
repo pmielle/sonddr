@@ -57,6 +57,7 @@ import { SupportRequestsComponent } from './components/support-requests/support-
 import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add-volunteer-popup.component';
 import { VolunteersViewComponent } from './views/volunteers-view/volunteers-view.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { TranslocoRootModule } from './transloco-root.module';
 
 
 @NgModule({
@@ -148,6 +149,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    TranslocoRootModule,
   ],
   providers: [
     {
