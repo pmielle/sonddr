@@ -1,8 +1,8 @@
-<div id="container">
+<div id="container" *transloco="let t; prefix: 'all-ideas'">
 
   <app-top-bar [left-item]="(screen.isMobile$ | async) ? 'logo' : undefined">
     @if (!(screen.isMobile$|async)) {
-    <h1 class="no-margin-bottom">All ideas</h1>
+    <h1 class="no-margin-bottom">{{ t('title') }}</h1>
     }
     <div class="spacer"></div>
     <app-profile-picture class="pointer" [user]="userData.user$|async"
@@ -11,10 +11,10 @@
 
   <div id="header">
     @if (screen.isMobile$ | async) {
-    <h1 id="title" class="gutter">All ideas</h1>
+    <h1 id="title" class="gutter">{{ t('title') }}</h1>
     }
 
-    <p class="gutter" *transloco="let t">{{ t('all-ideas') }}</p>
+    <p class="gutter">{{ t('header') }}</p>
 
     <app-h-scroll>
       @for (g of goals; track g.id) {

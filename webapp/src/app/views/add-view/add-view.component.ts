@@ -9,6 +9,7 @@ import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { EditorComponent } from 'src/app/components/editor/editor.component';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-add-view',
@@ -27,6 +28,7 @@ export class AddViewComponent {
   router = inject(Router);
   userData = inject(UserDataService);
   snack = inject(MatSnackBar);
+  i18n = inject(TranslationService);
 
   // attributes
   // --------------------------------------------

@@ -1,7 +1,7 @@
-<div id="container" class="swipe-up">
+<div id="container" class="swipe-up" *transloco="let t">
 
   <app-top-bar left-item="close">
-    <h2 class="no-margin-bottom">New discussion</h2>
+    <h2 class="no-margin-bottom">{{ t('misc.new-discussion') }}</h2>
     <div class="spacer"></div>
     <app-profile-picture class="pointer" [user]="userData.user$|async"
       (click)="userData.goToProfile()"></app-profile-picture>

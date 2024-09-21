@@ -4,7 +4,7 @@
     <div class="flex gap">
       <mat-icon>{{ goal?.icon }}</mat-icon>
       @if (!(screen.isMobile$|async)) {
-      <h1 class="no-margin-bottom">{{ goal?.name }}</h1>
+      <h1 class="no-margin-bottom">{{ goal ? i18n.getLocalizedAttr(goal, 'name') : undefined }}</h1>
       }
     </div>
     <div class="spacer"></div>
@@ -16,10 +16,10 @@
     <div id="background" [style.backgroundColor]="makeBackgroundColor()"></div>
 
     @if (screen.isMobile$ | async) {
-    <h1 id="title" class="gutter">{{ goal?.name }}</h1>
+    <h1 id="title" class="gutter">{{ goal ? i18n.getLocalizedAttr(goal, 'name') : undefined }}</h1>
     }
 
-    <p class="gutter">{{ goal?.header }}</p>
+    <p class="gutter">{{ goal ? i18n.getLocalizedAttr(goal, 'header') : undefined }}</p>
 
     <app-h-scroll [shadow-color]="makeBackgroundColor()">
       <app-chip label="Learn more" color="var(--foreground-color)" foreground-color="var(--background-color)"

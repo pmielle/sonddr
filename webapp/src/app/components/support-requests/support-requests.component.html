@@ -1,5 +1,5 @@
 @if(volunteers && volunteers.length || isLoggedInUser) {
-<div id="requests" class="flex gap justify-start">
+<div id="requests" class="flex gap justify-start" *transloco="let t">
 
   @if(volunteers && volunteers.length) {
   <div id="volunteers" class="flex justify-start small-gap pointer" [routerLink]="['/', 'ideas', 'volunteers', getIdeaId()]">
@@ -22,13 +22,13 @@
       [mat-menu-trigger-for]="menu"
       >
       <mat-icon>add</mat-icon>
-      <span>Request support</span>
+      <span>{{ t('misc.request-support') }}</span>
   </div>
   <mat-menu #menu="matMenu">
     @if(! (volunteers && volunteers.length)) {
-    <button mat-menu-item (click)="openVolunteerPopup()">Volunteer</button>
+    <button mat-menu-item (click)="openVolunteerPopup()">{{ t('misc.volunteer') }}</button>
     }
-    <button mat-menu-item (click)="openFinancingPopup()">Financing</button>
+    <button mat-menu-item (click)="openFinancingPopup()">{{ t('misc.financing') }}</button>
   </mat-menu>
   } <!-- @if isLoggedInUser -->
 

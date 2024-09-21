@@ -1,4 +1,4 @@
-<div id="container">
+<div id="container" *transloco="let t; prefix: 'misc'">
 
   <app-top-bar>
     @if (!(screen.isMobile$|async)) {
@@ -14,7 +14,7 @@
 
   @if (userData.activeDiscussions.length > 0) {
   <div id="new-discussions" class="discussions">
-    <p class="n-unread">{{ userData.activeDiscussions.length }} unread <app-red-dot></app-red-dot></p>
+    <p class="n-unread">{{ userData.activeDiscussions.length }} {{ t('unread') }}<app-red-dot></app-red-dot></p>
     @for (d of userData.activeDiscussions; track d.id) {
     <app-discussion [discussion]="d" (click)="goToDiscussion(d, true)"></app-discussion>
     }
@@ -23,8 +23,7 @@
 
   <div id="old-discussions" class="discussions">
     @if (userData.activeDiscussions.length > 0 && userData.olderDiscussions.length > 0) {
-    <p class="n-unread">Earlier
-    </p>
+    <p class="n-unread">{{ t('earlier') }}</p>
     }
     @for (d of userData.olderDiscussions; track d.id) {
     <app-discussion [discussion]="d" (click)="goToDiscussion(d)"></app-discussion>

@@ -24,11 +24,13 @@ export type Doc = {
 
 export type Goal = {
     id: string,
-    name: string,
     color: string,
     icon: string,
     order: number,
-    header: string,
+    "name-en": string,
+    "header-en": string,
+    "name-fr": string,
+    "header-fr": string,
 };
 
 export type Idea = {

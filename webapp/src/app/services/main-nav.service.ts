@@ -2,6 +2,7 @@ import { EventEmitter, Injectable, OnDestroy, OnInit, inject } from '@angular/co
 import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Subscription, filter } from 'rxjs';
 import { AuthService } from './auth.service';
+import { TranslationService } from './translation.service';
 
 export type Tab = "ideas" | "search" | "messages" | "notifications";
 export type FabMode = {
@@ -20,6 +21,7 @@ export class MainNavService implements OnDestroy {
   // --------------------------------------------
   router = inject(Router);
   auth = inject(AuthService);
+  i18n = inject(TranslationService);
 
   // attributes
   // --------------------------------------------
@@ -67,7 +69,7 @@ export class MainNavService implements OnDestroy {
     this.fabMode$.next({
       icon: "favorite_outline",
       color: "var(--primary-color)",
-      label: "Cheer",
+      label: this.i18n.get("fab.cheer"),
       action: () => {this.fabClick.next();}
     });
   }
@@ -85,7 +87,7 @@ export class MainNavService implements OnDestroy {
     this.fabMode$.next({
       icon: "add",
       color: "var(--primary-color)",
-      label: "Request",
+      label: this.i18n.get("fab.request"),
       action: () => {this.fabClick.next();}
     });
   }
@@ -94,7 +96,7 @@ export class MainNavService implements OnDestroy {
     this.fabMode$.next({
         icon: "add",
         color: "var(--blue)",
-        label: "send a<br>message",
+        label: this.i18n.get("fab.send-a-message"),
         action: () => {this.router.navigateByUrl(`/messages/new-discussion?preselected=${userId}`)}
     });
   }
@@ -103,7 +105,7 @@ export class MainNavService implements OnDestroy {
     this.fabMode$.next({
         icon: "logout",
         color: "var(--red)",
-        label: "Log out",
+        label: this.i18n.get("fab.log-out"),
         action: () => { this.auth.logOut(); }
     });
   }
@@ -170,7 +172,7 @@ export class MainNavService implements OnDestroy {
       this.fabMode$.next({
         icon: "add",
         color: "var(--primary-color)",
-        label: "Share<br>an idea",
+        label: this.i18n.get("fab.share-an-idea"),
         action: () => {this.router.navigateByUrl("/ideas/add")}
       });
     } else if (url.startsWith("/ideas/goal/")) {
@@ -178,18 +180,18 @@ export class MainNavService implements OnDestroy {
       this.fabMode$.next({
         icon: "add",
         color: "var(--primary-color)",
-        label: "Share<br>an idea",
+        label: this.i18n.get("fab.share-an-idea"),
         action: () => {this.router.navigateByUrl(`/ideas/add?preselected=${goalId}`)}
       });
     }  else if (url === "/messages") {
       this.fabMode$.next({
         icon: "add",
         color: "var(--blue)",
-        label: "Start a<br>discussion",
+        label: this.i18n.get("fab.start-a-discussion"),
         action: () => {this.router.navigateByUrl(`/messages/new-discussion`)}
       });
     } else if (url.startsWith("/ideas/add")) {
-      const label = url.includes("edit=") ? "Done" : "Share";
+      const label = url.includes("edit=") ? this.i18n.get("fab.done") : this.i18n.get("fab.share");
       this.fabMode$.next({
         icon: "done",
         color: "var(--green)",
@@ -200,7 +202,7 @@ export class MainNavService implements OnDestroy {
       this.fabMode$.next({
         icon: "done",
         color: "var(--green)",
-        label: "Done",
+        label: this.i18n.get("fab.done"),
         action: () => {this.fabClick.next();}
       });
     } else if (url.startsWith("/ideas/volunteers/")) {

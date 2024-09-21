@@ -1,7 +1,7 @@
-<div id="container" class="swipe-up">
+<div id="container" class="swipe-up" *transloco="let t">
 
   <app-top-bar left-item="close">
-    <h2 class="no-margin-bottom">{{ editIdeaId ? "Edit idea" : "New idea" }}</h2>
+    <h2 class="no-margin-bottom">{{ editIdeaId ? t('misc.edit-idea') : t('misc.new-idea') }}</h2>
   </app-top-bar>
 
   <div id="cover">
@@ -13,19 +13,19 @@
         <div id="button" class="flex column" mat-ripple [matRippleCentered]="true" [matRippleUnbounded]="true"
           matRippleSize="20px">
           <mat-icon>cloud_upload</mat-icon>
-          <span>Upload a cover</span>
+          <span>{{ t('misc.upload-a-cover') }}</span>
         </div>
       </app-file-picker>
     </div>
 
     <div id="goals">
       <app-h-scroll [hide-shadows]="true" left-padding="calc(2 * var(--gutter) + 32px)">
-        <app-chip label="Add a goal" icon="add" color="var(--background-color)" foreground-color="var(--grey)"
+        <app-chip [label]="t('misc.add-a-goal')" icon="add" color="var(--background-color)" foreground-color="var(--grey)"
           [mat-menu-trigger-for]="menu"></app-chip>
         <mat-menu #menu="matMenu">
           @for (g of selectableGoals; track g.id) {
           <button mat-menu-item (click)="selectGoal(g)">
-            {{ g.name }}
+            {{ i18n.getLocalizedAttr(g, 'name') }}
           </button>
           }
         </mat-menu>

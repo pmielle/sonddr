@@ -1,4 +1,4 @@
 @if (goal) {
-<app-chip [no-label]="noLabel" [color]="goal.color" [label]="goal.name" [icon]="goal.icon"
+<app-chip [no-label]="noLabel" [color]="goal.color" [label]="i18n.getLocalizedAttr(goal, 'name')" [icon]="goal.icon"
   [clickable]="clickable"></app-chip>
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MainNavService, Tab } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
