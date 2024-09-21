@@ -141,7 +141,9 @@ export class MainNavService implements OnDestroy {
   onRouteChange(e: NavigationEnd) {
     const url = e.urlAfterRedirects;
     this.updateTab(url);
-    this.updateFab(url);
+    setTimeout(() => {
+      this.updateFab(url);
+    }, 100);
     this.updateAtTabRoot(url);
     this.navigated = e.id > 1;
   }
