@@ -1,12 +1,12 @@
-<div id="container">
+<div id="container" *transloco="let t">
 
   <app-top-bar left-item="back">
     <div class="spacer"></div>
     @if (idea?.author?.isUser) {
     <button mat-icon-button [mat-menu-trigger-for]="menu"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="onEditClick()">Edit</button>
-      <button mat-menu-item (click)="onDeleteClick()">Delete</button>
+      <button mat-menu-item (click)="onEditClick()">{{ t('misc.edit') }}</button>
+      <button mat-menu-item (click)="onDeleteClick()">{{ t('misc.delete') }}</button>
     </mat-menu>
     } @else {
     <app-profile-picture class="pointer" [user]="userData.user$|async"

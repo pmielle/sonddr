@@ -100,8 +100,8 @@
         <ng-template #filledPositionsMenu>
           <div cdkMenu class="flex column">
             @if(isAdmin) {
-            <button mat-flat-button cdkMenuItem (click)="onRemove(v)">Remove</button>
-            <button mat-flat-button cdkMenuItem (click)="onDelete(v)">Delete</button>
+            <button mat-flat-button cdkMenuItem (click)="onRemove(v)">{{ t('misc.remove') }}</button>
+            <button mat-flat-button cdkMenuItem (click)="onDelete(v)">{{ t('misc.delete') }}</button>
             }
           </div>
         </ng-template>
