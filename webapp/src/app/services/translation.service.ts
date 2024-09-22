@@ -8,7 +8,12 @@ export class TranslationService {
 
   transloco = inject(TranslocoService);
 
-  constructor() { }
+  constructor() {
+    const userLang = navigator.language.split('-')[0];
+    if (this.transloco.isLang(userLang)) {
+      this.transloco.setActiveLang(userLang);
+    }
+  }
 
   get(selector: string, params?: object): string {
     return this.transloco.translate(selector, params);

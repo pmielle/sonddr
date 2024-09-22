@@ -57,11 +57,11 @@
   },
   "fab": {
     "cheer": "Cheer",
-    "share-an-idea": "Share\nan idea",
+    "share-an-idea": "Share<br>an idea",
     "share": "Share",
-    "start-a-discussion": "Start a\ndiscussion",
+    "start-a-discussion": "Start a<br>discussion",
     "request": "Request",
-    "send-a-message": "Send a\nmessage",
+    "send-a-message": "Send a<br>message",
     "log-out": "Log out",
     "done": "Done"
   },

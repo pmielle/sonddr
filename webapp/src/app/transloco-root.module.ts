@@ -12,7 +12,8 @@ import { TranslocoHttpLoader } from './transloco-loader';
       provideTransloco({
         config: {
           availableLangs: ['en', 'fr'],
-          defaultLang: 'fr',
+          defaultLang: 'en',
+          reRenderOnLangChange: true,
           prodMode: !isDevMode(),
         },
         loader: TranslocoHttpLoader
