@@ -201,7 +201,7 @@ export class IdeaViewComponent implements OnDestroy {
     if (!this.idea) { throw new Error("Cannot post comment if idea is not loaded"); }
     if (!this.comments) { throw new Error("Cannot post comment if comments are not loaded"); }
     const placeholderComment = this.makePlaceholderComment(body, this.idea.id);
-    this.comments = [...this.comments, placeholderComment];  // otherwise same reference, and @Input is not updated
+    this.comments = [placeholderComment, ...this.comments];  // otherwise same reference, and @Input is not updated
     this.http.postComment(this.idea.id, body).then(async insertedId => {
       const comment = await this.http.getComment(insertedId);
       this.replacePlaceholderComment(comment);
