@@ -55,10 +55,7 @@
     @for (s of sections; track s) {
     <div class="section">
       <div class="section-header flex row justify-start gutter"
-        [style.backgroundColor]="s.stuck ? color.transparentColor('#303030', .66) : 'transparent'"
-        [class.invisible]="!s.header" appIntersection
-        [rootMargin]="(screen.isMobile$|async) ? '-49px 0px 0px 0px' : '-101px 0px 0px 0px'"
-        (isIntersecting)="s.stuck = !$event">
+           [class.invisible]="!s.header">
         <span>{{ s.header }}</span>
       </div>
       <div class="section-content" [class.mobile]="screen.isMobile$ | async">
