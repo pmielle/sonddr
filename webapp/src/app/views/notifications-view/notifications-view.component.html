@@ -1,4 +1,4 @@
-<div id="container">
+<div id="container" *transloco="let t; prefix: 'misc'">
 
   <app-top-bar>
     @if (!(screen.isMobile$|async)) {
@@ -15,7 +15,7 @@
 
   @if (userData.newNotifications.length > 0) {
   <div id="new-notifications" class="notifications">
-    <p class="n-unread">{{ userData.newNotifications.length }} unread <app-red-dot></app-red-dot></p>
+    <p class="n-unread">{{ userData.newNotifications.length }} {{ t('unread') }} <app-red-dot></app-red-dot></p>
     @for (n of userData.newNotifications; track n.id) {
     <app-notification [notification]="n" (click)="openNotification(n, true)"></app-notification>
     }
@@ -26,7 +26,7 @@
 
   @if (showOlder) {
   <div id="old-notifications" class="notifications">
-    <p class="n-unread">Earlier</p>
+    <p class="n-unread">{{ t('earlier') }}</p>
     @for (n of userData.oldNotifications; track n.id) {
     <app-notification [notification]="n" (click)="openNotification(n)"></app-notification>
     }

@@ -136,11 +136,15 @@ export class IdeaViewComponent implements OnDestroy {
     if (!this.idea) { throw new Error("cannot set userHasCheered if idea is undefined"); }
     if (hasCheered) {
       this.idea.userHasCheered = true;
-      this.mainNav.setHasCheeredFab();
+      setTimeout(() => {
+        this.mainNav.setHasCheeredFab();
+      }, 100);
       if (! firstLoad) { this.idea.supports += 1 }
     } else {
       this.idea.userHasCheered = false;
-      this.mainNav.setCheerFab();
+      setTimeout(() => {
+        this.mainNav.setCheerFab();
+      }, 100);
       if (! firstLoad) { this.idea.supports -= 1 }
     }
   }
@@ -197,7 +201,7 @@ export class IdeaViewComponent implements OnDestroy {
     if (!this.idea) { throw new Error("Cannot post comment if idea is not loaded"); }
     if (!this.comments) { throw new Error("Cannot post comment if comments are not loaded"); }
     const placeholderComment = this.makePlaceholderComment(body, this.idea.id);
-    this.comments = [...this.comments, placeholderComment];  // otherwise same reference, and @Input is not updated
+    this.comments = [placeholderComment, ...this.comments];  // otherwise same reference, and @Input is not updated
     this.http.postComment(this.idea.id, body).then(async insertedId => {
       const comment = await this.http.getComment(insertedId);
       this.replacePlaceholderComment(comment);

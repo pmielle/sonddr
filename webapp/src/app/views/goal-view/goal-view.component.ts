@@ -7,6 +7,7 @@ import { HttpService } from 'src/app/services/http.service';
 import { ColorService } from 'src/app/services/color.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-goal-view',
@@ -22,6 +23,7 @@ export class GoalViewComponent implements OnInit, OnDestroy {
   screen = inject(ScreenSizeService);
   color = inject(ColorService);
   userData = inject(UserDataService);
+  i18n = inject(TranslationService);
 
   // attributes
   // --------------------------------------------

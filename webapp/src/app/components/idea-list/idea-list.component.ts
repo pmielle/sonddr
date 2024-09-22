@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { Idea } from 'sonddr-shared';
 import { ColorService } from 'src/app/services/color.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 export type SortBy = "recent" | "popular";
 
@@ -26,6 +27,8 @@ export class IdeaListComponent implements OnChanges {
   color = inject(ColorService);
   time = inject(TimeService);
   mainNav = inject(MainNavService);
+  i18n = inject(TranslationService);
+  elementRef = inject(ElementRef);
 
   // i/o
   // --------------------------------------------
@@ -52,8 +55,8 @@ export class IdeaListComponent implements OnChanges {
   // --------------------------------------------
   splitIdeasIntoSections(ideas: Idea[]): ListSection[] {
     let sections: ListSection[] = [
-      this._initSection(this.sortBy == "recent" ? "Today" : "Top 10"),
-      this._initSection(this.sortBy == "recent" ? "This week" : "Top 50"),
+      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.today') : this.i18n.get('sort-by.recent.top-10')),
+      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.this-week') : this.i18n.get('sort-by.recent.top-50')),
       this._initSection("")
     ];
     if (this.sortBy == "recent") {

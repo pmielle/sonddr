@@ -6,6 +6,7 @@ import { Idea, User, Volunteer, placeholder_id } from 'sonddr-shared';
 import { AddVolunteerPopupComponent } from 'src/app/components/add-volunteer-popup/add-volunteer-popup.component';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
+import { TranslationService } from 'src/app/services/translation.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 
 @Component({
@@ -23,6 +24,7 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   userData = inject(UserDataService);
   router = inject(Router);
   dialog = inject(MatDialog);
+  i18n = inject(TranslationService);
 
   // attributes
   // --------------------------------------------
@@ -156,7 +158,9 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   setIsAdmin() {
     this.isAdmin = this.idea!.author.isUser;
     if (this.isAdmin) {
-      this.mainNav.setAddVolunteerFab();
+      setTimeout(() => {
+        this.mainNav.setAddVolunteerFab();
+      }, 100);
     } else {
       this.mainNav.setUndefinedFab();
     }

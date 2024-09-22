@@ -1,0 +1,91 @@
+{
+  "date": {
+    "now": "Maintenant",
+    "seconds-ago": "Il y a {{ n }} secondes",
+    "about-a-minute-ago": "Il y a une minute",
+    "minutes-ago": "Il y a {{ n }} minutes",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "at": "à",
+    "jan": "Janvier",
+    "fev": "Février",
+    "mar": "Mars",
+    "apr": "Avril",
+    "may": "Mai",
+    "jun": "Juin",
+    "jul": "Juillet",
+    "aug": "Août",
+    "sep": "Septembre",
+    "oct": "Octobre",
+    "nov": "Novembre",
+    "dec": "Décembre"
+  },
+  "misc": {
+    "remove": "Enlever",
+    "see-other-comments": "Voir {{ n }} autres commentaires",
+    "see-other-candidates": "Voir {{ n }} autres candidats",
+    "comment": "Commente",
+    "unread": "non lus",
+    "new-discussion": "Nouvelle discussion",
+    "new-idea": "Nouvelle idée",
+    "edit-idea": "Édition",
+    "add-a-goal": "Ajouter un objectif",
+    "upload-a-cover": "Image de couverture",
+    "external-links": "Liens externes",
+    "cancel": "Annuler",
+    "add-link": "Ajouter un lien",
+    "member-since": "Membre depuis",
+    "idea": "idée",
+    "my-profile": "Mon profil",
+    "request-support": "Demander du soutien",
+    "volunteer": "Volontaire",
+    "financing": "Financement",
+    "edit": "Éditer",
+    "delete": "Supprimer",
+    "open-position": "Créer la demande",
+    "learn-more": "En savoir plus",
+    "earlier": "Plus tôt",
+    "apply": "Se proposer",
+    "applied": "Envoyé"
+  },
+  "placeholder": {
+    "what-do-you-think": "Qu'est-ce que tu en penses?",
+    "choose-a-title": "Choisis un titre",
+    "explain-your-idea": "Explique ton idée",
+    "to": "À",
+    "your-message": "Ton message"
+  },
+  "fab": {
+    "cheer": "Soutenir",
+    "share-an-idea": "Partager<br>une idée",
+    "share": "Partager",
+    "start-a-discussion": "Nouvelle<br>discussion",
+    "request": "Demander",
+    "send-a-message": "Envoyer<br>un message",
+    "log-out": "Déconnecter",
+    "done": "Valider"
+  },
+  "nav-bar": {
+    "ideas": "Idées",
+    "search": "Rechercher",
+    "messages": "Messages",
+    "notifications": "Notifications"
+  },
+  "sort-by": {
+    "label": "Trier par",
+    "recent": {
+      "label": "Nouveauté",
+      "today": "Aujourd'hui",
+      "this-week": "Cette semaine"
+    },
+    "popular": {
+      "label": "Popularité",
+      "top-10": "Top 10",
+      "top-50": "Top 50"
+    }
+  },
+  "all-ideas": {
+    "header": "Sonddr est un endroit où partager et réaliser nos idées pour rendre le monde (un peu) meilleur. Partage la tienne! Tu peux rejoindre ou quitter un projet à tout moment, pas de pression.",
+    "title": "Toutes les idées"
+  }
+}

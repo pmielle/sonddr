@@ -5,6 +5,7 @@ import { Goal } from 'sonddr-shared';
 import { HttpService } from 'src/app/services/http.service';
 import { ColorService } from 'src/app/services/color.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class DetailsViewComponent {
   http = inject(HttpService);
   color = inject(ColorService);
   mainNav = inject(MainNavService);
+  i18n = inject(TranslationService);
 
   // attributes
   // --------------------------------------------

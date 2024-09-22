@@ -1,5 +1,5 @@
 @if (externalLinks?.length || isLoggedInUser) {
-<div id="external-links">
+<div id="external-links" *transloco="let t">
   <app-h-scroll left-padding="calc(2 * var(--gutter) + 32px)">
     <mat-icon id="open-in-new">open_in_new</mat-icon>
     @for (el of externalLinks; track el) {
@@ -7,7 +7,7 @@
     <ng-template #editMenu>
       <div cdkMenu>
         @if(isLoggedInUser) {
-        <button mat-flat-button cdkMenuItem (click)="deleteExternalLink(el)">Delete</button>
+        <button mat-flat-button cdkMenuItem (click)="deleteExternalLink(el)">{{ t('misc.delete') }}</button>
         }
       </div>
     </ng-template>
@@ -27,6 +27,6 @@
     </mat-menu>
     } <!-- @if isLoggedInUser -->
   </app-h-scroll>
-  <div id="external-link-label" [class.higher]="externalLinks?.length">External links</div>
+  <div id="external-link-label" [class.higher]="externalLinks?.length">{{ t('misc.external-links') }}</div>
 </div>
 } <!-- @if externalLinks -->

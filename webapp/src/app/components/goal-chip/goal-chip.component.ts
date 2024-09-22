@@ -1,5 +1,6 @@
 import { Component, Input, inject } from '@angular/core';
 import { Goal } from 'sonddr-shared';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-goal-chip',
@@ -10,7 +11,7 @@ export class GoalChipComponent {
 
   // dependencies
   // --------------------------------------------
-  // ...
+  i18n = inject(TranslationService);
 
   // attributes
   // --------------------------------------------
@@ -21,5 +22,5 @@ export class GoalChipComponent {
   // methods
   // --------------------------------------------
   // ...
-  
+
 }

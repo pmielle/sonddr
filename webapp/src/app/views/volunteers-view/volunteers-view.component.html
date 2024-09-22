@@ -1,5 +1,7 @@
+<ng-container *transloco="let t">
+
 <app-top-bar left-item="close">
-  <h2 class="no-margin-bottom">Volunteers</h2>
+  <h2 class="no-margin-bottom">{{ t('misc.volunteer') }}s</h2>
 </app-top-bar>
 
 <div id="content">
@@ -17,9 +19,9 @@
           <p class="desc">{{ v.description }}</p>
           @if(! isAdmin) {
           @if (didApply(v)) {
-          <app-chip label="Applied" [border]="true" icon="check" (click)="onCancel(v)"></app-chip>
+          <app-chip [label]="t('misc.applied')" [border]="true" icon="check" (click)="onCancel(v)"></app-chip>
           } @else {
-          <app-chip label="Apply" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
+          <app-chip [label]="t('misc.apply')" icon="add" color="var(--green)" (click)="onApply(v)"></app-chip>
           }
           }
         </div>
@@ -55,7 +57,7 @@
         <app-chip
             id="more-candidates"
             icon="keyboard_arrow_down"
-            [label]="'See ' + (v.candidates.length - 1) + ' other candidates'"
+            [label]="i18n.get('misc.see-other-candidates', {n: (v.candidates.length - 1)})"
             color="var(--foreground-color)"
             foreground-color="var(--background-color)"
             (click)="onExpand(v)"
@@ -70,7 +72,7 @@
       <ng-template #openPositionsMenu>
         <div cdkMenu>
           @if(isAdmin) {
-          <button mat-flat-button cdkMenuItem (click)="onDelete(v)">Delete</button>
+          <button mat-flat-button cdkMenuItem (click)="onDelete(v)">{{ t('misc.delete') }}</button>
           }
         </div>
       </ng-template>
@@ -98,8 +100,8 @@
         <ng-template #filledPositionsMenu>
           <div cdkMenu class="flex column">
             @if(isAdmin) {
-            <button mat-flat-button cdkMenuItem (click)="onRemove(v)">Remove</button>
-            <button mat-flat-button cdkMenuItem (click)="onDelete(v)">Delete</button>
+            <button mat-flat-button cdkMenuItem (click)="onRemove(v)">{{ t('misc.remove') }}</button>
+            <button mat-flat-button cdkMenuItem (click)="onDelete(v)">{{ t('misc.delete') }}</button>
             }
           </div>
         </ng-template>
@@ -112,3 +114,5 @@
   }
 
 </div>
+
+</ng-container>

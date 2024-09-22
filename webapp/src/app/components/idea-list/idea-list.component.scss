@@ -30,7 +30,6 @@
             transition: transform var(--duration);
 
             &.out-of-sight {
-              // transform: translateY(-100%);
               transform: translateY(calc(-100% - var(--top-bar-height)));
             }
 

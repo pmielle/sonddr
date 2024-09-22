@@ -10,6 +10,7 @@
         'mobile': screen.isMobile$ | async,
         'flat': (screen.isMobile$|async) && mainNav.isNavBarFlat,
     }"
+    *transloco="let t; prefix: 'nav-bar'"
 >
     <div
         id="logo"
@@ -25,26 +26,26 @@
     </div>
 
     <app-nav-bar-item
-        label="Ideas"
+        [label]="t('ideas')"
         icon="lightbulb"
         (click)="onClick('ideas')"
         [outlined]="(mainNav.tab$|async) !== 'ideas'"
     ></app-nav-bar-item>
     <app-nav-bar-item
-        label="Search"
+        [label]="t('search')"
         icon="search"
         (click)="onClick('search')"
         [outlined]="(mainNav.tab$|async) !== 'search'"
     ></app-nav-bar-item>
     <app-nav-bar-item
-        label="Messages"
+        [label]="t('messages')"
         icon="forum"
         (click)="onClick('messages')"
         [outlined]="(mainNav.tab$|async) !== 'messages'"
         [badge]="makeBadge(userData.activeDiscussions.length)"
     ></app-nav-bar-item>
     <app-nav-bar-item
-        label="Notifications"
+        [label]="t('notifications')"
         icon="notifications"
         (click)="onClick('notifications')"
         [outlined]="(mainNav.tab$|async) !== 'notifications'"

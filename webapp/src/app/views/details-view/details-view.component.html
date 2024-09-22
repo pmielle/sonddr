@@ -3,7 +3,7 @@
   <app-top-bar left-item="close" [background-color]="makeBackgroundColor()" [opaque]="true">
     <div class="flex gap">
       <mat-icon>{{ goal?.icon }}</mat-icon>
-      <h2 class="no-margin-bottom">{{ goal?.name }}</h2>
+      <h2 class="no-margin-bottom">{{ goal ? i18n.getLocalizedAttr(goal, 'name') : undefined }}</h2>
     </div>
   </app-top-bar>
 

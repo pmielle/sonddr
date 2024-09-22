@@ -2,14 +2,14 @@
 <div id="container">
 
   @if (!hideSortBy && shouldDisplaySortBy()) {
-  <div id="sort-by" class="flex">
+  <div id="sort-by" class="flex" *transloco="let t; prefix: 'sort-by'">
     <button [mat-menu-trigger-for]="menu" mat-button>
-      <span>Sort by</span>
+      <span>{{ t('label') }}</span>
       <mat-icon>sort</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="updateSortBy('recent')">Recent</button>
-      <button mat-menu-item (click)="updateSortBy('popular')">Popular</button>
+      <button mat-menu-item (click)="updateSortBy('recent')">{{ t('recent.label') }}</button>
+      <button mat-menu-item (click)="updateSortBy('popular')">{{ t('popular.label') }}</button>
     </mat-menu>
   </div>
   }

@@ -1,12 +1,12 @@
 @if (comment) {
-<div id="container">
+<div id="container" *transloco="let t">
   <div id="author">
     <app-profile-picture [user]="comment.author" class="pointer"
       [routerLink]="['/', 'ideas', 'user', comment.author.id]"></app-profile-picture>
     @if (comment.author.isUser) {
     <button id="details" mat-icon-button [mat-menu-trigger-for]="menu"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="deleteComment.next()">Delete</button>
+      <button mat-menu-item (click)="deleteComment.next()">{{ t('misc.delete') }}</button>
     </mat-menu>
     }
     <span id="author-name" class="pointer no-margin-bottom" [routerLink]="['/', 'ideas', 'user', comment.author.id]">
