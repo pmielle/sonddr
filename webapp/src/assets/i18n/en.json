@@ -1,4 +1,25 @@
 {
+  "date": {
+    "now": "Now",
+    "seconds-ago": "{{ n }} seconds ago",
+    "about-a-minute-ago": "About a minute ago",
+    "minutes-ago": "{{ n }} minutes ago",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "at": "at",
+    "jan": "January",
+    "fev": "February",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December"
+  },
   "misc": {
     "comment": "Comment",
     "unread": "unread",

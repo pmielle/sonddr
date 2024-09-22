@@ -10,8 +10,8 @@ export class TranslationService {
 
   constructor() { }
 
-  get(selector: string): string {
-    return this.transloco.translate(selector);
+  get(selector: string, params?: object): string {
+    return this.transloco.translate(selector, params);
   }
 
   getLocalizedAttr(obj: object, attr: string): string {

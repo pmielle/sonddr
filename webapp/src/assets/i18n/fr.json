@@ -1,4 +1,25 @@
 {
+  "date": {
+    "now": "Maintenant",
+    "seconds-ago": "Il y a {{ n }} secondes",
+    "about-a-minute-ago": "Il y a une minute",
+    "minutes-ago": "Il y a {{ n }} minutes",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "at": "à",
+    "jan": "Janvier",
+    "fev": "Février",
+    "mar": "Mars",
+    "apr": "Avril",
+    "may": "Mai",
+    "jun": "Juin",
+    "jul": "Juillet",
+    "aug": "Août",
+    "sep": "Septembre",
+    "oct": "Octobre",
+    "nov": "Novembre",
+    "dec": "Décembre"
+  },
   "misc": {
     "comment": "Commente",
     "unread": "non lus",
