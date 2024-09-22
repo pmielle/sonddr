@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { Idea } from 'sonddr-shared';
 import { ColorService } from 'src/app/services/color.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
@@ -28,6 +28,7 @@ export class IdeaListComponent implements OnChanges {
   time = inject(TimeService);
   mainNav = inject(MainNavService);
   i18n = inject(TranslationService);
+  elementRef = inject(ElementRef);
 
   // i/o
   // --------------------------------------------

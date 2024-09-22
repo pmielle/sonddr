@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { User, Idea, ExternalLink } from 'sonddr-shared';
-import { SortBy } from 'src/app/components/idea-list/idea-list.component';
+import { IdeaListComponent, SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
@@ -28,6 +28,7 @@ export class UserViewComponent {
 
   // attributes
   // --------------------------------------------
+  @ViewChild(IdeaListComponent) ideaList?: IdeaListComponent;
   routeSub?: Subscription;
   user?: User;
   ideas?: Idea[];
@@ -58,6 +59,14 @@ export class UserViewComponent {
 
           // set user
           this.user = u
+
+          // because the height of the bio component is not fixed,
+          // the fullscreen has to be triggered later down the scroll
+          setTimeout(() => {
+            const newTopValue = (this.ideaList?.elementRef.nativeElement as Element).getBoundingClientRect();
+            this.mainNav.topValue = newTopValue.top;
+          }, 0);
+
         });
 
       }
@@ -68,6 +77,7 @@ export class UserViewComponent {
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
     this.mainNav.showNavBar();
+    this.mainNav.resetTopValue();
   }
 
   // methods

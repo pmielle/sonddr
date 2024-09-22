@@ -37,6 +37,8 @@ export class MainNavService implements OnDestroy {
   navigated = false;
   previousScroll = 0;
   fullScreen$ = new BehaviorSubject<boolean>(false);
+  defaultTopValue = 350;
+  topValue = this.defaultTopValue;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -52,8 +54,12 @@ export class MainNavService implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  resetTopValue() {
+    this.topValue = this.defaultTopValue;
+  }
+
   onScroll(el: Element) {
-    if (el.scrollTop < 200) {
+    if (el.scrollTop < this.topValue) {
       if (this.fullScreen$.getValue() === true ) { this.fullScreen$.next(false); }
     } else if (el.scrollTop + el.clientHeight > el.scrollHeight - 100) {
       if (this.fullScreen$.getValue() === true) { this.fullScreen$.next(false); }
