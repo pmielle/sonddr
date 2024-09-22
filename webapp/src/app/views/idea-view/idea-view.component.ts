@@ -136,11 +136,15 @@ export class IdeaViewComponent implements OnDestroy {
     if (!this.idea) { throw new Error("cannot set userHasCheered if idea is undefined"); }
     if (hasCheered) {
       this.idea.userHasCheered = true;
-      this.mainNav.setHasCheeredFab();
+      setTimeout(() => {
+        this.mainNav.setHasCheeredFab();
+      }, 100);
       if (! firstLoad) { this.idea.supports += 1 }
     } else {
       this.idea.userHasCheered = false;
-      this.mainNav.setCheerFab();
+      setTimeout(() => {
+        this.mainNav.setCheerFab();
+      }, 100);
       if (! firstLoad) { this.idea.supports -= 1 }
     }
   }

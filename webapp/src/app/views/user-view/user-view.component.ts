@@ -46,7 +46,9 @@ export class UserViewComponent {
           // manage fab and bottom bar
           if (u) {
             if (u.isUser) {
-              this.mainNav.setLoggedInUserFab();
+              setTimeout(() => {
+                this.mainNav.setLoggedInUserFab();
+              }, 100);
               this.mainNav.hideNavBar();
             } else {
               this.mainNav.setOtherUserFab(u.id);

@@ -57,7 +57,7 @@
         <app-chip
             id="more-candidates"
             icon="keyboard_arrow_down"
-            [label]="'See ' + (v.candidates.length - 1) + ' other candidates'"
+            [label]="i18n.get('misc.see-other-candidates', {n: (v.candidates.length - 1)})"
             color="var(--foreground-color)"
             foreground-color="var(--background-color)"
             (click)="onExpand(v)"

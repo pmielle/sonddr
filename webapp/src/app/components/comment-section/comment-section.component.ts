@@ -76,8 +76,7 @@ export class CommentSectionComponent {
     if (!this.comments.length) { return undefined; }
     const otherNb = this.comments.length - 1;
     if (otherNb <= 0) { return undefined; }
-    const plural = otherNb > 1;
-    return `See ${otherNb} other comment${plural ? 's' : ''}`;
+    return this.i18n.get('misc.see-other-comments', {n: otherNb});
   }
 
   splitCommentsIntoSections(comments: Comment[]): ListSection[] {

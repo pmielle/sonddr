@@ -21,6 +21,8 @@
     "dec": "Décembre"
   },
   "misc": {
+    "see-other-comments": "Voir {{ n }} autres commentaires",
+    "see-other-candidates": "Voir {{ n }} autres candidats",
     "comment": "Commente",
     "unread": "non lus",
     "new-discussion": "Nouvelle discussion",
