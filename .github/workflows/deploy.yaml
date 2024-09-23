@@ -56,7 +56,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Build database
-        run: docker build -t sonddr-database ./database/
+        run: docker build -t sonddr-database ./database/database/
       - name: Save .tar
         run: docker save sonddr-database -o ./sonddr-database.tar
       - name: Store artifact
