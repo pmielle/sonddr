@@ -1,5 +1,5 @@
 <#import "template.ftl" as layout>
-<h1>Sonddr is a place to share and contribute to each other ideas to make the world a little (or a lot) better</h1>
+<h1 id="my-title"></h1>
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
     <#if section = "header">
         ${msg("loginAccountTitle")}
@@ -99,7 +99,8 @@
                         <li>
                             <a id="social-${p.alias}" class="${properties.kcFormSocialAccountListButtonClass!} <#if social.providers?size gt 3>${properties.kcFormSocialAccountGridItem!}</#if>"
                                     type="button" href="${p.loginUrl}">
-				<span>Log in with ${p.displayName!}</span>
+				<span><span id="my-button"></span> ${p.displayName!}</span>
+
                             </a>
                         </li>
                     </#list>
