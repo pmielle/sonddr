@@ -1,4 +1,4 @@
-volume:
+volumes:
 
   mgob-data:
     name: mgob-data

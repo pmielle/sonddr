@@ -202,4 +202,4 @@ jobs:
           script_stop: true
           script: |
             (cd /srv/sonddr && git pull)
-            sudo docker compose -f /srv/sonddr/deployment/compose.yaml -f srv/sonddr/deployment/compose-prod.yaml up --pull always -d
+            sudo docker compose -f /srv/sonddr/deployment/compose.yaml -f /srv/sonddr/deployment/compose-prod.yaml up --pull always -d
