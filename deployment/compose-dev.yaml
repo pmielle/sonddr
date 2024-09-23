@@ -34,7 +34,7 @@ services:
 
   database:
     image: !reset
-    build: ../database/
+    build: ../database/database/
     restart: !reset
 
   reverse-proxy:

@@ -1,0 +1,15 @@
+scheduler:
+  cron: "00 00 * * *"  # at 00:00
+  retention: 14 # 2 weeks
+  timeout: 60
+
+target:
+  host: "database"
+  port: 27017
+  database: "sonddr"
+  username:
+  password:
+
+retry:
+  attempts: 3
+  backoffFactor: 60

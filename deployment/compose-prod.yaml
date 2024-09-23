@@ -1,0 +1,18 @@
+volume:
+
+  mgob-data:
+    name: mgob-data
+
+services:
+
+  database-backup:
+    container_name: database-backup
+    build:
+      context: ../database/backup
+    depends_on:
+      - database
+    volumes:
+      - type: volume
+        source: mgob-data
+        target: /storage
+    restart: unless-stopped
