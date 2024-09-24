@@ -72,6 +72,14 @@
 
         }
 
+        #summary {
+          margin: 0 var(--gutter) 0 32px;
+
+          #glitter {
+            margin-right: var(--small-spacing);
+          }
+        }
+
         #content {
             width: 100%;
             min-height: 60px;

@@ -58,6 +58,7 @@ import { AddVolunteerPopupComponent } from './components/add-volunteer-popup/add
 import { VolunteersViewComponent } from './views/volunteers-view/volunteers-view.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { TranslocoRootModule } from './transloco-root.module';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
@@ -121,6 +122,7 @@ import { TranslocoRootModule } from './transloco-root.module';
     FormsModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatExpansionModule,
     RouterModule.forRoot([
       {path: "", redirectTo: "ideas", pathMatch: "full"},
       {path: "ideas", component: IdeasTabComponent, children: [

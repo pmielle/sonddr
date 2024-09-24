@@ -64,6 +64,17 @@
 
     </div>
 
+    @if(idea?.summary) {
+    <mat-accordion id="summary">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon id="glitter">auto_awesome</mat-icon>Summary</mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>{{ idea?.summary }}</p>
+      </mat-expansion-panel>
+    </mat-accordion>
+    }
+
     <div id="content" [innerHTML]="idea?.content"></div>
 
     <app-comment-section [comments]="comments" (sort-by-change)="onSortByChange($event)"

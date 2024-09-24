@@ -44,6 +44,7 @@ export type Idea = {
     supports: number,
     userHasCheered: boolean,
     cover?: string,
+    summary?: string,
 };
 
 export type DbIdea = {
@@ -56,6 +57,7 @@ export type DbIdea = {
     content: string,
     supports: number,
     cover?: string,
+    summary?: string,
 };
 
 export type DbVolunteer = {
