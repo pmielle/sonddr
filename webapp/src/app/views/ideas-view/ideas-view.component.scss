@@ -3,5 +3,12 @@
     #header {
         padding-top: var(--spacing);
         padding-bottom: var(--spacing);
+        position: relative;
+
+        .reduce-width {
+          max-width: 50%;
+        }
+
     }
+
 }

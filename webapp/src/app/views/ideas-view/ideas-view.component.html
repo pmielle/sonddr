@@ -14,7 +14,7 @@
     <h1 id="title" class="gutter">{{ t('title') }}</h1>
     }
 
-    <p class="gutter">{{ t('header') }}</p>
+    <p class="gutter" [class.reduce-width]="screen.isWide$ | async">{{ t('header') }}</p>
 
     <app-h-scroll>
       @for (g of goals; track g.id) {

@@ -15,14 +15,17 @@ export class ScreenSizeService {
   // attributes
   // --------------------------------------------
   mobileMediaQuery = '(max-width: 500px)';  // keep in sync with scss styles
+  wideMediaQuery = '(min-width: 900px)';
   isMobile$ = new BehaviorSubject<boolean>(this.checkIsMobile());
+  isWide$ = new BehaviorSubject<boolean>(this.checkIsWide());
 
 
   // lifecycle hooks
   // --------------------------------------------
   constructor() {
-    this.breakpoints.observe(this.mobileMediaQuery).subscribe(() => {
+    this.breakpoints.observe([this.mobileMediaQuery, this.wideMediaQuery]).subscribe(() => {
       this.isMobile$.next(this.checkIsMobile());
+      this.isWide$.next(this.checkIsWide());
     });
   }
 
@@ -31,6 +34,10 @@ export class ScreenSizeService {
   // --------------------------------------------
   checkIsMobile(): boolean {
     return this.breakpoints.isMatched(this.mobileMediaQuery);
+  }
+
+  checkIsWide(): boolean {
+    return this.breakpoints.isMatched(this.wideMediaQuery);
   }
 
 }

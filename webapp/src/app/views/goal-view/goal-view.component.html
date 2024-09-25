@@ -19,7 +19,11 @@
     <h1 id="title" class="gutter">{{ goal ? i18n.getLocalizedAttr(goal, 'name') : undefined }}</h1>
     }
 
-    <p class="gutter">{{ goal ? i18n.getLocalizedAttr(goal, 'header') : undefined }}</p>
+    <p class="gutter"></p>
+
+    <p class="gutter" [class.reduce-width]="screen.isWide$ | async">
+      {{ goal ? i18n.getLocalizedAttr(goal, 'header') : undefined }}
+    </p>
 
     <app-h-scroll [shadow-color]="makeBackgroundColor()">
       <app-chip label="Learn more" color="var(--foreground-color)" foreground-color="var(--background-color)"
