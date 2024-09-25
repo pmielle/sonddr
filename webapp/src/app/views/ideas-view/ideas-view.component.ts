@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Goal, Idea } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
+import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 
@@ -17,6 +18,7 @@ export class IdeasViewComponent implements OnInit {
   http = inject(HttpService);
   screen = inject(ScreenSizeService);
   userData = inject(UserDataService);
+  mainNav = inject(MainNavService);
 
 
   // attributes
@@ -35,6 +37,7 @@ export class IdeasViewComponent implements OnInit {
   // methods
   // --------------------------------------------
   onSortByChange(sortBy: SortBy) {
+    this.mainNav.scrollToTop(true);
     this.http.getIdeas(sortBy).then(i => this.ideas = i);
   }
 

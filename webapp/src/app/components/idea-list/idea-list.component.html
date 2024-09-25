@@ -1,18 +1,21 @@
 @if (ideas?.length) {
 <div id="container">
 
-  @if (!hideSortBy && shouldDisplaySortBy()) {
-  <div id="sort-by" class="flex" *transloco="let t; prefix: 'sort-by'">
-    <button [mat-menu-trigger-for]="menu" mat-button>
-      <span>{{ t('label') }}</span>
-      <mat-icon>sort</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="updateSortBy('recent')">{{ t('recent.label') }}</button>
-      <button mat-menu-item (click)="updateSortBy('popular')">{{ t('popular.label') }}</button>
-    </mat-menu>
+  <div id="sticky-parent" [ngStyle]="{
+           'top': (mainNav.fullScreen$ | async) ? 0 : 'var(--top-bar-height)',
+  }">
+    <div id="sort-by" class="flex" *transloco="let t; prefix: 'sort-by'">
+      <button [mat-menu-trigger-for]="menu" mat-button>
+        <span>{{ t('label') }}</span>
+        <mat-icon>sort</mat-icon>
+        <div id="extra-icon"><mat-icon>{{ this.sortBy === 'recent' ? 'schedule' : 'favorite' }}</mat-icon></div>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="updateSortBy('recent')">{{ t('recent.label') }}</button>
+        <button mat-menu-item (click)="updateSortBy('popular')">{{ t('popular.label') }}</button>
+      </mat-menu>
+    </div>
   </div>
-  }
 
   <div id="first-section-header-background" [style.backgroundColor]="stuckBackgroundColor"></div>
 
@@ -20,11 +23,16 @@
   <div class="section">
     <!-- 111px and not 101 because #tabs has 10px top on desktop -->
     <div class="section-header flex row justify-start gutter"
-      [style.backgroundColor]="s.stuck ? color.transparentColor(stuckBackgroundColor, .66) : 'transparent'"
-      [ngClass]="{'invisible': !s.header, 'out-of-sight': mainNav.fullScreen$ | async}"
+      [ngStyle]="{
+                 'background-color': s.stuck ? color.transparentColor(stuckBackgroundColor, .66) : 'transparent',
+                 'top': (mainNav.fullScreen$ | async) ? 0 : 'var(--top-bar-height)',
+         }"
       appIntersection
-      [rootMargin]="(screen.isMobile$|async) ? '-49px 0px 0px 0px' : '-111px 0px 0px 0px'"
-      (isIntersecting)="s.stuck = !$event">
+      [rootMargin]="(screen.isMobile$|async)
+         ? (mainNav.fullScreen$ | async) ? '0px 0px 0px 0px' : '-49px 0px 0px 0px'
+         : (mainNav.fullScreen$ | async) ? '0px 0px 0px 0px' : '-111px 0px 0px 0px'"
+      (isIntersecting)="s.stuck = !$event"
+      (click)="onHeaderClick(s)">
       <span>{{ s.header }}</span>
     </div>
     <div class="section-content" [class.mobile]="screen.isMobile$ | async">

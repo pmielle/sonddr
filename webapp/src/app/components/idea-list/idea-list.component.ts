@@ -53,10 +53,16 @@ export class IdeaListComponent implements OnChanges {
 
   // methods
   // --------------------------------------------
+  onHeaderClick(s: ListSection) {
+    if (s.stuck) {
+      this.mainNav.scrollToTop(true);
+    }
+  }
+
   splitIdeasIntoSections(ideas: Idea[]): ListSection[] {
     let sections: ListSection[] = [
-      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.today') : this.i18n.get('sort-by.recent.top-10')),
-      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.this-week') : this.i18n.get('sort-by.recent.top-50')),
+      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.today') : this.i18n.get('sort-by.popular.top-10')),
+      this._initSection(this.sortBy == "recent" ? this.i18n.get('sort-by.recent.this-week') : this.i18n.get('sort-by.popular.top-50')),
       this._initSection("")
     ];
     if (this.sortBy == "recent") {
@@ -82,12 +88,6 @@ export class IdeaListComponent implements OnChanges {
     return sections.filter(s => s.ideas.length > 0);
   }
 
-  shouldDisplaySortBy(): boolean {
-    if (this.sections && this.sections.length > 0 && this.sections[0].stuck) {
-      return false;
-    }
-    return true;
-  }
   updateSortBy(sortBy: SortBy) {
     this.sortBy = sortBy;
     this.sortByChange.next(sortBy);

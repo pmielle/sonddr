@@ -8,6 +8,7 @@ import { ColorService } from 'src/app/services/color.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
+import { MainNavService } from 'src/app/services/main-nav.service';
 
 @Component({
   selector: 'app-goal-view',
@@ -24,6 +25,7 @@ export class GoalViewComponent implements OnInit, OnDestroy {
   color = inject(ColorService);
   userData = inject(UserDataService);
   i18n = inject(TranslationService);
+  mainNav = inject(MainNavService);
 
   // attributes
   // --------------------------------------------
@@ -62,6 +64,7 @@ export class GoalViewComponent implements OnInit, OnDestroy {
     if (!this.goal) {
       throw new Error("this.goal should be defined at this point");
     }
+    this.mainNav.scrollToTop(true);
     this.http.getIdeas(sortBy, this.goal.id, undefined).then(i => this.ideas = i);
   }
 

@@ -3,12 +3,25 @@
     position: relative;
     padding-bottom: calc(var(--spacing) + var(--large-spacing) + 56px);  // fab space
 
-    #sort-by {
-        position: absolute;
-        top: 0;
-        right: var(--gutter);
-        z-index: 2;  // above section header
-        height: var(--header-height);
+    #sticky-parent {
+      z-index: 2;
+      position: sticky;
+      height: 0;
+      overflow: visible;
+      transition: var(--duration);
+
+      #sort-by {
+          position: absolute;
+          right: var(--gutter);
+          height: var(--header-height);
+
+          #extra-icon {
+            position: absolute;
+            top: 5px;
+            left: -22px;
+            transform: scale(0.5);
+          }
+      }
     }
 
     #first-section-header-background {
@@ -23,11 +36,10 @@
 
         .section-header {
             position: sticky;
-            top: var(--top-bar-height);
             height: var(--header-height);
             z-index: 1;
             backdrop-filter: blur(5px);
-            transition: transform var(--duration);
+            transition: var(--duration);
 
             &.out-of-sight {
               transform: translateY(calc(-100% - var(--top-bar-height)));
