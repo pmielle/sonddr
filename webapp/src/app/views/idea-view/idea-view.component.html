@@ -14,25 +14,28 @@
     }
   </app-top-bar>
 
-  <div id="cover">
-    <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()" [appOpenImage]="idea?.cover"></div>
+  <div id="top-part" class="flex large-gap" [class.column]="! (screen.isWide$ | async)">
 
-    <div id="goals" class="flex">
-      @for (g of idea?.goals; track g.id) {
-      <app-goal-chip
-          [no-label]="true"
-          [goal]="g"
-          [routerLink]="['/', 'ideas', 'goal', g.id]"
-          ></app-goal-chip>
-      }
+    <div id="cover" [class.taller]="screen.isWide$ | async">
+      <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()" [appOpenImage]="idea?.cover"></div>
+
+      <div id="goals" class="flex">
+        @for (g of idea?.goals; track g.id) {
+        <app-goal-chip
+            [no-label]="true"
+            [goal]="g"
+            [routerLink]="['/', 'ideas', 'goal', g.id]"
+            ></app-goal-chip>
+        }
+      </div>
+      <app-like-counter [idea]="idea" (click)="toggleCheer()"></app-like-counter>
     </div>
-    <app-like-counter [idea]="idea" (click)="toggleCheer()"></app-like-counter>
-  </div>
 
-  <div id="page-content" class="flex column large-gap">
 
     <div id="header" class="flex column align-start">
+
       <h1 id="title" class="no-margin-bottom">{{ idea?.title }}</h1>
+
       <div id="author">
         <app-profile-picture [user]="idea?.author" class="pointer"
           [routerLink]="['/', 'ideas', 'user', idea?.author?.id]"></app-profile-picture>
@@ -62,10 +65,14 @@
       ></app-support-requests>
       }
 
-    </div>
+    </div> <!-- /header -->
+
+  </div> <!-- /top-part -->
+
+  <div id="page-content" class="flex column large-gap align-start">
 
     @if(idea?.summary) {
-    <mat-accordion id="summary">
+    <mat-accordion id="summary" [class.reduce-width]="screen.isWide$ | async">
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title><mat-icon id="glitter">auto_awesome</mat-icon>Summary</mat-panel-title>

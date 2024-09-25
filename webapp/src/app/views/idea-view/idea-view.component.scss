@@ -10,6 +10,11 @@
         aspect-ratio: 16/9;
         max-height: 300px;
 
+        &.taller {
+          aspect-ratio: 1 / 1;
+          max-height: 400px;
+        }
+
         #cover-background {
             position: absolute;
             top: calc(-1 * var(--top-bar-height));
@@ -40,40 +45,44 @@
         }
       }
 
-    #page-content {
-      --left-margin: calc(32px + 2 * var(--gutter));
+      #header {
+          --left-margin: calc(32px + 2 * var(--gutter));
+          width: 100%;
+          gap: var(--spacing);
+
+          #title {
+              margin-left: var(--left-margin);
+              margin-right: var(--gutter);
+          }
+
+          #author {
+              position: relative;
+              margin-left: var(--left-margin);
+
+              #author-name { font-weight: bold; }
+              #date { opacity: 0.5; }
+
+              app-profile-picture {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  transform: translate(calc(-100% - 10px), -7px);
+              }
+          }
+
+          app-external-links { margin-top: -6px; }
+
+      }
+
+      #page-content {
         padding-top: var(--large-spacing);
 
-        #header {
-            width: 100%;
-            gap: var(--spacing);
-
-            #title {
-                margin-left: var(--left-margin);
-                margin-right: var(--gutter);
-            }
-
-            #author {
-                position: relative;
-                margin-left: var(--left-margin);
-
-                #author-name { font-weight: bold; }
-                #date { opacity: 0.5; }
-
-                app-profile-picture {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    transform: translate(calc(-100% - 10px), -7px);
-                }
-            }
-
-            app-external-links { margin-top: -6px; }
-
-        }
-
         #summary {
-          margin: 0 var(--gutter) 0 32px;
+          margin-left: 32px;
+
+          &.reduce-width {
+            max-width: calc(50% - 32px - var(--large-spacing) / 2);
+          }
 
           #glitter {
             margin-right: var(--small-spacing);
@@ -90,5 +99,6 @@
         app-comment-section {
             width: 100%;
         }
-    }
+
+      }
 }
