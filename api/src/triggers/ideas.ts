@@ -1,7 +1,7 @@
 import { DbIdea } from "sonddr-shared";
 import { deleteDocuments, patchDocument, watchCollection } from "./../database.js";
 import { deleteUpload } from "./../uploads.js";
-import { generate_summary, min_content_length } from "../llm.js";
+import { generate_summary, llm_enabled, min_content_length } from "../llm.js";
 
 
 export function watchIdeas() {
@@ -9,7 +9,7 @@ export function watchIdeas() {
 		const ideaId = change.docId;
 		if (change.type === "insert") {
 			const dbDoc = change.docAfter;
-			if (dbDoc.content.length >= min_content_length) {
+			if (llm_enabled && dbDoc.content.length >= min_content_length) {
 				generate_summary(dbDoc).then((summary) => {
 					patchDocument(`ideas/${ideaId}`, {
 						field: "summary",

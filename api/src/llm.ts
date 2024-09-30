@@ -2,13 +2,22 @@ import OpenAI from "openai";
 import { DbIdea, Goal } from "sonddr-shared";
 import { getDocuments } from "./database.js";
 
-const openai = new OpenAI({
-	organization: process.env.OPENAI_ORGANIZATION,
-	project: process.env.OPENAI_PROJECT,
-	apiKey: process.env.OPENAI_KEY
-});
+const api_key = process.env.OPENAI_KEY;
 const model = "gpt-4o-mini";
 const system = "You are a helpful assistant.";
+
+let openai: OpenAI;
+export let llm_enabled: boolean;
+if (api_key) {
+	openai = new OpenAI({
+		organization: process.env.OPENAI_ORGANIZATION,
+		project: process.env.OPENAI_PROJECT,
+		apiKey: api_key,
+	});
+	llm_enabled = true;
+} else {
+	llm_enabled = false;
+}
 
 export const min_content_length = 1000;
 
