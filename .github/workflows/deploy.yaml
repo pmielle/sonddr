@@ -29,6 +29,8 @@ jobs:
               - 'database/**'
             reverse-proxy:
               - 'reverse-proxy/**'
+            deployment:
+              - 'deployment/**'
 
   build-webapp:
     needs: detect-changes
@@ -226,21 +228,21 @@ jobs:
         run: docker push ghcr.io/pmielle/sonddr-reverse-proxy:latest
 
   update:
-    needs: [push-webapp, push-api, push-auth, push-database, push-reverse-proxy]
+    needs: [detect-changes, push-webapp, push-api, push-auth, push-database, push-reverse-proxy]
     # hack from: https://github.com/actions/runner/issues/491#issuecomment-850884422
     if: |
       always()
-      && (needs.push-webapp.result == 'success') || (needs.push-webapp.result == 'skipped')
-      && (needs.push-api.result == 'success') || (needs.push-api.result == 'skipped')
-      && (needs.push-auth.result == 'success') || (needs.push-auth.result == 'skipped')
-      && (needs.push-database.result == 'success') || (needs.push-database.result == 'skipped')
-      && (needs.push-reverse-proxy.result == 'success') || (needs.push-reverse-proxy.result == 'skipped')
-      && ! ((needs.push-webapp.result == 'skipped') 
-            && (needs.push-webapp.result == 'skipped')
-            && (needs.push-webapp.result == 'skipped')
-            && (needs.push-webapp.result == 'skipped')
-            && (needs.push-webapp.result == 'skipped')
-            && (needs.push-webapp.result == 'skipped'))
+      && (needs.push-webapp.result == 'success' || needs.push-webapp.result == 'skipped')
+      && (needs.push-api.result == 'success' || needs.push-api.result == 'skipped')
+      && (needs.push-auth.result == 'success' || needs.push-auth.result == 'skipped')
+      && (needs.push-database.result == 'success' || needs.push-database.result == 'skipped')
+      && (needs.push-reverse-proxy.result == 'success' || needs.push-reverse-proxy.result == 'skipped')
+      && ! (needs.push-webapp.result == 'skipped'
+            && needs.push-api.result == 'skipped'
+            && needs.push-auth.result == 'skipped'
+            && needs.push-database.result == 'skipped'
+            && needs.push-reverse-proxy.result == 'skipped'
+            && needs.detect-changes.outputs.deployment == 'false')
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1.0.2
