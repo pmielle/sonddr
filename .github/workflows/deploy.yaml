@@ -14,6 +14,7 @@ jobs:
       database: ${{ steps.filter.outputs.database }}
       reverse-proxy: ${{ steps.filter.outputs.reverse-proxy }}
     steps:
+      - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
         id: filter
         with:
