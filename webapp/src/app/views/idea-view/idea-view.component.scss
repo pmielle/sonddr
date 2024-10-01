@@ -148,7 +148,7 @@
     }
 
     #content {
-      font-size: 16px;
+      font-size: var(--content-font-size);
       width: 100%;
       min-height: 60px;
       padding-left: calc(32px + 2 * var(--gutter));
