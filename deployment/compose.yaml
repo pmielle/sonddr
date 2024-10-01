@@ -56,7 +56,7 @@ services:
 
   auth-database:
     container_name: auth-database
-    image: postgres
+    image: postgres:16
     env_file:
       - ./.env
     volumes:
