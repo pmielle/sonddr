@@ -96,15 +96,15 @@ export class AddViewComponent {
         this.selectGoal(goal, true);
       }
 
-      // listen to keyboard close
-      this.screen.keyboard$.subscribe((state) => {
-        if (state == "closed") {
-          this.mainNav.showFab();
-        } else {
-          this.mainNav.hideFab();
-        }
-      });
+    });
 
+    // listen to keyboard close
+    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
+      if (state == "closed") {
+        this.mainNav.showFab();
+      } else if (state == "open") {
+        this.mainNav.hideFab();
+      }
     });
 
     // hide bottom bar and disable fab

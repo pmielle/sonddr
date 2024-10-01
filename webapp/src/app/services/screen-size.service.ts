@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { BehaviorSubject, Subscription, debounceTime, fromEvent } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, debounceTime, fromEvent } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +18,10 @@ export class ScreenSizeService implements OnDestroy {
   wideMediaQuery = '(min-width: 900px)';
   isMobile$ = new BehaviorSubject<boolean>(this.checkIsMobile());
   isWide$ = new BehaviorSubject<boolean>(this.checkIsWide());
-  keyboard$ = new BehaviorSubject<"open"|"closed">("closed");
+  keyboard$ = new Subject<"open"|"closed">();
   breakpointSub?: Subscription;
   resizeSub?: Subscription;
-  previousHeightDiff = ScreenSizeService.checkHeightDiff();
+  previousHeightDiff: number = 0;
 
   static checkHeightDiff(): number|undefined {
     if (window.visualViewport) {
@@ -41,7 +41,6 @@ export class ScreenSizeService implements OnDestroy {
     this.resizeSub = fromEvent(window, "resize").pipe(debounceTime(300)).subscribe(() => {
       const hDiff = ScreenSizeService.checkHeightDiff();
       if (hDiff === undefined) { return; }
-      if (this.previousHeightDiff === undefined) { this.previousHeightDiff = hDiff; return; }
       // normal case
       if (hDiff < this.previousHeightDiff - 200) {
         this.keyboard$.next("closed");
