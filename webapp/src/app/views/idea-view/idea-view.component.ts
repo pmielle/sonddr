@@ -33,6 +33,7 @@ export class IdeaViewComponent implements OnDestroy {
   routeSub?: Subscription;
   fabClickSub?: Subscription;
   popupSub?: Subscription;
+  keyboardSub?: Subscription;
   idea?: Idea;
   comments?: Comment[];
   volunteers?: Volunteer[];
@@ -51,12 +52,27 @@ export class IdeaViewComponent implements OnDestroy {
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
     this.fabClickSub = this.mainNav.fabClick.subscribe(() => this.toggleCheer());
+
+    // listen to keyboard close
+    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
+      if (state == "closed") {
+        this.mainNav.showFab();
+      } else if (state == "open") {
+        this.mainNav.hideFab();
+      }
+    });
+
   }
 
   ngOnDestroy(): void {
+
+    // unsubscribe
     this.routeSub?.unsubscribe();
     this.fabClickSub?.unsubscribe();
     this.popupSub?.unsubscribe();
+    this.keyboardSub?.unsubscribe();
+
+    // restore fab and nav bar
     this.mainNav.showNavBar();
     this.mainNav.showFab();
   }
@@ -66,14 +82,6 @@ export class IdeaViewComponent implements OnDestroy {
   addFinancing(e: any) {
     console.log("add financing")
     console.log(e)
-  }
-
-  onInputFocus() {
-    this.mainNav.hideFab();
-  }
-
-  onInputBlur() {
-    this.mainNav.showFab();
   }
 
   deleteExternalLink(link: ExternalLink) {
