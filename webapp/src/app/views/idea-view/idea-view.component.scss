@@ -4,101 +4,159 @@
 
 #container {
 
-    #cover {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 16/9;
-        max-height: 300px;
+  #top-part {
+    position: relative;
 
-        &.taller {
-          aspect-ratio: 1 / 1;
-          max-height: 400px;
-        }
+    &.wider {
 
-        #cover-background {
-            position: absolute;
-            top: calc(-1 * var(--top-bar-height));
-            left: 0;
-            height: calc(100% + var(--top-bar-height));
-            width: 100%;
-            background-color: var(--grey);
-        }
+      display: block;
 
-        #goals {
-          position: absolute;
-          gap: 10px;
-          bottom: 10px;
-          left: calc(2 * var(--gutter) + 32px);
-
-          app-goal-chip:nth-of-type(3) { z-index: 6; }
-          app-goal-chip:nth-of-type(4) { z-index: 5; position: absolute; left: calc(2 * (34px + 10px) + calc(1 * 20px)); }
-          app-goal-chip:nth-of-type(5) { z-index: 4; position: absolute; left: calc(2 * (34px + 10px) + calc(2 * 20px)); }
-          app-goal-chip:nth-of-type(6) { z-index: 3; position: absolute; left: calc(2 * (34px + 10px) + calc(3 * 20px)); }
-          app-goal-chip:nth-of-type(7) { z-index: 2; position: absolute; left: calc(2 * (34px + 10px) + calc(4 * 20px)); }
-          app-goal-chip:nth-of-type(8) { z-index: 1; position: absolute; left: calc(2 * (34px + 10px) + calc(5 * 20px)); }
-        }
-
-        app-like-counter {
-          position: absolute;
-          bottom: 10px;
-          right: var(--gutter);
-        }
+      #cover {
+        aspect-ratio: 1 / 1;
+        max-height: 500px;
       }
 
       #header {
-          --left-margin: calc(32px + 2 * var(--gutter));
-          width: 100%;
-          gap: var(--spacing);
-
-          #title {
-              margin-left: var(--left-margin);
-              margin-right: var(--gutter);
-          }
-
-          #author {
-              position: relative;
-              margin-left: var(--left-margin);
-
-              #author-name { font-weight: bold; }
-              #date { opacity: 0.5; }
-
-              app-profile-picture {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  transform: translate(calc(-100% - 10px), -7px);
-              }
-          }
-
-          app-external-links { margin-top: -6px; }
-
+        position: absolute;
+        display: inline-flex;
+        width: 50%;
+        max-height: calc(100% - 34px - 2 * 10px);
+        bottom: calc(34px + 2 * 10px);
+        right: 100px;
+        padding: var(--large-spacing);
+        border-radius: var(--spacing);
       }
 
-      #page-content {
-        padding-top: var(--large-spacing);
+    }
 
-        #summary {
-          margin-left: 32px;
+    #cover {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      max-height: 300px;
 
-          &.reduce-width {
-            max-width: calc(50% - 32px - var(--large-spacing) / 2);
-          }
-
-          #glitter {
-            margin-right: var(--small-spacing);
-          }
-        }
-
-        #content {
-            width: 100%;
-            min-height: 60px;
-            padding-left: calc(32px + 2 * var(--gutter));
-            padding-right: var(--gutter);
-        }
-
-        app-comment-section {
-            width: 100%;
-        }
-
+      #cover-background {
+        position: absolute;
+        top: calc(-1 * var(--top-bar-height));
+        left: 0;
+        height: calc(100% + var(--top-bar-height));
+        width: 100%;
+        background-color: var(--grey);
       }
+
+      #goals {
+        position: absolute;
+        gap: 10px;
+        bottom: 10px;
+        left: calc(2 * var(--gutter) + 32px);
+
+        app-goal-chip:nth-of-type(3) {
+          z-index: 6;
+        }
+
+        app-goal-chip:nth-of-type(4) {
+          z-index: 5;
+          position: absolute;
+          left: calc(2 * (34px + 10px) + calc(1 * 20px));
+        }
+
+        app-goal-chip:nth-of-type(5) {
+          z-index: 4;
+          position: absolute;
+          left: calc(2 * (34px + 10px) + calc(2 * 20px));
+        }
+
+        app-goal-chip:nth-of-type(6) {
+          z-index: 3;
+          position: absolute;
+          left: calc(2 * (34px + 10px) + calc(3 * 20px));
+        }
+
+        app-goal-chip:nth-of-type(7) {
+          z-index: 2;
+          position: absolute;
+          left: calc(2 * (34px + 10px) + calc(4 * 20px));
+        }
+
+        app-goal-chip:nth-of-type(8) {
+          z-index: 1;
+          position: absolute;
+          left: calc(2 * (34px + 10px) + calc(5 * 20px));
+        }
+      }
+
+      app-like-counter {
+        position: absolute;
+        bottom: 10px;
+        right: var(--gutter);
+      }
+    }
+
+    #header {
+      --left-margin: calc(32px + 2 * var(--gutter));
+      width: 100%;
+      gap: var(--spacing);
+      background-color: var(--background-color);
+
+      #title {
+        margin-left: var(--left-margin);
+        margin-right: var(--gutter);
+      }
+
+      #author {
+        position: relative;
+        margin-left: var(--left-margin);
+
+        #author-name {
+          font-weight: bold;
+        }
+
+        #date {
+          opacity: 0.5;
+        }
+
+        app-profile-picture {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform: translate(calc(-100% - 10px), -7px);
+        }
+      }
+
+      app-external-links {
+        margin-top: -6px;
+      }
+
+    }
+
+  }
+
+
+  #page-content {
+    padding-top: var(--large-spacing);
+
+    #summary {
+      margin-left: 32px;
+
+      &.reduce-width {
+        max-width: calc(50% - 32px - var(--large-spacing) / 2);
+      }
+
+      #glitter {
+        margin-right: var(--small-spacing);
+      }
+    }
+
+    #content {
+      width: 100%;
+      min-height: 60px;
+      padding-left: calc(32px + 2 * var(--gutter));
+      padding-right: var(--gutter);
+    }
+
+    app-comment-section {
+      width: 100%;
+    }
+
+  }
 }

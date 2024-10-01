@@ -14,9 +14,9 @@
     }
   </app-top-bar>
 
-  <div id="top-part" class="flex large-gap" [class.column]="! (screen.isWide$ | async)">
+  <div id="top-part" class="flex column large-gap" [class.wider]="screen.isWide$ | async">
 
-    <div id="cover" [class.taller]="screen.isWide$ | async">
+    <div id="cover">
       <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()" [appOpenImage]="idea?.cover"></div>
 
       <div id="goals" class="flex">
@@ -30,7 +30,6 @@
       </div>
       <app-like-counter [idea]="idea" (click)="toggleCheer()"></app-like-counter>
     </div>
-
 
     <div id="header" class="flex column align-start">
 
