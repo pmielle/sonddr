@@ -1,5 +1,5 @@
 <div id="container">
-  <div id="scroll-container" class="h-scroll no-scrollbar" [style.paddingLeft]="leftPadding">
+  <div id="scroll-container" class="h-scroll" [style.paddingLeft]="leftPadding">
     <div id="intersection-container">
       <div id="left-intersect" appIntersection (isIntersecting)="this.leftShadow=!$event"></div>
       <ng-content></ng-content>
