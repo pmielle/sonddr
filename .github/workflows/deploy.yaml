@@ -5,7 +5,33 @@ on:
 
 jobs:
 
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs: 
+      webapp: ${{ steps.filter.outputs.webapp }}
+      api: ${{ steps.filter.outputs.api }}
+      auth: ${{ steps.filter.outputs.auth }}
+      database: ${{ steps.filter.outputs.database }}
+      reverse-proxy: ${{ steps.filter.outputs.reverse-proxy }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            webapp:
+              - 'webapp/**'
+            api:
+              - 'api/**'
+            auth:
+              - 'auth/**'
+            database:
+              - 'database/**'
+            reverse-proxy:
+              - 'reverse-proxy/**'
+
   build-webapp:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.webapp == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -21,6 +47,8 @@ jobs:
           path: ./sonddr-webapp.tar
 
   build-api:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.api == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -36,6 +64,8 @@ jobs:
           path: ./sonddr-api.tar
 
   build-auth:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.auth == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -51,6 +81,8 @@ jobs:
           path: ./sonddr-auth.tar
 
   build-database:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.database == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -66,6 +98,8 @@ jobs:
           path: ./sonddr-database.tar
 
   build-reverse-proxy:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.reverse-proxy == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -192,6 +226,20 @@ jobs:
 
   update:
     needs: [push-webapp, push-api, push-auth, push-database, push-reverse-proxy]
+    # hack from: https://github.com/actions/runner/issues/491#issuecomment-850884422
+    if: |
+      always()
+      && (needs.push-webapp.result == 'success') || (needs.push-webapp.result == 'skipped')
+      && (needs.push-api.result == 'success') || (needs.push-api.result == 'skipped')
+      && (needs.push-auth.result == 'success') || (needs.push-auth.result == 'skipped')
+      && (needs.push-database.result == 'success') || (needs.push-database.result == 'skipped')
+      && (needs.push-reverse-proxy.result == 'success') || (needs.push-reverse-proxy.result == 'skipped')
+      && ! ((needs.push-webapp.result == 'skipped') 
+            && (needs.push-webapp.result == 'skipped')
+            && (needs.push-webapp.result == 'skipped')
+            && (needs.push-webapp.result == 'skipped')
+            && (needs.push-webapp.result == 'skipped')
+            && (needs.push-webapp.result == 'skipped'))
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1.0.2
