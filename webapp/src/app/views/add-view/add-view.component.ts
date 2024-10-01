@@ -34,6 +34,7 @@ export class AddViewComponent {
   // --------------------------------------------
   mainSub?: Subscription;
   fabSub?: Subscription;
+  keyboardSub?: Subscription;
   ideas?: Idea[];
   goals?: Goal[];
   selectedGoals: Goal[] = [];
@@ -95,6 +96,15 @@ export class AddViewComponent {
         this.selectGoal(goal, true);
       }
 
+      // listen to keyboard close
+      this.screen.keyboard$.subscribe((state) => {
+        if (state == "closed") {
+          this.mainNav.showFab();
+        } else {
+          this.mainNav.hideFab();
+        }
+      });
+
     });
 
     // hide bottom bar and disable fab
@@ -118,6 +128,7 @@ export class AddViewComponent {
     // unsubscribe
     this.mainSub?.unsubscribe();
     this.fabSub?.unsubscribe();
+    this.keyboardSub?.unsubscribe();
 
     // restore nav bar and fab
     this.mainNav.showNavBar();
@@ -241,14 +252,6 @@ export class AddViewComponent {
   onTitleTab(e: Event) {
     e.preventDefault();
     this.editor.contentDiv?.nativeElement.focus();
-  }
-
-  onInputFocus() {
-    this.mainNav.hideFab();
-  }
-
-  onInputBlur() {
-    this.mainNav.showFab();
   }
 
   formIsValid(): boolean {

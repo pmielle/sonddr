@@ -1,11 +1,11 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, OnDestroy, inject } from '@angular/core';
+import { BehaviorSubject, Subscription, debounceTime, fromEvent } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ScreenSizeService {
+export class ScreenSizeService implements OnDestroy {
 
   // dependencies
   // --------------------------------------------
@@ -18,15 +18,44 @@ export class ScreenSizeService {
   wideMediaQuery = '(min-width: 900px)';
   isMobile$ = new BehaviorSubject<boolean>(this.checkIsMobile());
   isWide$ = new BehaviorSubject<boolean>(this.checkIsWide());
+  keyboard$ = new BehaviorSubject<"open"|"closed">("closed");
+  breakpointSub?: Subscription;
+  resizeSub?: Subscription;
+  previousHeightDiff = ScreenSizeService.checkHeightDiff();
 
+  static checkHeightDiff(): number|undefined {
+    if (window.visualViewport) {
+      return window.screen.height - window.visualViewport.height;
+    } else {
+      return undefined;
+    }
+  }
 
   // lifecycle hooks
   // --------------------------------------------
   constructor() {
-    this.breakpoints.observe([this.mobileMediaQuery, this.wideMediaQuery]).subscribe(() => {
+    this.breakpointSub = this.breakpoints.observe([this.mobileMediaQuery, this.wideMediaQuery]).subscribe(() => {
       this.isMobile$.next(this.checkIsMobile());
       this.isWide$.next(this.checkIsWide());
     });
+    this.resizeSub = fromEvent(window, "resize").pipe(debounceTime(300)).subscribe(() => {
+      const hDiff = ScreenSizeService.checkHeightDiff();
+      if (hDiff === undefined) { return; }
+      if (this.previousHeightDiff === undefined) { this.previousHeightDiff = hDiff; return; }
+      // normal case
+      if (hDiff < this.previousHeightDiff - 200) {
+        this.keyboard$.next("closed");
+      } else if (hDiff > this.previousHeightDiff + 200) {
+        this.keyboard$.next("open");
+      }
+      // save value for next time
+      this.previousHeightDiff = hDiff;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.breakpointSub?.unsubscribe();
+    this.resizeSub?.unsubscribe();
   }
 
 

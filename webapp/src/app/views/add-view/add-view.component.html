@@ -38,14 +38,13 @@
 
   <div id="form" class="flex column gap">
     <input id="title" type="text" [placeholder]="t('placeholder.choose-a-title')" (keyup)="onKeyUp()" [(ngModel)]="title"
-      (focus)="onInputFocus()" (blur)="onInputBlur()" (keydown.tab)="onTitleTab($event)">
+      (keydown.tab)="onTitleTab($event)">
 
 
     <div id="editor">
       <app-profile-picture class="pointer" [class.mobile]="screen.isMobile$|async"
                            [user]="userData.user$|async"></app-profile-picture>
-      <app-editor [placeholder]="t('placeholder.explain-your-idea') + '...'" (keyup)="onKeyUp()"
-                  (focus)="onInputFocus()" (blur)="onInputBlur()"></app-editor>
+      <app-editor [placeholder]="t('placeholder.explain-your-idea') + '...'" (keyup)="onKeyUp()"></app-editor>
     </div>
 
   </div>
