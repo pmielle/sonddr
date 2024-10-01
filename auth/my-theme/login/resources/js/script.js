@@ -13,8 +13,10 @@ document.addEventListener("DOMContentLoaded", function(_) {
 	document.getElementById("my-title").textContent = content
 	document.getElementById("my-button").textContent = button
 
-	// show dev inputs if needed
-	console.log(window.location.host);
+	// show dev inputs on dev machines
+	if (! /sonddr/.test(window.location.host)) {
+		document.getElementById("kc-form").style.display = "block"
+	}
 
 })
 
