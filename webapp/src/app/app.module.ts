@@ -59,6 +59,7 @@ import { VolunteersViewComponent } from './views/volunteers-view/volunteers-view
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { TranslocoRootModule } from './transloco-root.module';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { AboveKeyboardDirective } from './directives/above-keyboard.directive';
 
 
 @NgModule({
@@ -107,6 +108,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
     SupportRequestsComponent,
     AddVolunteerPopupComponent,
     VolunteersViewComponent,
+    AboveKeyboardDirective,
   ],
   imports: [
     BrowserModule,

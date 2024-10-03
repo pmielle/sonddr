@@ -1,6 +1,6 @@
 <div id="container" *transloco="let t">
 
-  <div id="input" class="flex gutter">
+  <div id="input" class="flex gutter" appAboveKeyboard>
     <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
     <input
       type="text"
