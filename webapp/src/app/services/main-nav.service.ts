@@ -42,6 +42,8 @@ export class MainNavService implements OnDestroy {
   defaultTopValue = 350;
   topValue = this.defaultTopValue;
   keyboardSub?: Subscription;
+  ignoreScroll = false;
+  fullscreenOnScroll = true;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -53,9 +55,15 @@ export class MainNavService implements OnDestroy {
     // listen to software keyboard state
     this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
       if (state == "closed") {
+        this.ignoreScroll = false;
+        this.fullScreen$.next(false);
         this.showFab();
       } else if (state == "open") {
-        this.hideFab();
+        this.ignoreScroll = true;
+        setTimeout(() => {
+          this.fullScreen$.next(true);
+          this.hideFab();
+        }, 100);
       }
     });
 
@@ -64,6 +72,7 @@ export class MainNavService implements OnDestroy {
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
     this.keyboardSub?.unsubscribe();
+    this.ignoreScroll = false;
   }
 
   // methods
@@ -73,6 +82,7 @@ export class MainNavService implements OnDestroy {
   }
 
   onScroll(el: Element) {
+    if (this.ignoreScroll || !this.fullscreenOnScroll) { return }
     if (el.scrollTop < this.topValue) {
       if (this.fullScreen$.getValue() === true ) { this.fullScreen$.next(false); }
     } else if (el.scrollTop + el.clientHeight > el.scrollHeight - 100) {
@@ -142,7 +152,7 @@ export class MainNavService implements OnDestroy {
     setTimeout(() => {
       const tabs = document.getElementById("tabs");
       tabs?.scrollTo({
-        top: document.body.scrollHeight,
+        top: 999999,
         left: 0,
         behavior: smooth ? "smooth" : "instant"
       });

@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
-import { Subscription, debounceTime, fromEvent, switchMap, tap } from 'rxjs';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 
 const invisible_space = '\u200B';
@@ -37,41 +36,40 @@ export class EditorComponent implements OnInit, OnDestroy {
   content = "";
   inTags = new Set<string>();
   weirdTags = new Set<string>(["div", "span", "#text"]); // lowercase
-  inFocus = false;
-  keyboardSub?: Subscription;
-  toolbarBottom = 0;
-  initialHeight = window.visualViewport!.height;
+  showToolbar = false;
+  contentIsFocused = false;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-    this.keyboardSub = this.screen.keyboard$.pipe(
-      tap((state) => {
-        this.computeBottom();
-        if (state == "closed") { this.inFocus = false; }
-      }),
-      switchMap(() => fromEvent(window.visualViewport!, "scroll")),
-    ).subscribe(() => this.computeBottom());
   }
 
   ngOnDestroy(): void {
-    this.keyboardSub?.unsubscribe();
   }
+
   // methods
   // --------------------------------------------
-  computeBottom() {
-    this.toolbarBottom = this.initialHeight - window.visualViewport!.height - window.visualViewport!.pageTop;
-    this.detector.detectChanges();
+  onKeyboardOpen() {
+    if (this.contentIsFocused) {
+      this.showToolbar = true;
+    } else {
+      this.showToolbar = false;
+    }
   }
 
-  onInputFocus() {
+  onKeyboardClose() {
+  }
+
+  onFocus() {
+    this.contentIsFocused = true;
+    this.showToolbar = true;
     this.focus.next();
-    this.inFocus = true;
   }
 
-  onInputBlur() {
+  onBlur() {
+    this.contentIsFocused = false;
+    this.showToolbar = false;
     this.blur.next();
-    this.inFocus = false;
   }
 
   onKeyUp(event: KeyboardEvent): void {

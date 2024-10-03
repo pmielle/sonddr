@@ -10,25 +10,15 @@
 
     #messages {
         flex-direction: column-reverse;
-        padding-bottom: var(--spacing);
         padding-top: var(--large-spacing);
+        min-height: 100vh;
 
         &.mobile {
-          min-height: calc(
-          100vh
-          - var(--nav-bar-height)
-          - var(--top-bar-height)
-          - 67px
-          );
+          padding-bottom: calc(66px + var(--spacing));
         }
 
         &:not(.mobile) {
-          min-height: calc(
-          100vh
-          - var(--top-bar-height)
-          - 67px
-          - 20px
-          );
+          padding-bottom: var(--spacing);
         }
 
         app-message {
@@ -43,10 +33,15 @@
     #input {
         position: sticky;
         left: 0;
+        bottom: 0;
         padding-top: var(--spacing);
         padding-bottom: var(--spacing);
         width: 100%;
-        bottom: 0;
+
+        &.mobile {
+          position: fixed;
+          bottom: var(--nav-bar-height);
+        }
 
         input {
             margin-left: var(--gutter);

@@ -1,6 +1,6 @@
 <div id="content">
 
-  <div id="toolbar" [style.bottom]="toolbarBottom + 'px'" [ngClass]="{'mobile': screen.isMobile$|async, 'invisible': ! inFocus && ! showLinkPopup }">
+  <div id="toolbar" appAboveKeyboard (open)="onKeyboardOpen()" (close)="onKeyboardClose()" [ngClass]="{'mobile': screen.isMobile$|async, 'invisible': !showToolbar && (screen.isMobile$|async)}">
 
     <app-h-scroll>
       <button mat-icon-button (click)="onFormatButtonClick('b')" [color]="chooseButtonColor('b')">
@@ -59,6 +59,6 @@
   </div>
 
   <div id="content-div" contenteditable="true" [attr.placeholder]="placeholder" (keyup)="onKeyUp($event)"
-    (focus)="onInputFocus()" (blur)="onInputBlur()" #contentDiv></div>
+    (focus)="onFocus()" (blur)="onBlur()" #contentDiv></div>
 
 </div>

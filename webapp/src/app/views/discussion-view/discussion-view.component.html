@@ -15,7 +15,7 @@
   <div
     id="messages"
     class="flex justify-start small-gap"
-    [class.mobile]="screen.isMobile$|async"
+    [ngClass]="{'mobile': screen.isMobile$|async}"
   >
     @for (m of messages; track m.id; let i = $index) {
     <app-message
@@ -31,6 +31,10 @@
     id="input"
     class="flex gutter frosted"
     [class.mobile]="screen.isMobile$|async"
+    [ngClass]="{'mobile': screen.isMobile$|async}"
+    appAboveKeyboard
+    (open)="smallButton = true"
+    (close)="smallButton = false"
   >
     <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
     <input
@@ -38,11 +42,9 @@
       placeholder="Your message"
       [(ngModel)]="content"
       (keydown.enter)="formIsValid() && send()"
-      (focus)="onInputFocus()"
-      (blur)="onInputBlur()"
     />
     <app-chip label="Message" color="var(--blue)" icon="send" (click)="send()"
-      [class.disabled]="!this.formIsValid()"></app-chip>
+      [class.disabled]="!this.formIsValid()" [no-label]="smallButton"></app-chip>
   </div>
 
 
