@@ -25,14 +25,14 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   constructor() { }
 
   ngOnInit(): void {
+    const styles = window.getComputedStyle(this.ele.nativeElement);
+    this.initialPosition = styles.position;
+    this.initialBackgroundColor = styles.backgroundColor;
+    this.initialZIndex = styles.zIndex;
+    this.initialBottom = styles.bottom;
     this.keyboardSub = this.screen.keyboard$.pipe(
       tap((state) => {
         if (state === "open") {
-          const styles = window.getComputedStyle(this.ele.nativeElement);
-          this.initialPosition = styles.position;
-          this.initialBackgroundColor = styles.backgroundColor;
-          this.initialZIndex = styles.zIndex;
-          this.initialBottom = styles.bottom;
           (this.ele.nativeElement as HTMLElement).style.position = "fixed";
           (this.ele.nativeElement as HTMLElement).style.zIndex = "999";
           (this.ele.nativeElement as HTMLElement).style.backgroundColor = "var(--background-color)";

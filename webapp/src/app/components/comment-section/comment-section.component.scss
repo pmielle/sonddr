@@ -2,8 +2,8 @@
 
     #input {
         width: 100%;
-        padding-top: var(--large-spacing);
-        padding-bottom: var(--large-spacing);
+        padding-top: var(--spacing);
+        padding-bottom: var(--spacing);
 
         input {
             margin-left: var(--gutter);
@@ -17,6 +17,7 @@
         position: relative;
         background-color: var(--darker-background-color);
         padding-bottom: calc(56px + var(--spacing) + var(--large-spacing));  // space for fab
+        margin-top: calc(var(--large-spacing) - var(--spacing));
 
         #sort-by {
             position: absolute;

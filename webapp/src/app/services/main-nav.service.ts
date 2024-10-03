@@ -43,6 +43,7 @@ export class MainNavService implements OnDestroy {
   topValue = this.defaultTopValue;
   keyboardSub?: Subscription;
   ignoreScroll = false;
+  fullscreenOnScroll = true;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -81,7 +82,7 @@ export class MainNavService implements OnDestroy {
   }
 
   onScroll(el: Element) {
-    if (this.ignoreScroll) { return }
+    if (this.ignoreScroll || !this.fullscreenOnScroll) { return }
     if (el.scrollTop < this.topValue) {
       if (this.fullScreen$.getValue() === true ) { this.fullScreen$.next(false); }
     } else if (el.scrollTop + el.clientHeight > el.scrollHeight - 100) {
@@ -151,7 +152,7 @@ export class MainNavService implements OnDestroy {
     setTimeout(() => {
       const tabs = document.getElementById("tabs");
       tabs?.scrollTo({
-        top: document.body.scrollHeight,
+        top: 999999,
         left: 0,
         behavior: smooth ? "smooth" : "instant"
       });

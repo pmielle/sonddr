@@ -34,7 +34,7 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   content: string = "";
   chatRoom?: ChatRoom;
   chatRoomSub?: Subscription;
-  inFocus = false;
+  smallButton = false;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -49,24 +49,18 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
         (data) => this.onChatRoomUpdate(data)
       );
     });
+    this.mainNav.fullscreenOnScroll = false;
   }
 
   ngOnDestroy(): void {
     this.mainNav.restoreNavBar();
     this.routeSub?.unsubscribe();
     this.chatRoomSub?.unsubscribe();
+    this.mainNav.fullscreenOnScroll = true;
   }
 
   // methods
   // --------------------------------------------
-  onInputFocus() {
-    this.inFocus = true;
-  }
-
-  onInputBlur() {
-    this.inFocus = false;
-  }
-
   onChatRoomUpdate(data: Message[]|Change<Message>) {
     if (isChange(data)) {
       const change = data as Change<Message>;
@@ -89,7 +83,7 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
       }
     } else {
       this.messages = data as Message[];
-      this.mainNav.scrollToBottom(); // does not work for some weird timing reason
+      setTimeout(() => this.mainNav.scrollToBottom(), 0);
     }
   }
 
