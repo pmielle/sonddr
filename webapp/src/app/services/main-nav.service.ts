@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Subscription, filter } from 'rxjs';
 import { AuthService } from './auth.service';
 import { TranslationService } from './translation.service';
+import { ScreenSizeService } from './screen-size.service';
 
 export type Tab = "ideas" | "search" | "messages" | "notifications";
 export type FabMode = {
@@ -22,6 +23,7 @@ export class MainNavService implements OnDestroy {
   router = inject(Router);
   auth = inject(AuthService);
   i18n = inject(TranslationService);
+  screen = inject(ScreenSizeService);
 
   // attributes
   // --------------------------------------------
@@ -39,6 +41,7 @@ export class MainNavService implements OnDestroy {
   fullScreen$ = new BehaviorSubject<boolean>(false);
   defaultTopValue = 350;
   topValue = this.defaultTopValue;
+  keyboardSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -46,10 +49,21 @@ export class MainNavService implements OnDestroy {
     this.routerSub = this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(
       (e) => this.onRouteChange(e as NavigationEnd)
     );
+
+    // listen to software keyboard state
+    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
+      if (state == "closed") {
+        this.showFab();
+      } else if (state == "open") {
+        this.hideFab();
+      }
+    });
+
   }
 
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
+    this.keyboardSub?.unsubscribe();
   }
 
   // methods

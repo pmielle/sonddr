@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
@@ -8,7 +8,7 @@ import { ScreenSizeService } from 'src/app/services/screen-size.service';
   templateUrl: './main-nav.component.html',
   styleUrls: ['./main-nav.component.scss']
 })
-export class MainNavComponent {
+export class MainNavComponent implements AfterViewInit {
 
   screen = inject(ScreenSizeService);
   auth = inject(AuthService);

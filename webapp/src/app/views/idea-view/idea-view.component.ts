@@ -33,7 +33,6 @@ export class IdeaViewComponent implements OnDestroy {
   routeSub?: Subscription;
   fabClickSub?: Subscription;
   popupSub?: Subscription;
-  keyboardSub?: Subscription;
   idea?: Idea;
   comments?: Comment[];
   volunteers?: Volunteer[];
@@ -53,15 +52,6 @@ export class IdeaViewComponent implements OnDestroy {
     });
     this.fabClickSub = this.mainNav.fabClick.subscribe(() => this.toggleCheer());
 
-    // listen to keyboard close
-    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
-      if (state == "closed") {
-        this.mainNav.showFab();
-      } else if (state == "open") {
-        this.mainNav.hideFab();
-      }
-    });
-
   }
 
   ngOnDestroy(): void {
@@ -70,7 +60,6 @@ export class IdeaViewComponent implements OnDestroy {
     this.routeSub?.unsubscribe();
     this.fabClickSub?.unsubscribe();
     this.popupSub?.unsubscribe();
-    this.keyboardSub?.unsubscribe();
 
     // restore fab and nav bar
     this.mainNav.showNavBar();

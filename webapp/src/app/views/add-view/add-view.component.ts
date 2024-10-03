@@ -34,7 +34,6 @@ export class AddViewComponent {
   // --------------------------------------------
   mainSub?: Subscription;
   fabSub?: Subscription;
-  keyboardSub?: Subscription;
   ideas?: Idea[];
   goals?: Goal[];
   selectedGoals: Goal[] = [];
@@ -98,15 +97,6 @@ export class AddViewComponent {
 
     });
 
-    // listen to keyboard close
-    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
-      if (state == "closed") {
-        this.mainNav.showFab();
-      } else if (state == "open") {
-        this.mainNav.hideFab();
-      }
-    });
-
     // hide bottom bar and disable fab
     setTimeout(() => {
       this.mainNav.hideNavBar();
@@ -128,7 +118,6 @@ export class AddViewComponent {
     // unsubscribe
     this.mainSub?.unsubscribe();
     this.fabSub?.unsubscribe();
-    this.keyboardSub?.unsubscribe();
 
     // restore nav bar and fab
     this.mainNav.showNavBar();
