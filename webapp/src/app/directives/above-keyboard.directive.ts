@@ -20,6 +20,7 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   initialPosition = "";
   initialBackgroundColor = "";
   initialZIndex = "";
+  initialBottom = "";
 
   constructor() { }
 
@@ -27,9 +28,11 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
     this.keyboardSub = this.screen.keyboard$.pipe(
       tap((state) => {
         if (state === "open") {
-          this.initialPosition = (this.ele.nativeElement as HTMLElement).style.position;
-          this.initialBackgroundColor = (this.ele.nativeElement as HTMLElement).style.backgroundColor;
-          this.initialZIndex = (this.ele.nativeElement as HTMLElement).style.zIndex;
+          const styles = window.getComputedStyle(this.ele.nativeElement);
+          this.initialPosition = styles.position;
+          this.initialBackgroundColor = styles.backgroundColor;
+          this.initialZIndex = styles.zIndex;
+          this.initialBottom = styles.bottom;
           (this.ele.nativeElement as HTMLElement).style.position = "fixed";
           (this.ele.nativeElement as HTMLElement).style.zIndex = "999";
           (this.ele.nativeElement as HTMLElement).style.backgroundColor = "var(--background-color)";
@@ -39,7 +42,7 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
           (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
           (this.ele.nativeElement as HTMLElement).style.backgroundColor = this.initialBackgroundColor;
           (this.ele.nativeElement as HTMLElement).style.zIndex = this.initialZIndex;
-          this.refreshBottom();
+          (this.ele.nativeElement as HTMLElement).style.bottom = this.initialBottom;
           this.close.next();
         }
       }),
