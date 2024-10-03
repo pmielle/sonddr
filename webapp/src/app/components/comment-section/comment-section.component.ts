@@ -47,6 +47,7 @@ export class CommentSectionComponent {
   sortBy: SortBy = "recent";
   isCollapsed = true;
   commentBody = "";
+  smallButton = false;
   @ViewChild('input') input?: ElementRef;
 
   // lifecycle hooks

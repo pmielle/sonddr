@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Subscription, fromEvent, switchMap, tap } from 'rxjs';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { MainNavService } from '../services/main-nav.service';
@@ -13,9 +13,14 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   ele = inject(ElementRef);
   mainNav = inject(MainNavService);
 
+  @Output('open') open = new EventEmitter<void>();
+  @Output('close') close = new EventEmitter<void>();
+
   keyboardSub?: Subscription;
   initialHeight = window.visualViewport!.height;
   initialPosition = "";
+  initialBackgroundColor = "";
+  initialZIndex = "";
 
   constructor() { }
 
@@ -24,10 +29,18 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
       tap((state) => {
         if (state === "open") {
           this.initialPosition = (this.ele.nativeElement as HTMLElement).style.position;
+          this.initialBackgroundColor = (this.ele.nativeElement as HTMLElement).style.backgroundColor;
+          this.initialZIndex = (this.ele.nativeElement as HTMLElement).style.zIndex;
           (this.ele.nativeElement as HTMLElement).style.position = "fixed";
+          (this.ele.nativeElement as HTMLElement).style.zIndex = "999";
+          (this.ele.nativeElement as HTMLElement).style.backgroundColor = "var(--background-color)";
           this.refreshBottom();
+          this.open.next();
         } else {
           (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
+          (this.ele.nativeElement as HTMLElement).style.backgroundColor = this.initialBackgroundColor;
+          (this.ele.nativeElement as HTMLElement).style.zIndex = this.initialZIndex;
+          this.close.next();
         }
       }),
       switchMap(() => fromEvent(window.visualViewport!, "scroll")),

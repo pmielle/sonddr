@@ -36,7 +36,6 @@ export class EditorComponent implements OnInit, OnDestroy {
   content = "";
   inTags = new Set<string>();
   weirdTags = new Set<string>(["div", "span", "#text"]); // lowercase
-  inFocus = false;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -48,16 +47,6 @@ export class EditorComponent implements OnInit, OnDestroy {
 
   // methods
   // --------------------------------------------
-  onInputFocus() {
-    this.focus.next();
-    this.inFocus = true;
-  }
-
-  onInputBlur() {
-    this.blur.next();
-    this.inFocus = false;
-  }
-
   onKeyUp(event: KeyboardEvent): void {
     this.refreshContent();
     if (event.key === "Escape") {
