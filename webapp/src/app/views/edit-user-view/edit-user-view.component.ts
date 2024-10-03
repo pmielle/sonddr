@@ -38,6 +38,7 @@ export class EditUserViewComponent {
   user?: User;
   welcome = false;
   @ViewChild(EditorComponent) editor!: EditorComponent;
+  keyboardSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -68,6 +69,15 @@ export class EditUserViewComponent {
       }
     });
 
+    // listen to keyboard close
+    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
+      if (state == "closed") {
+        this.mainNav.showFab();
+      } else if (state == "open") {
+        this.mainNav.hideFab();
+      }
+    });
+
     // hide bottom bar and disable fab
     setTimeout(() => {
       this.mainNav.hideNavBar();
@@ -85,6 +95,7 @@ export class EditUserViewComponent {
     // unsubscribe
     this.mainSub?.unsubscribe();
     this.fabSub?.unsubscribe();
+    this.keyboardSub?.unsubscribe();
 
     // restore nav bar and fab
     this.mainNav.showNavBar();
@@ -111,14 +122,6 @@ export class EditUserViewComponent {
   onNameTab(e: Event) {
     e.preventDefault();
     this.editor.contentDiv?.nativeElement.focus();
-  }
-
-  onInputFocus() {
-    this.mainNav.hideFab();
-  }
-
-  onInputBlur() {
-    this.mainNav.showFab();
   }
 
   formIsValid(): boolean {
