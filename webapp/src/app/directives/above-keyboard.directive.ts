@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Subscription, fromEvent, switchMap, tap } from 'rxjs';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { MainNavService } from '../services/main-nav.service';
@@ -9,7 +9,6 @@ import { MainNavService } from '../services/main-nav.service';
 export class AboveKeyboardDirective implements OnInit, OnDestroy {
 
   screen = inject(ScreenSizeService);
-  detector = inject(ChangeDetectorRef);
   ele = inject(ElementRef);
   mainNav = inject(MainNavService);
 
@@ -40,6 +39,7 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
           (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
           (this.ele.nativeElement as HTMLElement).style.backgroundColor = this.initialBackgroundColor;
           (this.ele.nativeElement as HTMLElement).style.zIndex = this.initialZIndex;
+          this.refreshBottom();
           this.close.next();
         }
       }),
@@ -55,7 +55,6 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   refreshBottom() {
     const bottom = this.initialHeight - window.visualViewport!.height - window.visualViewport!.pageTop;
     (this.ele.nativeElement as HTMLElement).style.bottom = bottom + "px";
-    this.detector.detectChanges();
   }
 
 }
