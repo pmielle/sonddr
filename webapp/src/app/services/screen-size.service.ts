@@ -23,14 +23,6 @@ export class ScreenSizeService implements OnDestroy {
   resizeSub?: Subscription;
   previousHeightDiff: number = 0;
 
-  static checkHeightDiff(): number|undefined {
-    if (window.visualViewport) {
-      return window.screen.height - window.visualViewport.height;
-    } else {
-      return undefined;
-    }
-  }
-
   // lifecycle hooks
   // --------------------------------------------
   constructor() {
@@ -38,9 +30,8 @@ export class ScreenSizeService implements OnDestroy {
       this.isMobile$.next(this.checkIsMobile());
       this.isWide$.next(this.checkIsWide());
     });
-    this.resizeSub = fromEvent(window, "resize").pipe(debounceTime(300)).subscribe(() => {
-      const hDiff = ScreenSizeService.checkHeightDiff();
-      if (hDiff === undefined) { return; }
+    this.resizeSub = fromEvent(window.visualViewport!, "resize").pipe(debounceTime(300)).subscribe(() => {
+      const hDiff = this.checkHeightDiff();
       // normal case
       if (hDiff < this.previousHeightDiff - 200) {
         this.keyboard$.next("closed");
@@ -60,6 +51,10 @@ export class ScreenSizeService implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  checkHeightDiff(): number {
+    return window.screen.height - window.visualViewport!.height;
+  }
+
   checkIsMobile(): boolean {
     return this.breakpoints.isMatched(this.mobileMediaQuery);
   }

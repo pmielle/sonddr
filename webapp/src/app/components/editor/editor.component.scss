@@ -11,6 +11,7 @@
   #toolbar {
     position: relative;
     background-color: var(--background-color);
+    transform: var(--duration);
 
     #link-popup {
       position: absolute;
@@ -28,7 +29,6 @@
 
     &.mobile {
       position: fixed;
-      bottom: 0;
       left: 0;
       width: 100%; // otherwise won't h-scroll
 

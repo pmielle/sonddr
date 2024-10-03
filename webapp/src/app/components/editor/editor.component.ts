@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
+import { Subscription, debounceTime, fromEvent, switchMap, tap } from 'rxjs';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 
 const invisible_space = '\u200B';
@@ -8,11 +9,12 @@ const invisible_space = '\u200B';
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
-export class EditorComponent {
+export class EditorComponent implements OnInit, OnDestroy {
 
   // dependencies
   // --------------------------------------------
   screen = inject(ScreenSizeService);
+  detector = inject(ChangeDetectorRef);
 
   // I/O
   // --------------------------------------------
@@ -36,13 +38,32 @@ export class EditorComponent {
   inTags = new Set<string>();
   weirdTags = new Set<string>(["div", "span", "#text"]); // lowercase
   inFocus = false;
+  keyboardSub?: Subscription;
+  toolbarBottom = 0;
+  initialHeight = window.visualViewport!.height;
 
   // lifecycle hooks
   // --------------------------------------------
-  // ...
+  ngOnInit(): void {
+    this.keyboardSub = this.screen.keyboard$.pipe(
+      tap((state) => {
+        this.computeBottom();
+        if (state == "closed") { this.inFocus = false; }
+      }),
+      switchMap(() => fromEvent(window.visualViewport!, "scroll")),
+    ).subscribe(() => this.computeBottom());
+  }
 
+  ngOnDestroy(): void {
+    this.keyboardSub?.unsubscribe();
+  }
   // methods
   // --------------------------------------------
+  computeBottom() {
+    this.toolbarBottom = this.initialHeight - window.visualViewport!.height - window.visualViewport!.pageTop;
+    this.detector.detectChanges();
+  }
+
   onInputFocus() {
     this.focus.next();
     this.inFocus = true;
