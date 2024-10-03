@@ -1,6 +1,6 @@
 <div id="content">
 
-  <div id="toolbar" appAboveKeyboard (open)="onKeyboardOpen()" (close)="onKeyboardClose()" [ngClass]="{'mobile': screen.isMobile$|async, 'hidden': !showToolbar && (screen.isMobile$|async)}">
+  <div id="toolbar" appAboveKeyboard (open)="onKeyboardOpen()" (close)="onKeyboardClose()" [ngClass]="{'mobile': screen.isMobile$|async, 'invisible': !showToolbar && (screen.isMobile$|async)}">
 
     <app-h-scroll>
       <button mat-icon-button (click)="onFormatButtonClick('b')" [color]="chooseButtonColor('b')">

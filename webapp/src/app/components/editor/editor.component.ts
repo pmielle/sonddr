@@ -58,8 +58,6 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   onKeyboardClose() {
-    this.showToolbar = false;
-
   }
 
   onFocus() {
