@@ -31,6 +31,7 @@ export class ScreenSizeService implements OnDestroy {
       this.isWide$.next(this.checkIsWide());
     });
     this.resizeSub = fromEvent(window.visualViewport!, "resize").pipe(debounceTime(300)).subscribe(() => {
+      if (!this.checkIsMobile()) { return; }
       const hDiff = this.checkHeightDiff();
       // normal case
       if (hDiff < this.previousHeightDiff - 200) {
