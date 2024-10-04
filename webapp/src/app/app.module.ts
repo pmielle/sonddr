@@ -60,6 +60,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { TranslocoRootModule } from './transloco-root.module';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { AboveKeyboardDirective } from './directives/above-keyboard.directive';
+import { AutoGrowDirective } from './directives/auto-grow.directive';
 
 
 @NgModule({
@@ -109,6 +110,7 @@ import { AboveKeyboardDirective } from './directives/above-keyboard.directive';
     AddVolunteerPopupComponent,
     VolunteersViewComponent,
     AboveKeyboardDirective,
+    AutoGrowDirective,
   ],
   imports: [
     BrowserModule,

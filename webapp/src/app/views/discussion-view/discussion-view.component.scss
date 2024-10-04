@@ -43,10 +43,11 @@
           bottom: var(--nav-bar-height);
         }
 
-        input {
+        textarea {
             margin-left: var(--gutter);
             margin-right: var(--gutter);
             flex: 1;
+            margin-bottom: 6px;
         }
     }
 

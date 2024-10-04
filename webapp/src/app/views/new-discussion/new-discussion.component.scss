@@ -65,10 +65,16 @@
     padding-bottom: var(--spacing);
     width: 100%;
 
-    input {
+    &.mobile {
+      position: fixed;
+      bottom: var(--nav-bar-height);
+    }
+
+    textarea {
       margin-left: var(--gutter);
       margin-right: var(--gutter);
       flex: 1;
+      margin-bottom: 6px;
     }
   }
 }

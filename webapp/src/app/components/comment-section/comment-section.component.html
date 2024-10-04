@@ -1,16 +1,16 @@
 <div id="container" *transloco="let t">
 
-  <div id="input" class="flex gutter" appAboveKeyboard (open)="smallButton = true" (close)="smallButton = false">
+  <div id="input" class="flex gutter align-end" appAboveKeyboard (open)="smallButton = true" (close)="smallButton = false">
     <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
-    <input
-      type="text"
+    <textarea
+      appAutoGrow
       [placeholder]="t('placeholder.what-do-you-think')"
       [(ngModel)]="commentBody"
       (keydown.enter)="onPostComment()"
       (focus)="focus.next()"
       (blur)="blur.next()"
       #input
-    />
+    ></textarea>
     <app-chip [label]="t('misc.comment')" color="var(--green)" icon="send" [class.disabled]="!this.formIsValid()"
       (click)="onPostComment()" [no-label]="smallButton"></app-chip>
   </div>

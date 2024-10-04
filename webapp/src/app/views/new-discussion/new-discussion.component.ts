@@ -31,6 +31,7 @@ export class NewDiscussionComponent implements OnInit, OnDestroy {
   searchResults?: User[];
   content = "";
   inFocus = false;
+  smallButton = false;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -43,11 +44,13 @@ export class NewDiscussionComponent implements OnInit, OnDestroy {
         this.selectedUser = user;
       }
     });
+    this.mainNav.fullscreenOnScroll = false;
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe;
     this.mainNav.restoreNavBar();
+    this.mainNav.fullscreenOnScroll = true;
   }
 
   // methods
