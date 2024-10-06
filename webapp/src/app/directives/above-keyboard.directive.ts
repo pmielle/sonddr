@@ -1,5 +1,5 @@
 import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import { Subscription, fromEvent, switchMap, tap } from 'rxjs';
+import { Subscription, filter, fromEvent, switchMap, tap } from 'rxjs';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { MainNavService } from '../services/main-nav.service';
 
@@ -31,28 +31,41 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
     this.initialZIndex = styles.zIndex;
     this.initialBottom = styles.bottom;
     this.keyboardSub = this.screen.keyboard$.pipe(
-      tap((state) => {
+      filter(() => this.multiInputFilter()),
+        tap((state) => {
         if (state === "open") {
           (this.ele.nativeElement as HTMLElement).style.position = "fixed";
           (this.ele.nativeElement as HTMLElement).style.zIndex = "999";
           (this.ele.nativeElement as HTMLElement).style.backgroundColor = "var(--background-color)";
           this.refreshBottom();
+          window.visualViewport!.onscroll = () => this.refreshBottom();
           this.open.next();
         } else {
-          (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
-          (this.ele.nativeElement as HTMLElement).style.backgroundColor = this.initialBackgroundColor;
-          (this.ele.nativeElement as HTMLElement).style.zIndex = this.initialZIndex;
-          (this.ele.nativeElement as HTMLElement).style.bottom = this.initialBottom;
-          this.close.next();
+          setTimeout(() => {
+            (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
+            (this.ele.nativeElement as HTMLElement).style.backgroundColor = this.initialBackgroundColor;
+            (this.ele.nativeElement as HTMLElement).style.zIndex = this.initialZIndex;
+            (this.ele.nativeElement as HTMLElement).style.bottom = this.initialBottom;
+            window.visualViewport!.onscroll = () => {};
+            this.close.next();
+          }, 100); // otherwise bottom is 0 sometimes
         }
       }),
-      switchMap(() => fromEvent(window.visualViewport!, "scroll")),
     ).subscribe(() => this.refreshBottom());
   }
 
   ngOnDestroy(): void {
     this.keyboardSub?.unsubscribe();
-    (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
+  }
+
+  multiInputFilter(): boolean {
+    if (this.ele.nativeElement === document.activeElement) { return true; }
+    let childTextareas = Array.from((this.ele.nativeElement as HTMLElement).getElementsByTagName('textarea'));
+    if (!childTextareas.length) { return true; }
+    for (let t of childTextareas) {
+      if (t == document.activeElement) { return true; }
+    }
+    return false;
   }
 
   refreshBottom() {
