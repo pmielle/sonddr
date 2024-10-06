@@ -5,10 +5,9 @@
         'out-of-sight':
           (screen.isMobile$|async)
           && (mainNav.isNavBarHidden
-            ||
-            ((mainNav.fullScreen$ | async) && !mainNav.isNavBarHidden)),
-            ||
-            ((mainNav.halfFullScreen$ | async) && !mainNav.isNavBarHidden)),
+            || ((mainNav.fullScreen$ | async) && !mainNav.isNavBarHidden)
+            || ((mainNav.halfFullScreen$ | async) && !mainNav.isNavBarHidden)
+          ),
         'mobile': screen.isMobile$ | async,
         'flat': (screen.isMobile$|async) && mainNav.isNavBarFlat,
     }"
