@@ -18,7 +18,7 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   keyboardSub?: Subscription;
   initialHeight = window.visualViewport!.height;
   initialPosition = "";
-  initialBackgroundColor = "";
+  initialFrosted = false;
   initialZIndex = "";
   initialBottom = "";
 
@@ -26,27 +26,30 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const styles = window.getComputedStyle(this.ele.nativeElement);
+    this.initialFrosted = (this.ele.nativeElement as HTMLElement).classList.contains("frosted");
     this.initialPosition = styles.position;
-    this.initialBackgroundColor = styles.backgroundColor;
     this.initialZIndex = styles.zIndex;
     this.initialBottom = styles.bottom;
     this.keyboardSub = this.screen.keyboard$.pipe(
       filter(() => this.multiInputFilter()),
-        tap((state) => {
+      tap((state) => {
+        let ele = this.ele.nativeElement as HTMLElement;
         if (state === "open") {
-          (this.ele.nativeElement as HTMLElement).style.position = "fixed";
-          (this.ele.nativeElement as HTMLElement).style.zIndex = "999";
-          (this.ele.nativeElement as HTMLElement).style.backgroundColor = "var(--background-color)";
+          ele.style.position = "fixed";
+          ele.style.zIndex = "999";
+          if (!this.initialFrosted) { ele.classList.add("frosted"); }
           this.refreshBottom();
           window.visualViewport!.onscroll = () => this.refreshBottom();
           this.open.next();
         } else {
           setTimeout(() => {
-            (this.ele.nativeElement as HTMLElement).style.position = this.initialPosition;
-            (this.ele.nativeElement as HTMLElement).style.backgroundColor = this.initialBackgroundColor;
-            (this.ele.nativeElement as HTMLElement).style.zIndex = this.initialZIndex;
-            (this.ele.nativeElement as HTMLElement).style.bottom = this.initialBottom;
-            window.visualViewport!.onscroll = () => {};
+            ele.style.position = this.initialPosition;
+            if (!this.initialFrosted) {
+              ele.classList.remove("frosted");
+            }
+            ele.style.zIndex = this.initialZIndex;
+            ele.style.bottom = this.initialBottom;
+            window.visualViewport!.onscroll = () => { };
             this.close.next();
           }, 100); // otherwise bottom is 0 sometimes
         }
