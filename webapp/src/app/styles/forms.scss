@@ -3,11 +3,6 @@ input, textarea {
     box-sizing: border-box;
 }
 
-.auto-grow {
-  field-sizing: content;
-  max-height: 5lh;
-}
-
 [contenteditable=true]:empty:before {
   content: attr(placeholder);
   color: rgba(255, 255, 255, 0.5);

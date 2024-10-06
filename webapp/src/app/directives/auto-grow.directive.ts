@@ -5,14 +5,33 @@ import { Directive, ElementRef, OnInit, inject } from '@angular/core';
 })
 export class AutoGrowDirective implements OnInit {
 
+  // dependencies
+  // --------------------------------------------
   ele = inject(ElementRef);
 
-  constructor() {
-  }
+  // i/o
+  // --------------------------------------------
+  // ...
+
+  // attributes
+  // --------------------------------------------
+  // ...
+
+  // lifecycle hooks
+  // --------------------------------------------
+  constructor() {}
 
   ngOnInit(): void {
-      (this.ele.nativeElement as HTMLTextAreaElement).rows = 1;
-      (this.ele.nativeElement as HTMLTextAreaElement).classList.add("auto-grow");
+    let ele = (this.ele.nativeElement as HTMLTextAreaElement);
+    ele.rows = 1;
+    this.setStyles(ele);
+  }
+
+  // methods
+  // --------------------------------------------
+  setStyles(ele: HTMLTextAreaElement) {
+    ele.style.setProperty("fieldSizing", "content");
+    ele.style.maxHeight = "5lh";
   }
 
 }
