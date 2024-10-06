@@ -39,6 +39,7 @@ export class MainNavService implements OnDestroy {
   navigated = false;
   previousScroll = 0;
   fullScreen$ = new BehaviorSubject<boolean>(false);
+  halfFullScreen$ = new BehaviorSubject<boolean>(false);
   defaultTopValue = 350;
   topValue = this.defaultTopValue;
   keyboardSub?: Subscription;
@@ -56,12 +57,12 @@ export class MainNavService implements OnDestroy {
     this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
       if (state == "closed") {
         this.ignoreScroll = false;
-        this.fullScreen$.next(false);
+        this.halfFullScreen$.next(false);
         this.showFab();
       } else if (state == "open") {
         this.ignoreScroll = true;
         setTimeout(() => {
-          this.fullScreen$.next(true);
+          this.halfFullScreen$.next(true);
           this.hideFab();
         }, 100);
       }
