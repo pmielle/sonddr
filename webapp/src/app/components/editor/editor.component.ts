@@ -36,8 +36,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   content = "";
   inTags = new Set<string>();
   weirdTags = new Set<string>(["div", "span", "#text"]); // lowercase
-  showToolbar = false;
-  contentIsFocused = false;
+  showToolbar = true;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -50,25 +49,16 @@ export class EditorComponent implements OnInit, OnDestroy {
   // methods
   // --------------------------------------------
   onKeyboardOpen() {
-    if (this.contentIsFocused) {
-      this.showToolbar = true;
-    } else {
-      this.showToolbar = false;
-    }
   }
 
   onKeyboardClose() {
   }
 
   onFocus() {
-    this.contentIsFocused = true;
-    this.showToolbar = true;
     this.focus.next();
   }
 
   onBlur() {
-    this.contentIsFocused = false;
-    this.showToolbar = false;
     this.blur.next();
   }
 

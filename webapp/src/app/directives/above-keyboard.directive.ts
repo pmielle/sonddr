@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Subscription, filter, fromEvent, switchMap, tap } from 'rxjs';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { MainNavService } from '../services/main-nav.service';
@@ -12,6 +12,7 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   ele = inject(ElementRef);
   mainNav = inject(MainNavService);
 
+  @Input('root') root: HTMLElement = this.ele.nativeElement;
   @Output('open') open = new EventEmitter<void>();
   @Output('close') close = new EventEmitter<void>();
 
@@ -62,10 +63,10 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   }
 
   multiInputFilter(): boolean {
-    if (this.ele.nativeElement === document.activeElement) { return true; }
-    let childTextareas = Array.from((this.ele.nativeElement as HTMLElement).getElementsByTagName('textarea'));
-    if (!childTextareas.length) { return true; }
-    for (let t of childTextareas) {
+    if (this.root === document.activeElement) { return true; }
+    let childrenInputs = Array.from(this.root.querySelectorAll("textarea, input, div[contenteditable=\"true\"]"));
+    if (!childrenInputs.length) { return true; }
+    for (let t of childrenInputs) {
       if (t == document.activeElement) { return true; }
     }
     return false;
