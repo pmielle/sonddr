@@ -37,8 +37,8 @@
   </div>
 
   <div id="form" class="flex column gap">
-    <input id="title" type="text" [placeholder]="t('placeholder.choose-a-title')" (keyup)="onKeyUp()" [(ngModel)]="title"
-      (keydown.tab)="onTitleTab($event)">
+    <textarea appAutoGrow id="title" [placeholder]="t('placeholder.choose-a-title')"
+      (keyup)="onKeyUp()" [(ngModel)]="title" (keydown.tab)="onTitleTab($event)"></textarea>
 
 
     <div id="editor">
