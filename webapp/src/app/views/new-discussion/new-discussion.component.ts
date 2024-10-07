@@ -44,13 +44,11 @@ export class NewDiscussionComponent implements OnInit, OnDestroy {
         this.selectedUser = user;
       }
     });
-    this.mainNav.fullscreenOnScroll = false;
+    this.mainNav.disableFullScreenOnScroll();
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe;
-    this.mainNav.restoreNavBar();
-    this.mainNav.fullscreenOnScroll = true;
   }
 
   // methods

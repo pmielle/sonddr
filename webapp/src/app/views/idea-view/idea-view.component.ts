@@ -31,7 +31,7 @@ export class IdeaViewComponent implements OnDestroy {
   // attributes
   // --------------------------------------------
   routeSub?: Subscription;
-  fabClickSub?: Subscription;
+  fabSub?: Subscription;
   popupSub?: Subscription;
   idea?: Idea;
   comments?: Comment[];
@@ -50,20 +50,14 @@ export class IdeaViewComponent implements OnDestroy {
       this.http.getComments("recent", id, undefined).then(c => this.comments = c);
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
-    this.fabClickSub = this.mainNav.fabClick.subscribe(() => this.toggleCheer());
+    this.fabSub = this.mainNav.fabClick$.subscribe(() => this.toggleCheer());
 
   }
 
   ngOnDestroy(): void {
-
-    // unsubscribe
     this.routeSub?.unsubscribe();
-    this.fabClickSub?.unsubscribe();
+    this.fabSub?.unsubscribe();
     this.popupSub?.unsubscribe();
-
-    // restore fab and nav bar
-    this.mainNav.showNavBar();
-    this.mainNav.showFab();
   }
 
   // methods

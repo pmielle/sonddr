@@ -44,11 +44,7 @@ export class DetailsViewComponent {
   }
 
   ngOnDestroy(): void {
-    // unsubscribe
     this.routeSub?.unsubscribe();
-
-    // restore nav bar and fab
-    this.mainNav.showNavBar();
   }
 
   // methods

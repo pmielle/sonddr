@@ -49,14 +49,12 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
         (data) => this.onChatRoomUpdate(data)
       );
     });
-    this.mainNav.fullscreenOnScroll = false;
+    this.mainNav.disableFullScreenOnScroll();
   }
 
   ngOnDestroy(): void {
-    this.mainNav.restoreNavBar();
     this.routeSub?.unsubscribe();
     this.chatRoomSub?.unsubscribe();
-    this.mainNav.fullscreenOnScroll = true;
   }
 
   // methods

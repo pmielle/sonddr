@@ -25,26 +25,30 @@ export class MainNavService implements OnDestroy {
   i18n = inject(TranslationService);
   screen = inject(ScreenSizeService);
 
+  // i/o
+  // --------------------------------------------
+  // ...
+
   // attributes
   // --------------------------------------------
+  static defaultTopValue = 350;
+  tab$ = new BehaviorSubject<Tab|undefined>(undefined);
+  atTabRoot$ = new BehaviorSubject<boolean|undefined>(undefined);
+  fabMode$ = new BehaviorSubject<FabMode|undefined>(undefined);
+  fullScreen$ = new BehaviorSubject<boolean>(false);
+  halfFullScreen$ = new BehaviorSubject<boolean>(false);
+  fabClick$ = new EventEmitter<void>();
   isNavBarHidden = false;
   isNavBarFlat = false;
   isFabHidden = false;
   isFabDisabled = false;
-  fabClick = new EventEmitter<void>();
-  tab$ = new BehaviorSubject<Tab|undefined>(undefined);
-  atTabRoot$ = new BehaviorSubject<boolean|undefined>(undefined);
-  fabMode$ = new BehaviorSubject<FabMode|undefined>(undefined);
-  routerSub?: Subscription;
   navigated = false;
+  topValue = MainNavService.defaultTopValue;
   previousScroll = 0;
-  fullScreen$ = new BehaviorSubject<boolean>(false);
-  halfFullScreen$ = new BehaviorSubject<boolean>(false);
-  defaultTopValue = 350;
-  topValue = this.defaultTopValue;
-  keyboardSub?: Subscription;
   ignoreScroll = false;
-  fullscreenOnScroll = true;
+  fullScreenOnScroll = true;
+  keyboardSub?: Subscription;
+  routerSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -73,17 +77,35 @@ export class MainNavService implements OnDestroy {
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
     this.keyboardSub?.unsubscribe();
-    this.ignoreScroll = false;
+    this.restoreAll();
   }
 
   // methods
   // --------------------------------------------
-  resetTopValue() {
-    this.topValue = this.defaultTopValue;
+  goToTab(tab: Tab) {
+    this.router.navigateByUrl(`/${tab}`);
+  }
+
+  scrollToBottom(smooth: boolean = false) {
+    const tabs = document.getElementById("tabs");
+    tabs?.scrollTo({
+      top: 999999,
+      left: 0,
+      behavior: smooth ? "smooth" : "instant"
+    });
+  }
+
+  scrollToTop(smooth: boolean = false) {
+    const tabs = document.getElementById("tabs");
+    tabs?.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: smooth ? "smooth" : "instant"
+    });
   }
 
   onScroll(el: Element) {
-    if (this.ignoreScroll || !this.fullscreenOnScroll) { return }
+    if (this.ignoreScroll || !this.fullScreenOnScroll) { return }
     if (el.scrollTop < this.topValue) {
       if (this.fullScreen$.getValue() === true ) { this.fullScreen$.next(false); }
     } else if (el.scrollTop + el.clientHeight > el.scrollHeight - 100) {
@@ -96,86 +118,14 @@ export class MainNavService implements OnDestroy {
     this.previousScroll = el.scrollTop;
   }
 
-  setCheerFab() {
-    this.fabMode$.next({
-      icon: "favorite_outline",
-      color: "var(--primary-color)",
-      label: this.i18n.get("fab.cheer"),
-      action: () => {this.fabClick.next();}
-    });
-  }
-
-  setHasCheeredFab() {
-    this.fabMode$.next({
-      icon: "favorite",
-      color: "var(--primary-color)",
-      label: "✅",
-      action: () => {this.fabClick.next();}
-    });
-  }
-
-  setAddVolunteerFab() {
-    this.fabMode$.next({
-      icon: "add",
-      color: "var(--primary-color)",
-      label: this.i18n.get("fab.request"),
-      action: () => {this.fabClick.next();}
-    });
-  }
-
-  setOtherUserFab(userId: string) {
-    this.fabMode$.next({
-        icon: "add",
-        color: "var(--blue)",
-        label: this.i18n.get("fab.send-a-message"),
-        action: () => {this.router.navigateByUrl(`/messages/new-discussion?preselected=${userId}`)}
-    });
-  }
-
-  setLoggedInUserFab() {
-    this.fabMode$.next({
-        icon: "logout",
-        color: "var(--red)",
-        label: this.i18n.get("fab.log-out"),
-        action: () => { this.auth.logOut(); }
-    });
-  }
-
-  setUndefinedFab() {
-    this.fabMode$.next(undefined);
-  }
-
-  goToTab(tab: Tab) {
-    this.router.navigateByUrl(`/${tab}`);
-  }
-
-  scrollToBottom(smooth: boolean = false) {
-    setTimeout(() => {
-      const tabs = document.getElementById("tabs");
-      tabs?.scrollTo({
-        top: 999999,
-        left: 0,
-        behavior: smooth ? "smooth" : "instant"
-      });
-    }, 0);
-  }
-
-  scrollToTop(smooth: boolean = false) {
-    const tabs = document.getElementById("tabs");
-    tabs?.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: smooth ? "smooth" : "instant"
-    });
-  }
-
   onRouteChange(e: NavigationEnd) {
     const url = e.urlAfterRedirects;
+    this.restoreAll();
+    this.updateAtTabRoot(url);
     this.updateTab(url);
     setTimeout(() => {
       this.updateFab(url);
     }, 100);
-    this.updateAtTabRoot(url);
     this.navigated = e.id > 1;
   }
 
@@ -229,14 +179,14 @@ export class MainNavService implements OnDestroy {
         icon: "done",
         color: "var(--green)",
         label: label,
-        action: () => {this.fabClick.next();}
+        action: () => {this.fabClick$.next();}
       });
     } else if (url.startsWith("/ideas/user-edit/")) {
       this.fabMode$.next({
         icon: "done",
         color: "var(--green)",
         label: this.i18n.get("fab.done"),
-        action: () => {this.fabClick.next();}
+        action: () => {this.fabClick$.next();}
       });
     } else if (url.startsWith("/ideas/volunteers/")) {
       this.fabMode$.next(undefined); // handled by the view depending on who the user is
@@ -262,9 +212,92 @@ export class MainNavService implements OnDestroy {
     }
   }
 
+  setCheerFab() {
+    this.fabMode$.next({
+      icon: "favorite_outline",
+      color: "var(--primary-color)",
+      label: this.i18n.get("fab.cheer"),
+      action: () => {this.fabClick$.next();}
+    });
+  }
+
+  setHasCheeredFab() {
+    this.fabMode$.next({
+      icon: "favorite",
+      color: "var(--primary-color)",
+      label: "✅",
+      action: () => {this.fabClick$.next();}
+    });
+  }
+
+  setAddVolunteerFab() {
+    this.fabMode$.next({
+      icon: "add",
+      color: "var(--primary-color)",
+      label: this.i18n.get("fab.request"),
+      action: () => {this.fabClick$.next();}
+    });
+  }
+
+  setOtherUserFab(userId: string) {
+    this.fabMode$.next({
+        icon: "add",
+        color: "var(--blue)",
+        label: this.i18n.get("fab.send-a-message"),
+        action: () => {this.router.navigateByUrl(`/messages/new-discussion?preselected=${userId}`)}
+    });
+  }
+
+  setLoggedInUserFab() {
+    this.fabMode$.next({
+        icon: "logout",
+        color: "var(--red)",
+        label: this.i18n.get("fab.log-out"),
+        action: () => { this.auth.logOut(); }
+    });
+  }
+
+  setUndefinedFab() {
+    this.fabMode$.next(undefined);
+  }
+
+  // views can temporarily hide stuff:
+  // restore everything back to its original state
+  restoreAll() {
+    this.restoreNavBar();
+    this.restoreFab();
+    this.restoreScroll();
+  }
+
+  restoreScroll() {
+    this.ignoreScroll = false;
+    this.fullScreenOnScroll = true;
+    this.previousScroll = 0;
+    this.resetTopValue();
+  }
+
+  restoreNavBar() {
+    this.isNavBarFlat = false;
+    this.showNavBar();
+  }
+
+  restoreFab() {
+    this.enableFab();
+    this.isFabHidden = false;
+  }
+
+  disableFullScreenOnScroll() {
+    this.fullScreenOnScroll = false;
+  }
+
+  resetTopValue() {
+    this.topValue = MainNavService.defaultTopValue;
+  }
+
   hideNavBar() {
     this.isNavBarHidden = true;
   }
+
   showNavBar() {
     this.isNavBarHidden = false;
   }
@@ -272,13 +305,11 @@ export class MainNavService implements OnDestroy {
   flattenNavBar() {
     this.isNavBarFlat = true;
   }
-  restoreNavBar() {
-    this.isNavBarFlat = false;
-  }
 
   hideFab() {
     this.isFabHidden = true;
   }
+
   showFab() {
     this.isFabHidden = false;
   }
@@ -286,13 +317,9 @@ export class MainNavService implements OnDestroy {
   enableFab() {
     this.isFabDisabled = false;
   }
+
   disableFab() {
     this.isFabDisabled = true;
-  }
-
-  restoreFab() {
-    this.isFabHidden = false;
-    this.isFabDisabled = false;
   }
 
 }

@@ -78,8 +78,6 @@ export class UserViewComponent {
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
-    this.mainNav.showNavBar();
-    this.mainNav.resetTopValue();
   }
 
   // methods

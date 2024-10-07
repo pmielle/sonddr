@@ -35,7 +35,7 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   expandedCandidates: Map<string, boolean> = new Map();
   routeSub?: Subscription;
   popupSub?: Subscription;
-  fabClickSub?: Subscription;
+  fabSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -49,14 +49,13 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
       });
     });
     setTimeout(() => this.mainNav.hideNavBar(), 100); // otherwise NG0100
-    this.fabClickSub = this.mainNav.fabClick.subscribe(() => this.openVolunteerPopup());
+    this.fabSub = this.mainNav.fabClick$.subscribe(() => this.openVolunteerPopup());
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe;
-    this.mainNav.showNavBar();
     this.popupSub?.unsubscribe();
-    this.fabClickSub?.unsubscribe();
+    this.fabSub?.unsubscribe();
   }
 
   // methods

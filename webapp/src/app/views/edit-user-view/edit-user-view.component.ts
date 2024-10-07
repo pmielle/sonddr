@@ -75,20 +75,14 @@ export class EditUserViewComponent {
     }, 100); // otherwise NG0100
 
     // listen to fab clicks
-    this.fabSub = this.mainNav.fabClick.subscribe(() => {
+    this.fabSub = this.mainNav.fabClick$.subscribe(() => {
         this.submit();
     });
   }
 
   ngOnDestroy(): void {
-
-    // unsubscribe
     this.mainSub?.unsubscribe();
     this.fabSub?.unsubscribe();
-
-    // restore nav bar and fab
-    this.mainNav.showNavBar();
-    this.mainNav.restoreFab();
   }
 
   // methods

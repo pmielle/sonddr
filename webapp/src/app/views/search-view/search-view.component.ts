@@ -25,9 +25,7 @@ export class SearchViewComponent implements OnDestroy {
 
   // lifecycle hooks
   // --------------------------------------------
-  ngOnDestroy(): void {
-      this.mainNav.showNavBar();
-  }
+  ngOnDestroy(): void {}
 
   // methods
   // --------------------------------------------

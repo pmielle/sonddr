@@ -104,13 +104,14 @@ export class AddViewComponent {
     }, 100); // otherwise NG0100
 
     // listen to fab clicks
-    this.fabSub = this.mainNav.fabClick.subscribe(() => {
+    this.fabSub = this.mainNav.fabClick$.subscribe(() => {
       if (this.editIdeaId) {
         this.submitEdit();
       } else {
         this.submit();
       }
     });
+
   }
 
   ngOnDestroy(): void {
@@ -118,10 +119,6 @@ export class AddViewComponent {
     // unsubscribe
     this.mainSub?.unsubscribe();
     this.fabSub?.unsubscribe();
-
-    // restore nav bar and fab
-    this.mainNav.showNavBar();
-    this.mainNav.restoreFab();
 
     // stop any draft save
     if (this.draftTimeout) {
