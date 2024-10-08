@@ -84,18 +84,20 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   }
 
   onKeyboardClose() {
-    let ele = (this.ele.nativeElement as HTMLElement);
-    // restore the styles
-    ele.style.position = this.initialPosition;
-    ele.style.zIndex = this.initialZIndex;
-    ele.style.bottom = this.initialBottom;
-    if (!this.hasFrosted) {
-      ele.classList.remove("frosted");
-    }
-    // stop reacting to scroll
-    this.stopReactingToScroll();
-    // bubble up
-    this.close.next();
+    setTimeout(() => {
+      let ele = (this.ele.nativeElement as HTMLElement);
+      // restore the styles
+      ele.style.position = this.initialPosition;
+      ele.style.zIndex = this.initialZIndex;
+      ele.style.bottom = this.initialBottom;
+      if (!this.hasFrosted) {
+        ele.classList.remove("frosted");
+      }
+      // stop reacting to scroll
+      this.stopReactingToScroll();
+      // bubble up
+      this.close.next();
+    }, 100); // do not restore scroll too early
   }
 
   stopReactingToScroll() {
