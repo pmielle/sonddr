@@ -7,6 +7,7 @@ import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { EditorComponent } from 'src/app/components/editor/editor.component';
 import { UserDataService } from 'src/app/services/user-data.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-edit-user-view',
@@ -23,11 +24,14 @@ export class EditUserViewComponent {
   userData = inject(UserDataService);
   mainNav = inject(MainNavService);
   router = inject(Router);
+  i18n = inject(TranslationService);
+
+  // i/o
+  // --------------------------------------------
+  @ViewChild(EditorComponent) editor!: EditorComponent;
 
   // attributes
   // --------------------------------------------
-  mainSub?: Subscription;
-  fabSub?: Subscription;
   coverPreview?: string;
   profilePicturePreview?: string;
   name = "";
@@ -37,11 +41,22 @@ export class EditUserViewComponent {
   initialBio?: string;
   user?: User;
   welcome = false;
-  @ViewChild(EditorComponent) editor!: EditorComponent;
+  mainSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
+
+    // setup main nav
+    this.mainNav.hideNavBar();
+    this.mainNav.disableFab();
+    this.mainNav.setFab({
+      icon: "done",
+      color: "var(--green)",
+      label: this.i18n.get("fab.done"),
+      action: () => this.submit(),
+    });
+
 
     // get data
     this.mainSub = combineLatest([
@@ -68,30 +83,14 @@ export class EditUserViewComponent {
       }
     });
 
-    // hide bottom bar and disable fab
-    setTimeout(() => {
-      this.mainNav.hideNavBar();
-      this.mainNav.disableFab();
-    }, 100); // otherwise NG0100
-
-    // listen to fab clicks
-    this.fabSub = this.mainNav.fabClick$.subscribe(() => {
-        this.submit();
-    });
   }
 
   ngOnDestroy(): void {
     this.mainSub?.unsubscribe();
-    this.fabSub?.unsubscribe();
   }
 
   // methods
   // --------------------------------------------
-  chooseCover() {
-    const gradient = 'var(--cover-gradient)';
-    return this.coverPreview ? `${gradient}, url(${this.coverPreview})` : gradient;
-  }
-
   setupEdit(user: User) {
     this.name = user.name;
     this.editor.setContent(user.bio);
@@ -99,7 +98,11 @@ export class EditUserViewComponent {
     this.initialName = user.name;
     if (user.cover) { this.coverPreview = this.http.getImageUrl(user.cover); }
     if (user.profilePicture) { this.profilePicturePreview = this.http.getImageUrl(user.profilePicture); }
-    this.refreshFabDisplay();
+  }
+
+  chooseCover() {
+    const gradient = 'var(--cover-gradient)';
+    return this.coverPreview ? `${gradient}, url(${this.coverPreview})` : gradient;
   }
 
   onNameTab(e: Event) {
@@ -128,7 +131,7 @@ export class EditUserViewComponent {
         this.welcome ? `/` : `/ideas/user/${this.user!.id}`,
         { skipLocationChange: this.welcome ? false : true }
       );
-    }, 333); // otherwise doesn't refresh for some reason
+    }, 500); // otherwise doesn't refresh properly
   }
 
   onProfilePictureChange(file: File) {

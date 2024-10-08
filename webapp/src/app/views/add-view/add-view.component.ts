@@ -30,10 +30,13 @@ export class AddViewComponent {
   snack = inject(MatSnackBar);
   i18n = inject(TranslationService);
 
+  // i/o
+  // --------------------------------------------
+  @ViewChild(EditorComponent) editor!: EditorComponent;
+
   // attributes
   // --------------------------------------------
-  mainSub?: Subscription;
-  fabSub?: Subscription;
+  editIdeaId?: string;
   ideas?: Idea[];
   goals?: Goal[];
   selectedGoals: Goal[] = [];
@@ -41,17 +44,22 @@ export class AddViewComponent {
   coverPreview?: string;
   title = "";
   cover?: File;
-  editIdeaId?: string;
   initialContent?: string;
   initialTitle?: string;
   initialGoals?: Goal[];
-  @ViewChild(EditorComponent) editor!: EditorComponent;
-  draftTimeout: any;
   draft?: Draft;
+  draftTimeout: any;
+  mainSub?: Subscription;
+  hasBeenSubmitted = false;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
+
+    // main nav common setup
+    // fab is set later, depending on query params
+    this.mainNav.hideNavBar();
+    this.mainNav.disableFab();
 
     // get data
     this.mainSub = combineLatest([
@@ -66,50 +74,43 @@ export class AddViewComponent {
       this.goals = goals;
       this.selectableGoals = goals;
 
-      // early return if edit mode
+      // if edit mode, get the idea and pre-fill it
+      // and early return
       const editIdeaId = map.get("edit");
       const preselectedGoalId = map.get("preselected");
       this.editIdeaId = undefined;
       if (editIdeaId) {
-        this.editIdeaId = editIdeaId;
-        this.http.getIdea(editIdeaId).then(idea => {
-          if (! idea.author.isUser) { throw new Error("Unauthorized"); }
-          this.setupEdit(idea);
+        this.setupEditMode(editIdeaId);
+
+        // set fab
+        this.mainNav.setFab({
+          icon: "done",
+          color: "var(--green)",
+          label: this.i18n.get("fab.done"),
+          action: () => this.submitEdit(),
         });
-        return;
+
+        return; // guard
       }
 
-      // pre-fill things:
+      // set fab
+      this.mainNav.setFab({
+        icon: "done",
+        color: "var(--green)",
+        label: this.i18n.get("fab.share"),
+        action: () => this.submit(),
+      });
+
+      // pre-fill things if needed:
       // draft or goal preselection
       if (drafts && drafts.length) {
-
-        if (drafts.length > 1) { throw new Error("No more than 1 draft per user is expected"); }
+        if (drafts.length > 1) { console.warn(`Found ${drafts.length} drafts instead of 1`); }
         const draft = drafts[0];
-        this.restoreDraft(draft);
-
+        this.setupDraft(draft);
       } else if (preselectedGoalId) {
-        const goal = goals.find(g => g.id === preselectedGoalId);
-        if (!goal) {
-          throw new Error(`Failed to preselect ${preselectedGoalId}: no matching goal found`);
-        }
-        this.selectGoal(goal, true);
+        this.setupPreselectedGoal(preselectedGoalId);
       }
 
-    });
-
-    // hide bottom bar and disable fab
-    setTimeout(() => {
-      this.mainNav.hideNavBar();
-      this.mainNav.disableFab();
-    }, 100); // otherwise NG0100
-
-    // listen to fab clicks
-    this.fabSub = this.mainNav.fabClick$.subscribe(() => {
-      if (this.editIdeaId) {
-        this.submitEdit();
-      } else {
-        this.submit();
-      }
     });
 
   }
@@ -118,9 +119,9 @@ export class AddViewComponent {
 
     // unsubscribe
     this.mainSub?.unsubscribe();
-    this.fabSub?.unsubscribe();
 
     // stop any draft save
+    // and save one last time
     if (this.draftTimeout) {
       clearInterval(this.draftTimeout);
       this.refreshDraft();
@@ -130,7 +131,30 @@ export class AddViewComponent {
 
   // methods
   // --------------------------------------------
-  restoreDraft(draft: Draft) {
+  setupPreselectedGoal(goalId: string) {
+    const goal = this.goals?.find(g => g.id === goalId);
+    if (!goal) {
+      throw new Error(`Failed to preselect ${goalId}: no matching goal found`);
+    }
+    this.selectGoal(goal, true);
+  }
+
+  setupEditMode(ideaId: string) {
+    this.editIdeaId = ideaId;
+    this.http.getIdea(ideaId).then(idea => {
+      if (! idea.author.isUser) { throw new Error("Unauthorized"); }
+      this.title = idea.title;
+      idea.goals.forEach(g => this.selectGoal(g));
+      this.editor.setContent(idea.content);
+      this.initialTitle = idea.title;
+      this.initialContent = idea.content;
+      this.initialGoals = idea.goals;
+      if (idea.cover) { this.coverPreview = this.http.getImageUrl(idea.cover); }
+    });
+
+  }
+
+  setupDraft(draft: Draft) {
     this.draft = draft;  // save it for later use
     if (draft.title) { this.title = draft.title }
     if (draft.content) { this.editor.setContent(draft.content) }
@@ -139,10 +163,52 @@ export class AddViewComponent {
       .filter(g => draft.goalIds?.includes(g.id))
       .forEach(g => this.selectGoal(g, true));
     }
-    setTimeout(() => this.refreshFabDisplay(), 300);
-    this.snack.open("Draft restored", "Discard", { duration: 5 * 1e3 }).onAction().subscribe(() => {
-      this.discardDraft();
-    });
+    this.refreshFabDisplay();
+    this.snack.open("Draft restored", "Discard", { duration: 5 * 1e3 })
+      .onAction().subscribe(() => {
+        this.discardDraft();
+      });
+  }
+
+  async submitEdit(): Promise<void> {
+    if (! this.formIsValid() || ! this.somethingHasBeenEdited()) {
+      throw new Error("submit should not be callable if one input is empty or if nothing has changed");
+    }
+    await this.http.editIdea(
+      this.editIdeaId!,
+      this.titleHasChanged() ? this.title : undefined,
+      this.contentHasChanged() ? this.editor.content : undefined,
+      this.goalsHaveChanged() ? this.selectedGoals : undefined,
+      this.cover,
+      this.editor.images,
+    );
+    setTimeout(() => this.router.navigateByUrl(
+      `/ideas/idea/${this.editIdeaId!}`,
+      {skipLocationChange: true}
+    ), 100); // otherwise doesn't refresh for some reason
+  }
+
+  async submit(): Promise<void> {
+    if (this.formIsValid()) {
+      // post the idea
+      const id = await this.http.postIdea(
+        this.title,
+        this.editor.content,
+        this.selectedGoals.map(g => g.id),
+        this.cover,
+        this.editor.images,
+      );
+      // draft management
+      if (this.draft) { this.http.deleteDraft(this.draft.id); }
+      this.hasBeenSubmitted = true; // otherwise draft will be saved onDestroy
+      // navigate away
+      this.router.navigateByUrl(
+        `/ideas/idea/${id}`,
+        {replaceUrl: true}
+      );
+    } else {
+      throw new Error("submit should not be callable if one input is empty");
+    }
   }
 
   discardDraft() {
@@ -167,6 +233,12 @@ export class AddViewComponent {
   }
 
   refreshDraft() {
+
+    // do not save drafts in edit mode
+    if (this.editIdeaId) { return; }
+
+    // do not save if the idea is being submitted
+    if (this.hasBeenSubmitted) { return; }
 
     // empty form: delete draft if any
     if (
@@ -224,17 +296,6 @@ export class AddViewComponent {
     return this.coverPreview ? `${gradient}, url(${this.coverPreview})` : gradient;
   }
 
-  setupEdit(idea: Idea) {
-    this.title = idea.title;
-    idea.goals.forEach(g => this.selectGoal(g));
-    this.editor.setContent(idea.content);
-    this.initialTitle = idea.title;
-    this.initialContent = idea.content;
-    this.initialGoals = idea.goals;
-    if (idea.cover) { this.coverPreview = this.http.getImageUrl(idea.cover); }
-    this.refreshFabDisplay();
-  }
-
   onTitleTab(e: Event) {
     e.preventDefault();
     this.editor.contentDiv?.nativeElement.focus();
@@ -245,45 +306,6 @@ export class AddViewComponent {
       ? true
       : false;
     return result;
-  }
-
-  async submitEdit(): Promise<void> {
-    if (! this.formIsValid() || ! this.somethingHasBeenEdited()) {
-      throw new Error("submit should not be callable if one input is empty or if nothing has changed");
-    }
-    await this.http.editIdea(
-      this.editIdeaId!,
-      this.titleHasChanged() ? this.title : undefined,
-      this.contentHasChanged() ? this.editor.content : undefined,
-      this.goalsHaveChanged() ? this.selectedGoals : undefined,
-      this.cover,
-      this.editor.images,
-    );
-    setTimeout(() => this.router.navigateByUrl(
-      `/ideas/idea/${this.editIdeaId!}`,
-      {skipLocationChange: true}
-    ), 100); // otherwise doesn't refresh for some reason
-  }
-
-  async submit(): Promise<void> {
-    if (this.formIsValid()) {
-      const id = await this.http.postIdea(
-        this.title,
-        this.editor.content,
-        this.selectedGoals.map(g => g.id),
-        this.cover,
-        this.editor.images,
-      );
-      if (this.draft) {
-        this.http.deleteDraft(this.draft.id);
-      }
-      this.router.navigateByUrl(
-        `/ideas/idea/${id}`,
-        {replaceUrl: true}
-      );
-    } else {
-      throw new Error("submit should not be callable if one input is empty");
-    }
   }
 
   onCoverChange(file: File) {

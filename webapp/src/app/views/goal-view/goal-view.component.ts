@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Goal, Idea } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
@@ -26,6 +26,11 @@ export class GoalViewComponent implements OnInit, OnDestroy {
   userData = inject(UserDataService);
   i18n = inject(TranslationService);
   mainNav = inject(MainNavService);
+  router = inject(Router);
+
+  // i/o
+  // --------------------------------------------
+  // ...
 
   // attributes
   // --------------------------------------------
@@ -39,17 +44,15 @@ export class GoalViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.routeSub = this.route.paramMap.subscribe((map) => {
       const id = map.get("id")!;
-      this.http.getGoal(id).then(g => this.goal = g);
-      this.http.getGoals().then(goals => {
-        let otherGoals: Goal[] = [];
-        let goal: Goal|undefined = undefined;
-        goals.forEach(g => {
-          if (g.id == id) { goal = g }
-          else { otherGoals.push(g) }
-        });
-        this.otherGoals = otherGoals;
-        this.goal = goal;
+      // set fab
+      this.mainNav.setFab({
+        icon: "add",
+        color: "var(--primary-color)",
+        label: this.i18n.get("fab.share-an-idea"),
+        action: () => {this.router.navigateByUrl(`/ideas/add?preselected=${id}`)}
       });
+      // get goal and its ideas
+      this.http.getGoals().then(goals => this.dispatchGoals(goals, id));
       this.http.getIdeas("recent", id, undefined).then(i => this.ideas = i);
     })
   }
@@ -60,6 +63,17 @@ export class GoalViewComponent implements OnInit, OnDestroy {
 
   // methods
   // --------------------------------------------
+  dispatchGoals(goals: Goal[], goalId: string) {
+    let otherGoals: Goal[] = [];
+    let goal: Goal|undefined = undefined;
+    goals.forEach(g => {
+      if (g.id == goalId) { goal = g }
+      else { otherGoals.push(g) }
+    });
+    this.otherGoals = otherGoals;
+    this.goal = goal;
+  }
+
   onSortByChange(sortBy: SortBy) {
     if (!this.goal) {
       throw new Error("this.goal should be defined at this point");

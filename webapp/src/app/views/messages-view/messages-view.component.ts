@@ -2,7 +2,9 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Discussion } from 'sonddr-shared/dist';
 import { HttpService } from 'src/app/services/http.service';
+import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
+import { TranslationService } from 'src/app/services/translation.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 
 @Component({
@@ -18,6 +20,12 @@ export class MessagesViewComponent implements OnInit, OnDestroy {
   userData = inject(UserDataService);
   router = inject(Router);
   http = inject(HttpService);
+  mainNav = inject(MainNavService);
+  i18n = inject(TranslationService);
+
+  // i/o
+  // --------------------------------------------
+  // ...
 
   // attributes
   // --------------------------------------------
@@ -26,6 +34,12 @@ export class MessagesViewComponent implements OnInit, OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit() {
+    this.mainNav.setFab({
+      icon: "add",
+      color: "var(--blue)",
+      label: this.i18n.get("fab.start-a-discussion"),
+      action: () => {this.router.navigateByUrl(`/messages/new-discussion`)}
+    });
   }
 
   ngOnDestroy(): void {

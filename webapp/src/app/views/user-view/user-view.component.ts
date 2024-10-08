@@ -8,6 +8,8 @@ import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { UserDataService } from 'src/app/services/user-data.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-user-view',
@@ -25,13 +27,19 @@ export class UserViewComponent {
   time = inject(TimeService);
   mainNav = inject(MainNavService);
   router = inject(Router);
+  auth = inject(AuthService);
+  i18n = inject(TranslationService);
+
+  // i/o
+  // --------------------------------------------
+  // ...
 
   // attributes
   // --------------------------------------------
   @ViewChild(IdeaListComponent) ideaList?: IdeaListComponent;
-  routeSub?: Subscription;
   user?: User;
   ideas?: Idea[];
+  routeSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -44,19 +52,28 @@ export class UserViewComponent {
         this.http.getUser(id).then(u => {
 
           // manage fab and bottom bar
+          // depending on who the user is
           if (u) {
             if (u.isUser) {
-              setTimeout(() => {
-                this.mainNav.setLoggedInUserFab();
-              }, 100);
               this.mainNav.hideNavBar();
+              this.mainNav.setFab({
+                icon: "logout",
+                color: "var(--red)",
+                label: this.i18n.get("fab.log-out"),
+                action: () => this.auth.logOut(),
+              });
             } else {
-              this.mainNav.setOtherUserFab(u.id);
               this.mainNav.showNavBar();
+              this.mainNav.setFab({
+                icon: "add",
+                color: "var(--blue)",
+                label: this.i18n.get("fab.send-a-message"),
+                action: () => this.router.navigateByUrl(`/messages/new-discussion?preselected=${u.id}`),
+              });
             }
           } else {
-            this.mainNav.setUndefinedFab();
             this.mainNav.showNavBar();
+            this.mainNav.setFab(undefined);
           }
 
           // set user
@@ -87,7 +104,7 @@ export class UserViewComponent {
     return this.user?.cover ? `${gradient}, url(${this.http.getImageUrl(this.user.cover)}` : gradient;
   }
 
-  async onEditClick() {
+  onEditClick() {
     this.router.navigateByUrl(
       `/ideas/user-edit/${this.user!.id}`,
       {skipLocationChange: true}

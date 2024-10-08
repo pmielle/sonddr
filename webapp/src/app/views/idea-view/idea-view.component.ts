@@ -9,6 +9,7 @@ import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDataService } from 'src/app/services/user-data.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-idea-view',
@@ -27,15 +28,19 @@ export class IdeaViewComponent implements OnDestroy {
   userData = inject(UserDataService);
   router = inject(Router);
   dialog = inject(MatDialog);
+  i18n = inject(TranslationService);
+
+  // i/o
+  // --------------------------------------------
+  // ...
 
   // attributes
   // --------------------------------------------
-  routeSub?: Subscription;
-  fabSub?: Subscription;
-  popupSub?: Subscription;
   idea?: Idea;
   comments?: Comment[];
   volunteers?: Volunteer[];
+  routeSub?: Subscription;
+  popupSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -50,18 +55,39 @@ export class IdeaViewComponent implements OnDestroy {
       this.http.getComments("recent", id, undefined).then(c => this.comments = c);
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
-    this.fabSub = this.mainNav.fabClick$.subscribe(() => this.toggleCheer());
 
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
-    this.fabSub?.unsubscribe();
     this.popupSub?.unsubscribe();
   }
 
   // methods
   // --------------------------------------------
+  setHasCheered(hasCheered: boolean, firstLoad = false) {
+    if (!this.idea) { throw new Error("cannot set userHasCheered if idea is undefined"); }
+    if (hasCheered) {
+      this.idea.userHasCheered = true;
+      this.mainNav.setFab({
+        icon: "favorite",
+        color: "var(--primary-color)",
+        label: "✅",
+        action: () => this.toggleCheer(),
+      });
+      if (! firstLoad) { this.idea.supports += 1 }
+    } else {
+      this.idea.userHasCheered = false;
+      this.mainNav.setFab({
+        icon: "favorite_outline",
+        color: "var(--primary-color)",
+        label: this.i18n.get("fab.cheer"),
+        action: () => this.toggleCheer(),
+      });
+      if (! firstLoad) { this.idea.supports -= 1 }
+    }
+  }
+
   addFinancing(e: any) {
     console.log("add financing")
     console.log(e)
@@ -120,23 +146,6 @@ export class IdeaViewComponent implements OnDestroy {
     } else {
       this.setHasCheered(true);
       this.cheer();
-    }
-  }
-
-  setHasCheered(hasCheered: boolean, firstLoad = false) {
-    if (!this.idea) { throw new Error("cannot set userHasCheered if idea is undefined"); }
-    if (hasCheered) {
-      this.idea.userHasCheered = true;
-      setTimeout(() => {
-        this.mainNav.setHasCheeredFab();
-      }, 100);
-      if (! firstLoad) { this.idea.supports += 1 }
-    } else {
-      this.idea.userHasCheered = false;
-      setTimeout(() => {
-        this.mainNav.setCheerFab();
-      }, 100);
-      if (! firstLoad) { this.idea.supports -= 1 }
     }
   }
 

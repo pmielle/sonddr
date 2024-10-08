@@ -26,6 +26,10 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   dialog = inject(MatDialog);
   i18n = inject(TranslationService);
 
+  // i/o
+  // --------------------------------------------
+  // ...
+
   // attributes
   // --------------------------------------------
   openPositions: Volunteer[] = [];
@@ -35,11 +39,15 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   expandedCandidates: Map<string, boolean> = new Map();
   routeSub?: Subscription;
   popupSub?: Subscription;
-  fabSub?: Subscription;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
+
+    // setup main nav
+    this.mainNav.hideNavBar();
+
+    // get data
     this.routeSub = this.route.paramMap.subscribe((map) => {
       const id = map.get("id")!;
       this.http.getVolunteers(id).then(v => {
@@ -48,18 +56,28 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
         this.setVolunteers(v)
       });
     });
-    setTimeout(() => this.mainNav.hideNavBar(), 100); // otherwise NG0100
-    this.fabSub = this.mainNav.fabClick$.subscribe(() => this.openVolunteerPopup());
+
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe;
     this.popupSub?.unsubscribe();
-    this.fabSub?.unsubscribe();
   }
 
   // methods
   // --------------------------------------------
+  setIsAdmin() {
+    this.isAdmin = this.idea!.author.isUser;
+    if (this.isAdmin) {
+      this.mainNav.setFab({
+        icon: "add",
+        color: "var(--primary-color)",
+        label: this.i18n.get("fab.request"),
+        action: () => this.openVolunteerPopup(),
+      });
+    }
+  }
+
   openVolunteerPopup() {
     const dialogRef = this.dialog.open(AddVolunteerPopupComponent, {
       panelClass: "custom-popup",
@@ -152,17 +170,6 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
     const user = this.userData.user$.getValue()!;
     v.candidates = v.candidates.filter(u => u.id !== user.id);
     this.updateOpenPosition(v);
-  }
-
-  setIsAdmin() {
-    this.isAdmin = this.idea!.author.isUser;
-    if (this.isAdmin) {
-      setTimeout(() => {
-        this.mainNav.setAddVolunteerFab();
-      }, 100);
-    } else {
-      this.mainNav.setUndefinedFab();
-    }
   }
 
   setVolunteers(volunteers: Volunteer[]) {

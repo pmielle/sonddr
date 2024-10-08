@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, NavigationStart } from '@angular/router';
 import { BehaviorSubject, Subscription, filter } from 'rxjs';
 import { AuthService } from './auth.service';
 import { TranslationService } from './translation.service';
@@ -53,8 +53,14 @@ export class MainNavService implements OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   constructor() {
-    this.routerSub = this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(
-      (e) => this.onRouteChange(e as NavigationEnd)
+    this.routerSub = this.router.events.subscribe(
+      (e) => {
+        if (e instanceof NavigationEnd) {
+          this.onNavigationEnd(e);
+        } else if (e instanceof NavigationStart) {
+          this.onNavigationStart();
+        }
+      }
     );
 
     // listen to software keyboard state
@@ -65,10 +71,8 @@ export class MainNavService implements OnDestroy {
         this.showFab();
       } else if (state == "open") {
         this.ignoreScroll = true;
-        setTimeout(() => {
-          this.halfFullScreen$.next(true);
-          this.hideFab();
-        }, 100);
+        this.halfFullScreen$.next(true);
+        this.hideFab();
       }
     });
 
@@ -82,26 +86,43 @@ export class MainNavService implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  onNavigationStart() {
+    this.restoreAll();
+  }
+
+  onNavigationEnd(e: NavigationEnd) {
+    this.navigated = e.id > 1;
+    const url = e.urlAfterRedirects;
+    this.updateAtTabRoot(url);
+    this.updateTab(url);
+  }
+
   goToTab(tab: Tab) {
     this.router.navigateByUrl(`/${tab}`);
   }
 
+  // settimeout to avoid race conditions
   scrollToBottom(smooth: boolean = false) {
-    const tabs = document.getElementById("tabs");
-    tabs?.scrollTo({
-      top: 999999,
-      left: 0,
-      behavior: smooth ? "smooth" : "instant"
-    });
+    setTimeout(() => {
+      const tabs = document.getElementById("tabs");
+      tabs?.scrollTo({
+        top: 999999,
+        left: 0,
+        behavior: smooth ? "smooth" : "instant"
+      });
+    }, 100);
   }
 
+  // settimeout to avoid race conditions
   scrollToTop(smooth: boolean = false) {
-    const tabs = document.getElementById("tabs");
-    tabs?.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: smooth ? "smooth" : "instant"
-    });
+    setTimeout(() => {
+      const tabs = document.getElementById("tabs");
+      tabs?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: smooth ? "smooth" : "instant"
+      });
+    }, 100);
   }
 
   onScroll(el: Element) {
@@ -116,17 +137,6 @@ export class MainNavService implements OnDestroy {
       if (this.fullScreen$.getValue() === false) { this.fullScreen$.next(true); }
     }
     this.previousScroll = el.scrollTop;
-  }
-
-  onRouteChange(e: NavigationEnd) {
-    const url = e.urlAfterRedirects;
-    this.restoreAll();
-    this.updateAtTabRoot(url);
-    this.updateTab(url);
-    setTimeout(() => {
-      this.updateFab(url);
-    }, 100);
-    this.navigated = e.id > 1;
   }
 
   updateAtTabRoot(url: string) {
@@ -150,115 +160,8 @@ export class MainNavService implements OnDestroy {
     }
   }
 
-  updateFab(url: string) {
-    if (url === "/ideas") {
-      this.fabMode$.next({
-        icon: "add",
-        color: "var(--primary-color)",
-        label: this.i18n.get("fab.share-an-idea"),
-        action: () => {this.router.navigateByUrl("/ideas/add")}
-      });
-    } else if (url.startsWith("/ideas/goal/")) {
-      const goalId = url.split(/\//)[3];
-      this.fabMode$.next({
-        icon: "add",
-        color: "var(--primary-color)",
-        label: this.i18n.get("fab.share-an-idea"),
-        action: () => {this.router.navigateByUrl(`/ideas/add?preselected=${goalId}`)}
-      });
-    }  else if (url === "/messages") {
-      this.fabMode$.next({
-        icon: "add",
-        color: "var(--blue)",
-        label: this.i18n.get("fab.start-a-discussion"),
-        action: () => {this.router.navigateByUrl(`/messages/new-discussion`)}
-      });
-    } else if (url.startsWith("/ideas/add")) {
-      const label = url.includes("edit=") ? this.i18n.get("fab.done") : this.i18n.get("fab.share");
-      this.fabMode$.next({
-        icon: "done",
-        color: "var(--green)",
-        label: label,
-        action: () => {this.fabClick$.next();}
-      });
-    } else if (url.startsWith("/ideas/user-edit/")) {
-      this.fabMode$.next({
-        icon: "done",
-        color: "var(--green)",
-        label: this.i18n.get("fab.done"),
-        action: () => {this.fabClick$.next();}
-      });
-    } else if (url.startsWith("/ideas/volunteers/")) {
-      this.fabMode$.next(undefined); // handled by the view depending on who the user is
-    } else if (url.startsWith("/ideas/user/")) {
-      this.fabMode$.next(undefined); // handled by the view depending on who the user is
-    } else if (url.startsWith("/ideas/idea/")) {
-      this.fabMode$.next(undefined); // handled by the view depending on who the user is
-    }else if (url.startsWith("/messages/new-discussion")) {
-      this.fabMode$.next(undefined);
-    } else if (url.startsWith("/messages/discussion/")) {
-      this.fabMode$.next(undefined);
-    } else if (url === "/notifications") {
-      this.fabMode$.next(undefined);
-    } else if (url === "/search") {
-      this.fabMode$.next(undefined);
-    } else if (url === "/") {
-      this.fabMode$.next(undefined);
-    } else if (url.startsWith("/ideas/details/")) {
-      this.fabMode$.next(undefined);
-    } else {
-      console.error(`cannot set fab mobe: ${url} is not an exepected url`);
-      this.fabMode$.next(undefined);
-    }
-  }
-
-  setCheerFab() {
-    this.fabMode$.next({
-      icon: "favorite_outline",
-      color: "var(--primary-color)",
-      label: this.i18n.get("fab.cheer"),
-      action: () => {this.fabClick$.next();}
-    });
-  }
-
-  setHasCheeredFab() {
-    this.fabMode$.next({
-      icon: "favorite",
-      color: "var(--primary-color)",
-      label: "✅",
-      action: () => {this.fabClick$.next();}
-    });
-  }
-
-  setAddVolunteerFab() {
-    this.fabMode$.next({
-      icon: "add",
-      color: "var(--primary-color)",
-      label: this.i18n.get("fab.request"),
-      action: () => {this.fabClick$.next();}
-    });
-  }
-
-  setOtherUserFab(userId: string) {
-    this.fabMode$.next({
-        icon: "add",
-        color: "var(--blue)",
-        label: this.i18n.get("fab.send-a-message"),
-        action: () => {this.router.navigateByUrl(`/messages/new-discussion?preselected=${userId}`)}
-    });
-  }
-
-  setLoggedInUserFab() {
-    this.fabMode$.next({
-        icon: "logout",
-        color: "var(--red)",
-        label: this.i18n.get("fab.log-out"),
-        action: () => { this.auth.logOut(); }
-    });
-  }
-
-  setUndefinedFab() {
-    this.fabMode$.next(undefined);
+  setFab(mode: FabMode|undefined) {
+    this.fabMode$.next(mode);
   }
 
   // views can temporarily hide stuff:
@@ -282,6 +185,7 @@ export class MainNavService implements OnDestroy {
   }
 
   restoreFab() {
+    this.setFab(undefined);
     this.enableFab();
     this.isFabHidden = false;
   }
