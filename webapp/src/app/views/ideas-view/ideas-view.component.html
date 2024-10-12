@@ -16,6 +16,8 @@
 
     <p class="gutter" [class.reduce-width]="screen.isWide$ | async">{{ t('header') }}</p>
 
+    <button (click)="auth.logIn()">LOG IN</button>
+
     <app-h-scroll>
       @for (g of goals; track g.id) {
       <app-goal-chip [goal]="g" [routerLink]="['goal', g.id]"></app-goal-chip>

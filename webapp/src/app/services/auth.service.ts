@@ -19,18 +19,22 @@ export class AuthService {
   // lifecycle hooks
   // --------------------------------------------
   constructor() {
-    this.loadUserProfile();
+    if (this.keycloak.isLoggedIn()) { this.loadUserProfile(); }
   }
 
   // public methods
   // --------------------------------------------
-  async loadUserProfile() {
-    const profile = await this.keycloak.loadUserProfile();
-    this.profile$.next(profile);
+  logIn() {
+    this.keycloak.login();
   }
 
   logOut() {
     this.keycloak.logout();
+  }
+
+  async loadUserProfile() {
+    const profile = await this.keycloak.loadUserProfile();
+    this.profile$.next(profile);
   }
 
   async getToken(): Promise<string> {

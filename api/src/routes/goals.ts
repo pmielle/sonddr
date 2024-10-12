@@ -5,7 +5,6 @@ import { getGoal, getGoals } from "../handlers/goals.js";
 export function addGoalsRoutes(router: Router) {
 
 	router.get('/goals',
-		keycloak.protect(),
 		async (req, res, next) => {
 			try {
 				await getGoals(req, res, next);
@@ -15,7 +14,6 @@ export function addGoalsRoutes(router: Router) {
 		});
 
 	router.get('/goals/:id',
-		keycloak.protect(),
 		async (req, res, next) => {
 			try {
 				await getGoal(req, res, next);

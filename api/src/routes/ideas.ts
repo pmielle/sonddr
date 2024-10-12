@@ -6,8 +6,6 @@ import { upload } from "../uploads.js";
 export function addIdeasRoutes(router: Router) {
 
 	router.get('/ideas',
-		keycloak.protect(),
-		fetchUserId,
 		async (req, res, next) => {
 			try {
 				await getIdeas(req, res, next);
@@ -17,7 +15,6 @@ export function addIdeasRoutes(router: Router) {
 		});
 
 	router.get('/ideas/:id',
-		keycloak.protect(),
 		fetchUserId, async (req, res, next) => {
 			try {
 				await getIdea(req, res, next);

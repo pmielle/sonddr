@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Goal, Idea } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
+import { AuthService } from 'src/app/services/auth.service';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
@@ -23,6 +24,7 @@ export class IdeasViewComponent implements OnInit {
   mainNav = inject(MainNavService);
   i18n = inject(TranslationService);
   router = inject(Router);
+  auth = inject(AuthService);
 
   // i/o
   // --------------------------------------------
