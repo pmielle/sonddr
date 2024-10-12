@@ -5,6 +5,24 @@ import { getUser, getUsers, patchUser, putUser } from "../handlers/users.js";
 
 export function addUsersRoutes(router: Router) {
 
+	router.get('/users/:id',
+		async (req, res, next) => {
+			try {
+				await getUser(req, res, next);
+			} catch (err) {
+				next(err);
+			}
+		});
+
+	router.get('/users',
+		async (req, res, next) => {
+			try {
+				await getUsers(req, res, next);
+			} catch (err) {
+				next(err);
+			}
+		});
+
 	router.patch(`/users/:id`,
 		keycloak.protect(),
 		fetchUserId,
@@ -12,17 +30,6 @@ export function addUsersRoutes(router: Router) {
 		async (req, res, next) => {
 			try {
 				await patchUser(req, res, next);
-			} catch (err) {
-				next(err);
-			}
-		});
-
-	router.get('/users',
-		keycloak.protect(),
-		fetchUserId,
-		async (req, res, next) => {
-			try {
-				await getUsers(req, res, next);
 			} catch (err) {
 				next(err);
 			}
@@ -37,17 +44,6 @@ export function addUsersRoutes(router: Router) {
 			} catch (err) {
 				next(err);
 			};
-		});
-
-	router.get('/users/:id',
-		keycloak.protect(),
-		fetchUserId,
-		async (req, res, next) => {
-			try {
-				await getUser(req, res, next);
-			} catch (err) {
-				next(err);
-			}
 		});
 
 }
