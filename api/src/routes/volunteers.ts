@@ -4,6 +4,15 @@ import { fetchUserId, keycloak } from "../auth.js";
 
 export function addVolunteersRoutes(router: Router) {
 
+	router.get('/volunteers',
+		async (req, res, next) => {
+			try {
+				await getVolunteers(req, res, next);
+			} catch (err) {
+				next(err);
+			}
+		});
+
 	router.post('/volunteers',
 		keycloak.protect(),
 		fetchUserId,
@@ -21,17 +30,6 @@ export function addVolunteersRoutes(router: Router) {
 		async (req, res, next) => {
 			try {
 				await deleteVolunteer(req, res, next);
-			} catch (err) {
-				next(err);
-			}
-		});
-
-	router.get('/volunteers',
-		keycloak.protect(),
-		fetchUserId,
-		async (req, res, next) => {
-			try {
-				await getVolunteers(req, res, next);
 			} catch (err) {
 				next(err);
 			}

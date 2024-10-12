@@ -5,7 +5,7 @@ import { reviveUsers } from "./users.js";
 import { basePath } from "../routes/routes.js";
 import { uploadPath } from "../uploads.js";
 
-export async function reviveIdea(dbDoc: DbIdea, userId: string): Promise<Idea> {
+export async function reviveIdea(dbDoc: DbIdea, userId: string|undefined = undefined): Promise<Idea> {
     return (await reviveIdeas([dbDoc], userId))[0];
 }
 

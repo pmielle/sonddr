@@ -4,9 +4,16 @@ import { deleteComment, getComment, getComments, postComment } from "../handlers
 
 export function addCommentsRoutes(router: Router) {
 
+	router.get('/comments',
+		async (req, res, next) => {
+			try {
+				await getComments(req, res, next);
+			} catch (err) {
+				next(err);
+			}
+		});
+
 	router.get('/comments/:id',
-		keycloak.protect(),
-		fetchUserId,
 		async (req, res, next) => {
 			try {
 				await getComment(req, res, next);
@@ -32,17 +39,6 @@ export function addCommentsRoutes(router: Router) {
 		async (req, res, next) => {
 			try {
 				await deleteComment(req, res, next);
-			} catch (err) {
-				next(err);
-			}
-		});
-
-	router.get('/comments',
-		keycloak.protect(),
-		fetchUserId,
-		async (req, res, next) => {
-			try {
-				await getComments(req, res, next);
 			} catch (err) {
 				next(err);
 			}

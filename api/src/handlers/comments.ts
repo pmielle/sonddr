@@ -5,25 +5,6 @@ import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
 import { Filter, } from "../types/types.js";
 import { reviveComment, reviveComments } from "../revivers/comments.js";
 
-export async function postComment(req: Request, res: Response, _: NextFunction) {
-	const payload = {
-		ideaId: _getFromReqBody("ideaId", req),
-		content: _getFromReqBody("content", req),
-		authorId: req["userId"],
-		date: new Date(),
-		rating: 0,
-	};
-	const insertedId = await postDocument(_getReqPath(req), payload);
-	res.json({ insertedId: insertedId });
-}
-
-export async function deleteComment(req: Request, res: Response, _: NextFunction) {
-	const comment = await getDocument<DbComment>(_getReqPath(req));
-	if (comment.authorId !== req["userId"]) { throw new Error("Unauthorized"); }
-	await deleteDocument(_getReqPath(req));
-	res.send();
-}
-
 export async function getComments(req: Request, res: Response, _: NextFunction) {
 	const order = req.query.order || "date";
 	const ideaId = req.query.ideaId;
@@ -48,3 +29,23 @@ export async function getComment(req: Request, res: Response, _: NextFunction) {
 		.then(dbDoc => reviveComment(dbDoc, req["userId"]));
 	res.json(doc);
 }
+
+export async function postComment(req: Request, res: Response, _: NextFunction) {
+	const payload = {
+		ideaId: _getFromReqBody("ideaId", req),
+		content: _getFromReqBody("content", req),
+		authorId: req["userId"],
+		date: new Date(),
+		rating: 0,
+	};
+	const insertedId = await postDocument(_getReqPath(req), payload);
+	res.json({ insertedId: insertedId });
+}
+
+export async function deleteComment(req: Request, res: Response, _: NextFunction) {
+	const comment = await getDocument<DbComment>(_getReqPath(req));
+	if (comment.authorId !== req["userId"]) { throw new Error("Unauthorized"); }
+	await deleteDocument(_getReqPath(req));
+	res.send();
+}
+

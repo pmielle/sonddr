@@ -15,7 +15,7 @@ export function addIdeasRoutes(router: Router) {
 		});
 
 	router.get('/ideas/:id',
-		fetchUserId, async (req, res, next) => {
+		async (req, res, next) => {
 			try {
 				await getIdea(req, res, next);
 			} catch (err) {
