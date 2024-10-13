@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { fetchUserId, keycloak } from "../auth.js";
+import { maybeFetchUserId, keycloak } from "../auth.js";
 import { deleteDraft, getDrafts, patchDraft, postDraft } from "../handlers/drafts.js";
 
 export function addDraftsRoutes(router: Router) {
 
 	router.get('/drafts',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getDrafts(req, res, next);
@@ -17,7 +17,7 @@ export function addDraftsRoutes(router: Router) {
 
 	router.delete('/drafts/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await deleteDraft(req, res, next);
@@ -28,7 +28,7 @@ export function addDraftsRoutes(router: Router) {
 
 	router.patch(`/drafts/:id`,
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await patchDraft(req, res, next);
@@ -39,7 +39,7 @@ export function addDraftsRoutes(router: Router) {
 
 	router.post('/drafts',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await postDraft(req, res, next);

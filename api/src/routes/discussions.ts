@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { getDiscussion, getDiscussions, patchDiscussion, postDiscussion } from "../handlers/discussions.js";
-import { authenticateRequest, fetchUserId, keycloak } from "../auth.js";
+import { authenticateRequest, maybeFetchUserId, keycloak } from "../auth.js";
 
 export function addDiscussionsRoutes(router: Router) {
 
 	router.post('/discussions',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await postDiscussion(req, res, next);
@@ -17,7 +17,7 @@ export function addDiscussionsRoutes(router: Router) {
 
 	router.patch('/discussions/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await patchDiscussion(req, res, next);
@@ -28,7 +28,7 @@ export function addDiscussionsRoutes(router: Router) {
 
 	router.get('/discussions/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getDiscussion(req, res, next);

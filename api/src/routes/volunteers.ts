@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { deleteVolunteer, getVolunteers, patchVolunteer, postVolunteer } from "../handlers/volunteers.js";
-import { fetchUserId, keycloak } from "../auth.js";
+import { maybeFetchUserId, keycloak } from "../auth.js";
 
 export function addVolunteersRoutes(router: Router) {
 
 	router.get('/volunteers',
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getVolunteers(req, res, next);
@@ -15,7 +16,7 @@ export function addVolunteersRoutes(router: Router) {
 
 	router.post('/volunteers',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await postVolunteer(req, res, next);
@@ -26,7 +27,7 @@ export function addVolunteersRoutes(router: Router) {
 
 	router.delete('/volunteers/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await deleteVolunteer(req, res, next);
@@ -37,7 +38,7 @@ export function addVolunteersRoutes(router: Router) {
 
 	router.patch('/volunteers/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await patchVolunteer(req, res, next);

@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { fetchUserId, keycloak } from "../auth.js";
+import { maybeFetchUserId, keycloak } from "../auth.js";
 import { deleteIdea, getIdea, getIdeas, patchIdea, postIdea } from "../handlers/ideas.js";
 import { upload } from "../uploads.js";
 
 export function addIdeasRoutes(router: Router) {
 
 	router.get('/ideas',
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getIdeas(req, res, next);
@@ -15,6 +16,7 @@ export function addIdeasRoutes(router: Router) {
 		});
 
 	router.get('/ideas/:id',
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getIdea(req, res, next);
@@ -25,7 +27,7 @@ export function addIdeasRoutes(router: Router) {
 
 	router.delete('/ideas/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await deleteIdea(req, res, next);
@@ -36,7 +38,7 @@ export function addIdeasRoutes(router: Router) {
 
 	router.patch(`/ideas/:id`,
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		upload([{ name: "cover", maxCount: 1 }, { name: "images" }]),
 		async (req, res, next) => {
 			try {
@@ -48,7 +50,7 @@ export function addIdeasRoutes(router: Router) {
 
 	router.post('/ideas',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		upload([{ name: "cover", maxCount: 1 }, { name: "images" },]),
 		async (req, res, next) => {
 			try {
