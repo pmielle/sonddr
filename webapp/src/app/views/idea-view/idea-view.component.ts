@@ -105,12 +105,13 @@ export class IdeaViewComponent implements OnDestroy {
 
   async onDeleteClick() {
     await this.http.deleteIdea(this.idea!.id);
-    this.router.navigateByUrl("/ideas");
+    this.mainNav.navigateTo("/ideas");
   }
 
   async onEditClick() {
-    this.router.navigateByUrl(
+    this.mainNav.navigateTo(
       `/ideas/add?edit=${this.idea!.id}`,
+      true,
       {skipLocationChange: true}
     );
   }

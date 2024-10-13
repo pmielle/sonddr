@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
-import { NavigationEnd, Router, NavigationStart } from '@angular/router';
+import { NavigationEnd, Router, NavigationStart, NavigationBehaviorOptions } from '@angular/router';
 import { BehaviorSubject, Subscription, filter } from 'rxjs';
 import { AuthService } from './auth.service';
 import { TranslationService } from './translation.service';
@@ -86,6 +86,18 @@ export class MainNavService implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  navigateTo(url: string, logInRequired: boolean = false, navigationOptions: NavigationBehaviorOptions|undefined = undefined) {
+    if (logInRequired && !this.auth.isLoggedIn()) {
+      this.auth.openAuthSnack();
+      return;
+    }
+    this.router.navigateByUrl(url, navigationOptions);
+  }
+
+  goToTab(tab: Tab, logInRequired: boolean = false, navigationOptions: NavigationBehaviorOptions|undefined = undefined) {
+    this.navigateTo(`/${tab}`, logInRequired, navigationOptions);
+  }
+
   onNavigationStart() {
     this.restoreAll();
   }
@@ -95,10 +107,6 @@ export class MainNavService implements OnDestroy {
     const url = e.urlAfterRedirects;
     this.updateAtTabRoot(url);
     this.updateTab(url);
-  }
-
-  goToTab(tab: Tab) {
-    this.router.navigateByUrl(`/${tab}`);
   }
 
   // settimeout to avoid race conditions

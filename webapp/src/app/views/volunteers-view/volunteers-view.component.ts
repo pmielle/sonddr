@@ -139,7 +139,7 @@ export class VolunteersViewComponent implements OnInit, OnDestroy {
   onDelete(v: Volunteer) {
     this.http.deleteVolunteer(v.id).then(() => {
       if (this.filledPositions.length + this.openPositions.length == 0) {
-        this.router.navigateByUrl(`/ideas/idea/${this.idea!.id}`);
+        this.mainNav.navigateTo(`/ideas/idea/${this.idea!.id}`, true);
       }
     });
     this.deletePosition(v.id);

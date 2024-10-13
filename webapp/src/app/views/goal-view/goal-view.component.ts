@@ -9,6 +9,7 @@ import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-goal-view',
@@ -27,6 +28,7 @@ export class GoalViewComponent implements OnInit, OnDestroy {
   i18n = inject(TranslationService);
   mainNav = inject(MainNavService);
   router = inject(Router);
+  auth = inject(AuthService);
 
   // i/o
   // --------------------------------------------
@@ -49,7 +51,7 @@ export class GoalViewComponent implements OnInit, OnDestroy {
         icon: "add",
         color: "var(--primary-color)",
         label: this.i18n.get("fab.share-an-idea"),
-        action: () => {this.router.navigateByUrl(`/ideas/add?preselected=${id}`)}
+        action: () => this.mainNav.navigateTo(`/ideas/add?preselected=${id}`, true),
       });
       // get goal and its ideas
       this.http.getGoals().then(goals => this.dispatchGoals(goals, id));

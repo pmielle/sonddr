@@ -68,7 +68,7 @@ export class UserViewComponent {
                 icon: "add",
                 color: "var(--blue)",
                 label: this.i18n.get("fab.send-a-message"),
-                action: () => this.router.navigateByUrl(`/messages/new-discussion?preselected=${u.id}`),
+                action: () => this.mainNav.navigateTo(`/messages/new-discussion?preselected=${u.id}`, true),
               });
             }
           } else {
@@ -105,8 +105,9 @@ export class UserViewComponent {
   }
 
   onEditClick() {
-    this.router.navigateByUrl(
+    this.mainNav.navigateTo(
       `/ideas/user-edit/${this.user!.id}`,
+      true,
       {skipLocationChange: true}
     );
   }

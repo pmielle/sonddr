@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
 import { MainNavService, Tab } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
@@ -13,6 +14,7 @@ export class NavBarComponent {
   mainNav = inject(MainNavService);
   screen = inject(ScreenSizeService);
   userData = inject(UserDataService);
+  auth = inject(AuthService);
 
   // lifecycle hooks
   // --------------------------------------------
@@ -31,14 +33,16 @@ export class NavBarComponent {
   }
 
   onClick(tab: Tab) {
+    // this tab is already active
     if (this.mainNav.tab$.getValue() === tab) {
       if (this.mainNav.atTabRoot$.getValue()) {
         this.mainNav.scrollToTop(true);
       } else {
-        this.mainNav.goToTab(tab);
+          this.mainNav.goToTab(tab);
       }
+    // else, coming from another tab
     } else {
-      this.mainNav.goToTab(tab);
+        this.mainNav.goToTab(tab, true);
     }
   }
 

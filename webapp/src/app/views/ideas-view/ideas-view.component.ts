@@ -44,7 +44,7 @@ export class IdeasViewComponent implements OnInit {
         icon: "add",
         color: "var(--primary-color)",
         label: this.i18n.get("fab.share-an-idea"),
-        action: () => {this.router.navigateByUrl("/ideas/add")}
+        action: () => this.mainNav.navigateTo("/ideas/add", true),
     });
   }
 

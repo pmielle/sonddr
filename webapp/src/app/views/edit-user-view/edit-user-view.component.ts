@@ -127,8 +127,9 @@ export class EditUserViewComponent {
     );
     setTimeout(() => {
       this.userData.refreshUser();
-      this.router.navigateByUrl(
+      this.mainNav.navigateTo(
         this.welcome ? `/` : `/ideas/user/${this.user!.id}`,
+        true,
         { skipLocationChange: this.welcome ? false : true }
       );
     }, 500); // otherwise doesn't refresh properly

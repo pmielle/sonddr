@@ -38,7 +38,7 @@ export class MessagesViewComponent implements OnInit, OnDestroy {
       icon: "add",
       color: "var(--blue)",
       label: this.i18n.get("fab.start-a-discussion"),
-      action: () => {this.router.navigateByUrl(`/messages/new-discussion`)}
+      action: () => this.mainNav.navigateTo(`/messages/new-discussion`, true),
     });
   }
 
@@ -49,7 +49,7 @@ export class MessagesViewComponent implements OnInit, OnDestroy {
   // --------------------------------------------
   goToDiscussion(discussion: Discussion, markAsRead: boolean = false) {
     if (markAsRead) { this.http.markDiscussionAsRead(discussion.id); }
-    this.router.navigateByUrl(`/messages/discussion/${discussion.id}`);
+    this.mainNav.navigateTo(`/messages/discussion/${discussion.id}`, true);
   }
 
 }

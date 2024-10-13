@@ -182,8 +182,9 @@ export class AddViewComponent {
       this.cover,
       this.editor.images,
     );
-    setTimeout(() => this.router.navigateByUrl(
+    setTimeout(() => this.mainNav.navigateTo(
       `/ideas/idea/${this.editIdeaId!}`,
+      true,
       {skipLocationChange: true}
     ), 100); // otherwise doesn't refresh for some reason
   }
@@ -202,8 +203,9 @@ export class AddViewComponent {
       if (this.draft) { this.http.deleteDraft(this.draft.id); }
       this.hasBeenSubmitted = true; // otherwise draft will be saved onDestroy
       // navigate away
-      this.router.navigateByUrl(
+      this.mainNav.navigateTo(
         `/ideas/idea/${id}`,
+        true,
         {replaceUrl: true}
       );
     } else {

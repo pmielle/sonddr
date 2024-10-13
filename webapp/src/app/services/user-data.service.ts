@@ -7,6 +7,7 @@ import { HttpService } from './http.service';
 import { KeycloakProfile } from 'keycloak-js';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { MainNavService } from './main-nav.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class UserDataService {
   auth = inject(AuthService);
   http = inject(HttpService);
   router = inject(Router);
+  mainNav = inject(MainNavService);
 
   // attributes
   // --------------------------------------------
@@ -45,7 +47,7 @@ export class UserDataService {
 
   goToProfile() {
     if (!this.user$) { throw new Error("User is undefined"); }
-    this.router.navigateByUrl(`/ideas/user/${this._getUser()!.id}`);
+    this.mainNav.navigateTo(`/ideas/user/${this._getUser()!.id}`, true);
   }
 
   // private
@@ -96,7 +98,9 @@ export class UserDataService {
         const name = this._choose_name(profile);
         await this.http.createUser(id, name);
         user = await this.http.getUser(id);
-        setTimeout(() => this.router.navigateByUrl(`/ideas/user-edit/${user.id}?welcome=true`), 100);
+        setTimeout(() => {
+          this.mainNav.navigateTo(`/ideas/user-edit/${user.id}?welcome=true`, true)
+        }, 100);
       } else {
         throw err;
       }
