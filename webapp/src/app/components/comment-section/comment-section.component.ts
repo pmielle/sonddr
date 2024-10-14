@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { Comment } from 'sonddr-shared';
+import { AuthService } from 'src/app/services/auth.service';
 import { ColorService } from 'src/app/services/color.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { TimeService } from 'src/app/services/time.service';
@@ -28,6 +29,7 @@ export class CommentSectionComponent {
   time = inject(TimeService);
   userData = inject(UserDataService);
   i18n = inject(TranslationService);
+  auth = inject(AuthService);
 
   // i/o
   // --------------------------------------------
@@ -63,6 +65,10 @@ export class CommentSectionComponent {
   // --------------------------------------------
   onPostComment() {
     if (!this.formIsValid()) { return; }
+    if (!this.auth.isLoggedIn()) {
+      this.auth.openAuthSnack();
+      return;
+    }
     this.postComment.next(this.commentBody);
     this.commentBody = "";
     this.input?.nativeElement.blur();

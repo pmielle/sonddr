@@ -10,6 +10,7 @@ import { TimeService } from 'src/app/services/time.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-idea-view',
@@ -29,6 +30,7 @@ export class IdeaViewComponent implements OnDestroy {
   router = inject(Router);
   dialog = inject(MatDialog);
   i18n = inject(TranslationService);
+  auth = inject(AuthService);
 
   // i/o
   // --------------------------------------------
@@ -141,6 +143,10 @@ export class IdeaViewComponent implements OnDestroy {
 
   toggleCheer() {
     if (!this.idea) { throw new Error("cannot react to fab click if idea is undefined"); }
+    if (!this.auth.isLoggedIn()) {
+      this.auth.openAuthSnack();
+      return;
+    }
     if (this.idea.userHasCheered) {
       this.setHasCheered(false);
       this.deleteCheer();
@@ -201,6 +207,10 @@ export class IdeaViewComponent implements OnDestroy {
   postComment(body: string) {
     if (!this.idea) { throw new Error("Cannot post comment if idea is not loaded"); }
     if (!this.comments) { throw new Error("Cannot post comment if comments are not loaded"); }
+    if (!this.auth.isLoggedIn()) {
+      this.auth.openAuthSnack();
+      return;
+    }
     const placeholderComment = this.makePlaceholderComment(body, this.idea.id);
     this.comments = [placeholderComment, ...this.comments];  // otherwise same reference, and @Input is not updated
     this.http.postComment(this.idea.id, body).then(async insertedId => {
