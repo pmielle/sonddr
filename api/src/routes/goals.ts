@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { keycloak } from "../auth.js";
+import { keycloak, maybeFetchUserId } from "../auth.js";
 import { getGoal, getGoals } from "../handlers/goals.js";
 
 export function addGoalsRoutes(router: Router) {
 
 	router.get('/goals',
-		keycloak.protect(),
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getGoals(req, res, next);
@@ -15,7 +15,7 @@ export function addGoalsRoutes(router: Router) {
 		});
 
 	router.get('/goals/:id',
-		keycloak.protect(),
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await getGoal(req, res, next);

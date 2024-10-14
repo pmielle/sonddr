@@ -5,6 +5,18 @@ import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
 import { Filter } from "../types/types.js";
 import { reviveVolunteer, reviveVolunteers } from "../revivers/volunteers.js";
 
+export async function getVolunteers(req: Request, res: Response, _: NextFunction) {
+	const userId = req["userId"];
+	const ideaIdFilter = req.query.ideaId;
+	const userIdFilter = req.query.userId;
+	const filters: Filter[] = [];
+	if (ideaIdFilter) { filters.push({ field: "ideaId", operator: "eq", value: ideaIdFilter }); }
+	if (userIdFilter) { filters.push({ field: "userId", operator: "eq", value: userIdFilter }); }
+	const docs = await getDocuments<DbVolunteer>(_getReqPath(req), undefined, filters)
+		.then(dbDocs => reviveVolunteers(dbDocs, userId));
+	res.json(docs);
+}
+
 export async function postVolunteer(req: Request, res: Response, _: NextFunction) {
 	const userId = req["userId"];
 	const ideaId = _getFromReqBody("ideaId", req);
@@ -30,18 +42,6 @@ export async function deleteVolunteer(req: Request, res: Response, _: NextFuncti
 	}
 	await deleteDocument(_getReqPath(req));
 	res.send();
-}
-
-export async function getVolunteers(req: Request, res: Response, _: NextFunction) {
-	const userId = req["userId"];
-	const ideaIdFilter = req.query.ideaId;
-	const userIdFilter = req.query.userId;
-	const filters: Filter[] = [];
-	if (ideaIdFilter) { filters.push({ field: "ideaId", operator: "eq", value: ideaIdFilter }); }
-	if (userIdFilter) { filters.push({ field: "userId", operator: "eq", value: userIdFilter }); }
-	const docs = await getDocuments<DbVolunteer>(_getReqPath(req), undefined, filters)
-		.then(dbDocs => reviveVolunteers(dbDocs, userId));
-	res.json(docs);
 }
 
 export async function patchVolunteer(req: Request, res: Response, _: NextFunction) {

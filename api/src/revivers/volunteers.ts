@@ -4,12 +4,12 @@ import { _getUnique, _getUniqueInArray } from "../utils.js";
 import { reviveIdeas } from "./ideas.js";
 import { reviveUsers } from "./users.js";
 
-export async function reviveVolunteer(dbDoc: DbVolunteer, userId: string): Promise<Volunteer> {
+export async function reviveVolunteer(dbDoc: DbVolunteer, userId: string|undefined = undefined): Promise<Volunteer> {
 	return (await reviveVolunteers([dbDoc], userId))[0];
 }
 
 // userId is the id of the logged-in user
-export async function reviveVolunteers(dbDocs: DbVolunteer[], userId: string): Promise<Volunteer[]> {
+export async function reviveVolunteers(dbDocs: DbVolunteer[], userId: string|undefined = undefined): Promise<Volunteer[]> {
 	if (dbDocs.length == 0) { return []; }
 	// get users
 	let ideasToGet = _getUnique(dbDocs, "ideaId");

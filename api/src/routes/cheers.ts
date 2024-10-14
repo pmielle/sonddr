@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { deleteCheer, getCheer, putCheer } from "../handlers/cheers.js";
-import { fetchUserId, keycloak } from "../auth.js";
+import { maybeFetchUserId, keycloak } from "../auth.js";
 
 export function addCheersRoutes(router: Router) {
 
 	router.delete(`/cheers/:id`,
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await deleteCheer(req, res, next);
@@ -27,7 +27,7 @@ export function addCheersRoutes(router: Router) {
 
 	router.put('/cheers/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await putCheer(req, res, next);

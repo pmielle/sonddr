@@ -5,7 +5,7 @@
     @if(! user.isUser) {
     <div class="spacer"></div>
     <app-profile-picture class="pointer" [user]="userData.user$|async"
-      (click)="userData.goToProfile()"></app-profile-picture>
+      (click)="userData.goToProfileOrAuth()"></app-profile-picture>
     } @else {
     <h2 class="no-margin-bottom">{{ t('misc.my-profile') }}</h2>
     <div class="spacer"></div>

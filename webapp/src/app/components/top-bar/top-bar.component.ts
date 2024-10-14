@@ -44,7 +44,7 @@ export class TopBarComponent {
   }
 
   goHome() {
-    this.router.navigateByUrl("/");
+    this.mainNav.navigateTo("/");
   }
 
   onClick(e: Event) {

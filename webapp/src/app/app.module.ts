@@ -168,8 +168,7 @@ import { AutoGrowDirective } from './directives/auto-grow.directive';
             realm: "sonddr",
             clientId: "sonddr-frontend",
           },
-          initOptions: {onLoad: "login-required"},
-          loadUserProfileAtStartUp: true,
+          initOptions: {onLoad: "check-sso"},
         })
       },
       multi: true,

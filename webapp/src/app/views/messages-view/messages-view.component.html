@@ -5,7 +5,7 @@
     <h1 class="no-margin-bottom">Messages</h1>
     }
     <div class="spacer"></div>
-    <app-profile-picture class="pointer" [user]="userData.user$|async" (click)="userData.goToProfile()"></app-profile-picture>
+    <app-profile-picture class="pointer" [user]="userData.user$|async" (click)="userData.goToProfileOrAuth()"></app-profile-picture>
   </app-top-bar>
 
   @if (screen.isMobile$ | async) {

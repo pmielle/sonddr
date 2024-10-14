@@ -23,10 +23,15 @@ export function init_keycloak(store: any) {
 	});
 }
 
-export async function fetchUserId(req: Request, res: Response, next: NextFunction) {
-	const token = (await keycloak.getGrant(req, res)).access_token;
-	const profile = await keycloak.grantManager.userInfo(token);
-	req["userId"] = makeMongoId(profile["sub"]).toString();
+export async function maybeFetchUserId(req: Request, res: Response, next: NextFunction) {
+	try {
+		const token = (await keycloak.getGrant(req, res)).access_token;
+		const profile = await keycloak.grantManager.userInfo(token);
+		req["userId"] = makeMongoId(profile["sub"]).toString();
+	} catch (err) {
+		console.log(err);
+		req["userId"] = undefined;
+	}
 	next();
 }
 

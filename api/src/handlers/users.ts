@@ -5,20 +5,6 @@ import { getDocument, getDocuments, patchDocument, putDocument } from "../databa
 import { Filter, Patch } from "../types/types.js";
 import { reviveUser, reviveUsers } from "../revivers/users.js";
 
-export async function putUser(req: Request, res: Response, _: NextFunction) {
-	const payload = {
-		id: req["userId"],
-		name: _getFromReqBody("name", req),
-		date: new Date(),
-		externalLinks: [],
-		bio: "",
-		cover: undefined,
-		profilePicture: undefined,
-	};
-	await putDocument(_getReqPath(req), payload);
-	res.send();
-}
-
 export async function getUser(req: Request, res: Response, _: NextFunction) {
 	const doc = await getDocument<DbUser>(_getReqPath(req))
 		.then(dbDoc => reviveUser(dbDoc, req["userId"]));
@@ -37,6 +23,20 @@ export async function getUsers(req: Request, res: Response, _: NextFunction) {
 		filters
 	).then(dbDocs => reviveUsers(dbDocs, req["userId"]));
 	res.json(users);
+}
+
+export async function putUser(req: Request, res: Response, _: NextFunction) {
+	const payload = {
+		id: req["userId"],
+		name: _getFromReqBody("name", req),
+		date: new Date(),
+		externalLinks: [],
+		bio: "",
+		cover: undefined,
+		profilePicture: undefined,
+	};
+	await putDocument(_getReqPath(req), payload);
+	res.send();
 }
 
 export async function patchUser(req: Request, res: Response, _: NextFunction) {

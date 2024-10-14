@@ -12,7 +12,7 @@
         (focus)="onInputFocus()"
         #input
       >
-      <app-profile-picture [user]="(userData.user$|async)" (click)="userData.goToProfile()"></app-profile-picture>
+      <app-profile-picture [user]="(userData.user$|async)" (click)="userData.goToProfileOrAuth()"></app-profile-picture>
     </div>
   </app-top-bar>
 

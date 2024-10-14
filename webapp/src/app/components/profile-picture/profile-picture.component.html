@@ -1,4 +1,6 @@
-@if (user) {
-<div id="container" class="bg cover" [class.large]="large"
-  [style.backgroundImage]="choosePicture()" mat-ripple></div>
-}
+<div id="container" class="bg cover flex" [class.large]="large"
+  [style.backgroundImage]="choosePicture()" mat-ripple>
+  @if(!user) {
+  <mat-icon>question_mark</mat-icon>
+  }
+</div>

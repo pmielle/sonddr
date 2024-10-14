@@ -70,7 +70,7 @@ export class NewDiscussionComponent implements OnInit, OnDestroy {
       throw new Error("submit() should not be callable when form is not valid");
     }
     const insertedId = await this.http.createNewDiscussion(this.selectedUser!.id, this.content);
-    this.router.navigateByUrl(`/messages/discussion/${insertedId}`, {replaceUrl: true});
+    this.mainNav.navigateTo(`/messages/discussion/${insertedId}`, true, {replaceUrl: true});
   }
 
   selectUser(user: User) {

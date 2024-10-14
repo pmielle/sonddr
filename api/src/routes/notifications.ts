@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { getNotifications, patchNotification } from "../handlers/notifications.js";
-import { authenticateRequest, fetchUserId, keycloak } from "../auth.js";
+import { authenticateRequest, maybeFetchUserId, keycloak } from "../auth.js";
 
 export function addNotificationsRoutes(router: Router) {
 
 	router.patch('/notifications/:id',
 		keycloak.protect(),
-		fetchUserId,
+		maybeFetchUserId,
 		async (req, res, next) => {
 			try {
 				await patchNotification(req, res, next);
