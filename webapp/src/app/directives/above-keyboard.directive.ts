@@ -35,21 +35,22 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   // the element to pin might have the "frosted" class already
   // if so, do not remove it when unpinning
   hasFrosted = false;
+  isPinned = false;
 
   // lifecycle hooks
   // --------------------------------------------
   constructor() { }
 
   ngOnInit(): void {
-    this.keyboardSub = this.screen.keyboard$.pipe(
-      filter(() => this.checkShouldReact()),
-    ).subscribe((state) => {
-      if (state === "open") {
-        this.onKeyboardOpen();
+    this.keyboardSub = this.screen.keyboard$.subscribe((state) => {
+      if (state === "open" && this.checkShouldPin()) {
+        if (this.checkShouldPin()) {
+          this.onKeyboardOpen();
+        }
       } else {
-        setTimeout(() => {
+        if (this.isPinned) {
           this.onKeyboardClose();
-        }, 100); // otherwise bottom is 0 sometimes
+        }
       }
     });
   }
@@ -61,54 +62,11 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
 
   // methods
   // --------------------------------------------
-  onKeyboardOpen() {
-    let ele = (this.ele.nativeElement as HTMLElement);
-    // override styles to pin the element
-    // most styles are from a stylesheet,
-    // so we need to use getComputedStyles to get them
-    const styles = window.getComputedStyle(ele);
-    this.initialPosition = styles.position;
-    this.initialZIndex = styles.zIndex;
-    this.initialBottom = styles.bottom;
-    ele.style.position = "fixed";
-    ele.style.zIndex = "999";
-    this.hasFrosted = ele.classList.contains("frosted");
-    if (!this.hasFrosted) { ele.classList.add("frosted"); }
-    // react to scroll
-    window.visualViewport!.onscroll = () => this.refreshBottom();
-    // bubble up
-    this.open.next();
-    // pin it a first time
-    // the same method will be called on scroll
-    this.refreshBottom();
-  }
-
-  onKeyboardClose() {
-    setTimeout(() => {
-      let ele = (this.ele.nativeElement as HTMLElement);
-      // restore the styles
-      ele.style.position = this.initialPosition;
-      ele.style.zIndex = this.initialZIndex;
-      ele.style.bottom = this.initialBottom;
-      if (!this.hasFrosted) {
-        ele.classList.remove("frosted");
-      }
-      // stop reacting to scroll
-      this.stopReactingToScroll();
-      // bubble up
-      this.close.next();
-    }, 100); // do not restore scroll too early
-  }
-
-  stopReactingToScroll() {
-    window.visualViewport!.onscroll = () => { };
-  }
-
   // decide whether or not to react to a keyboard event:
   // if the element is or contains a focusable element,
   // make sure it is focused (and ignore if not)
   // this is useful if there are multiple input fields on the page
-  checkShouldReact(): boolean {
+  checkShouldPin(): boolean {
     // the element itself can be focusable
     if (this.root === document.activeElement) { return true; }
     // if not, check its children
@@ -127,6 +85,37 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
     return false;
   }
 
+  onKeyboardOpen() {
+    this.save();
+    this.override();
+    this.open.next();
+    // pin it a first time
+    // the same method will be called on scroll
+    this.refreshBottom();
+  }
+
+  save() {
+    this.isPinned = true;
+    let ele = (this.ele.nativeElement as HTMLElement);
+    const styles = window.getComputedStyle(ele);
+    this.initialPosition = styles.position;
+    this.initialZIndex = styles.zIndex;
+    this.initialBottom = styles.bottom;
+  }
+
+  override() {
+    let ele = (this.ele.nativeElement as HTMLElement);
+    // override styles to pin the element
+    // most styles are from a stylesheet,
+    // so we need to use getComputedStyles to get them
+    ele.style.position = "fixed";
+    ele.style.zIndex = "999";
+    this.hasFrosted = ele.classList.contains("frosted");
+    if (!this.hasFrosted) { ele.classList.add("frosted"); }
+    // react to scroll
+    window.visualViewport!.onscroll = () => this.refreshBottom();
+  }
+
   // hack to pin the elem right above the keyboard:
   // fullHeight is the screen size before the keyboard opens
   // visualViewport height and pageTop (offset) can be used to track stuff
@@ -134,6 +123,37 @@ export class AboveKeyboardDirective implements OnInit, OnDestroy {
   refreshBottom() {
     const bottom = this.fullHeight - window.visualViewport!.height - window.visualViewport!.pageTop;
     (this.ele.nativeElement as HTMLElement).style.bottom = bottom + "px";
+  }
+
+  onKeyboardClose() {
+    this.restore();
+    this.reset();
+    this.close.next();
+  }
+
+  restore() {
+    // stop reacting to scroll
+    this.stopReactingToScroll();
+    // restore the styles
+    let ele = (this.ele.nativeElement as HTMLElement);
+    ele.style.position = this.initialPosition;
+    ele.style.zIndex = this.initialZIndex;
+    ele.style.bottom = this.initialBottom;
+    if (!this.hasFrosted) {
+      ele.classList.remove("frosted");
+    }
+  }
+
+  reset() {
+    this.isPinned = false;
+    this.hasFrosted = false;
+    this.initialBottom = "";
+    this.initialZIndex = "";
+    this.initialBottom = "";
+  }
+
+  stopReactingToScroll() {
+    window.visualViewport!.onscroll = () => { };
   }
 
 }
