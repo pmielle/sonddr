@@ -45,7 +45,11 @@ export class UserDataService {
     this.user$.next(newUser);
   }
 
-  goToProfile() {
+  goToProfileOrAuth() {
+    if (!this.auth.isLoggedIn()) {
+      this.auth.logIn();
+      return;
+    }
     if (!this.user$) { throw new Error("User is undefined"); }
     this.mainNav.navigateTo(`/ideas/user/${this._getUser()!.id}`, true);
   }
