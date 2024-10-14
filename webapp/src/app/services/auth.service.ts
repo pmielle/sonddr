@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   logOut() {
-    this.keycloak.logout();
+    this.keycloak.logout(`https://${location.hostname}/ideas`);
   }
 
   async loadUserProfile() {
