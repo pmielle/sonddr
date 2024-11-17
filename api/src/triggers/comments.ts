@@ -21,6 +21,7 @@ export function watchComments() {
 				date: new Date(),
 				readByIds: [],
 				content: `${commentAuthor.name} has commented on ${idea.title}: "${dbComment.content}"`,
+                href: `/ideas/idea/${idea.id}`,
 			};
 			postDocument(`notifications`, notificationPayload);
 		}

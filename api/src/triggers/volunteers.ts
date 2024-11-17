@@ -24,6 +24,7 @@ export function watchVolunteers() {
 					date: new Date(),
 					readByIds: [],
 					content: `Your volunteer position for ${dbIdea.title} has been deleted.`,
+                    href: `/ideas/idea/${dbIdea.id}`,
 				};
 				postDocument(`notifications`, notificationPayload);
 			}
@@ -41,6 +42,7 @@ export function watchVolunteers() {
 					date: new Date(),
 					readByIds: [],
 					content: `You were removed from your volunteer position for ${dbIdea.title}.`,
+                    href: `/ideas/idea/${dbIdea.id}`,
 				};
 				postDocument(`notifications`, notificationPayload);
 			// - candidate has been accepted
@@ -50,6 +52,7 @@ export function watchVolunteers() {
 					date: new Date(),
 					readByIds: [],
 					content: `Your volunteer application for ${dbIdea.title} has been accepted.`,
+                    href: `/ideas/idea/${dbIdea.id}`,
 				};
 				postDocument(`notifications`, notificationPayload);
 			}
@@ -68,6 +71,7 @@ export function watchVolunteers() {
 					date: new Date(),
 					readByIds: [],
 					content: `${newCandidate.name} has applied for a volunteer position for ${dbIdea.title}.`,
+                    href: `/ideas/idea/${dbIdea.id}`,
 				};
 				postDocument(`notifications`, notificationPayload);
 			}

@@ -146,6 +146,7 @@ export type Notification = {
     content: string,
     date: Date,
     readByIds: string[],
+    href?: string,
 };
 
 export type Message = {

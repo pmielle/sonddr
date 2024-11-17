@@ -17,7 +17,7 @@
   <div id="new-notifications" class="notifications">
     <p class="n-unread">{{ userData.newNotifications.length }} {{ t('unread') }} <app-red-dot></app-red-dot></p>
     @for (n of userData.newNotifications; track n.id) {
-    <app-notification [notification]="n" (click)="openNotification(n, true)"></app-notification>
+    <app-notification [notification]="n" (click)="openNotification(n)"></app-notification>
     }
   </div>
   } @else {

@@ -3,6 +3,7 @@ import { HttpService } from 'src/app/services/http.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { Notification } from "sonddr-shared";
+import { MainNavService } from 'src/app/services/main-nav.service';
 
 @Component({
   selector: 'app-notifications-view',
@@ -16,6 +17,7 @@ export class NotificationsViewComponent implements OnInit, OnDestroy {
   screen = inject(ScreenSizeService);
   userData = inject(UserDataService);
   http = inject(HttpService);
+  mainNav = inject(MainNavService);
 
   // attributes
   // --------------------------------------------
@@ -31,11 +33,11 @@ export class NotificationsViewComponent implements OnInit, OnDestroy {
 
   // methods
   // --------------------------------------------
-  openNotification(notification: Notification, markAsRead: boolean = false) {
-    if (markAsRead) {
+  openNotification(notification: Notification) {
+    if (notification.href) {
       this.http.markNotificationAsRead(notification.id);
+      this.mainNav.navigateTo(notification.href);
     }
-    // TODO: actually go somewhere here
   }
 
 }
