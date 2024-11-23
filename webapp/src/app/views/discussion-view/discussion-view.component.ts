@@ -60,6 +60,8 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   // methods
   // --------------------------------------------
   onChatRoomUpdate(data: Message[]|Change<Message>) {
+    console.log("something happened!");
+    console.log(data);
     if (isChange(data)) {
       const change = data as Change<Message>;
       switch (change.type) {

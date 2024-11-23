@@ -1,7 +1,6 @@
 import { Request } from "express";
-import { Doc } from "sonddr-shared";
 
-export function _getUnique<T extends Doc, U extends keyof T>(collection: T[], key: U): T[U][] {
+export function _getUnique<T extends object, U extends keyof T>(collection: T[], key: U): T[U][] {
 	return Array.from(collection.reduce((result, current) => {
 		if (key in current) {  // key might be optional
 			result.add(current[key] as T[U]);
@@ -10,11 +9,15 @@ export function _getUnique<T extends Doc, U extends keyof T>(collection: T[], ke
 	}, new Set<T[U]>).values());
 }
 
-export function _getUniqueInArray<T, U extends keyof T>(collection: T[], key: U): T[U] {
+export function _getUniqueInArray<T extends object, U extends keyof T>(collection: T[], key: U): T[U] {
 	return Array.from(collection.reduce((result, current) => {
-		(current[key] as any).forEach((item: any) => {
-			result.add(item);
-		});
+        // - 'current' might be optional in some edge cases (e.g. nested optional object)
+        // - key might be optional
+        if (current && key in current) {  // might be optional
+            (current[key] as any).forEach((item: any) => {
+                result.add(item);
+            });
+        }
 		return result;
 	}, new Set<any>).values()) as T[U];
 }

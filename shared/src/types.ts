@@ -156,7 +156,18 @@ export type Message = {
     date: Date,
     content: string,
     deleted: boolean,
+    reactions?: Reaction[],
 };
+
+export type DbReaction = {
+    emoji: string,
+    fromUserIds: string[],
+}
+
+export type Reaction = {
+    emoji: string,
+    fromUsers: User[],
+}
 
 export type DbMessage = {
     id: string,
@@ -165,6 +176,7 @@ export type DbMessage = {
     date: Date,
     content: string,
     deleted: boolean,
+    reactions?: DbReaction[],
 };
 
 export type Cheer = {
