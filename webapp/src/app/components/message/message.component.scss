@@ -4,11 +4,28 @@
   flex-direction: row;
 
   #bubble {
+    position: relative;
     border-radius: var(--radius);
     border-bottom-left-radius: 0;
     background-color: var(--grey);
     padding: 5px 10px;
     max-width: 80%;
+
+    #reaction {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      transform: translate(10px, 22px);
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 99px;
+
+      img { display: block; }
+    }
+  }
+
+  &.has-reaction {
+    padding-bottom: 20px;
   }
 
   &.from-user {

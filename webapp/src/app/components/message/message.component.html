@@ -1,6 +1,14 @@
-<div id="container" class="flex justify-start gutter" [ngClass]="{'mobile': screen.isMobile$|async ,'from-user': message?.author?.isUser, 'deleted': message?.deleted}" *transloco="let t">
+<div id="container" class="flex justify-start gutter" [ngClass]="{
+  'mobile': screen.isMobile$|async ,
+  'from-user': message?.author?.isUser,
+  'deleted': message?.deleted,
+  'has-reaction': message?.reactions,
+}" *transloco="let t">
   <div id="bubble" [cdkContextMenuTriggerFor]="menu">
     <p class="no-margin-bottom">{{ message?.content }}</p>
+    @if(message?.userReaction; as react) {
+    <div id="reaction"><img [src]="emoji.get(react)"></div>
+    }
   </div>
   <ng-template #menu>
     <div cdkMenu>
