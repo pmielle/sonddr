@@ -1,11 +1,11 @@
 import { IncomingMessage } from "http";
 import { Server } from "node:http";
 import { WebSocketServer } from "ws";
-import { delete_str } from "sonddr-shared";
+import { DbMessage, DbReaction, delete_str, react_str, sep_str } from "sonddr-shared";
 import { authenticateIncomingMessage } from "./auth.js";
 import { wsBasePath } from "./routes/routes.js";
 import { ChatRoom, ChatRoomManager } from "./types/chat-room.js";
-import { patchDocument, postDocument } from "./database.js";
+import { getDocument, patchDocument, postDocument } from "./database.js";
 
 export function addWebsockets(server: Server) {
 
@@ -47,14 +47,23 @@ export function addWebsockets(server: Server) {
 
 			if (message.startsWith(delete_str)) {
 
-				const messageId = message.substring(delete_str.length);
-
+                const messageId = message.split(sep_str)[1];
 				await patchDocument(
 					`messages/${messageId}`,
 					[
 						{ field: "deleted", operator: "set", value: true },
 						{ field: "content", operator: "set", value: "Deleted" },
 					]
+				);
+
+            } else if (message.startsWith(react_str)) {
+
+                const [messageId, emoji] = message.split(sep_str).slice(1,3);
+                let dbMessage = await getDocument<DbMessage>(`messages/${messageId}`);
+                let reactions = _addToReactions(dbMessage.reactions, emoji, userId);
+				await patchDocument(
+					`messages/${messageId}`,
+					[ { field: "reactions", operator: "set", value: reactions } ]
 				);
 
 			} else {
@@ -92,6 +101,25 @@ export function addWebsockets(server: Server) {
 
 	});
 
+}
+
+function _addToReactions(reactions: DbReaction[]|undefined, emoji: string, userId: string): DbReaction[] {
+    // first time someone ever react to this message
+    if (reactions === undefined) {
+        return [{emoji: emoji, fromUserIds: [userId]}];
+    }
+    let reaction = reactions.find(r => r.emoji === emoji);
+    if (reaction) {
+        // someone has already reacted with this emoji
+        if (reaction.fromUserIds.includes(userId)) {
+            throw new Error(`${userId} has already reacted with ${emoji}`);
+        }
+        reaction.fromUserIds.push(userId);
+    } else {
+        // first time someone reacts with this emoji
+        reactions.push({emoji: emoji, fromUserIds: [userId]});
+    }
+    return reactions;
 }
 
 function _getFromIncomingMessageQuery<T>(key: string, incomingMessage: IncomingMessage): T {
