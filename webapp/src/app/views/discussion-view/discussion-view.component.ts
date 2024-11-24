@@ -60,7 +60,7 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   // methods
   // --------------------------------------------
   onChatRoomUpdate(data: Message[]|Change<Message>) {
-    console.log("something happened!");
+    console.log("something happened");
     console.log(data);
     if (isChange(data)) {
       const change = data as Change<Message>;
@@ -72,7 +72,11 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
         }
         case "update": {
           const index = this.findIndex(change.docId);
+          console.log("BEFORE: ");
+          console.log(JSON.stringify(this.messages![index]));
           this.messages![index] = change.docAfter!;
+          console.log("AFTER: ");
+          console.log(JSON.stringify(this.messages![index]));
           break;
         }
         case "delete": {

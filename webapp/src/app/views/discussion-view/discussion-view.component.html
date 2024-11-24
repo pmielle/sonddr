@@ -22,6 +22,7 @@
       [class.with-spacer]="shouldHaveSpacer(i)"
       [message]="m"
       (delete)="delete(m.id)"
+      (react)="react($event, m.id)"
     ></app-message>
     }
   </div>

@@ -27,7 +27,7 @@ export class ChatRoom {
     });
   }
 
-  send(message: string) {
+  send(message: string): Message {
     this.ws.send(message);
     return this._makePlaceholderMessage(message);
   }

@@ -7,6 +7,9 @@
       @if(message?.author?.isUser && ! message?.deleted) {
       <button mat-flat-button cdkMenuItem (click)="delete.next()">{{ t('misc.delete') }}</button>
       }
+      @if(!message?.author?.isUser) {
+      <button mat-flat-button cdkMenuItem (click)="onReactClick()">{{ t('misc.react') }}</button>
+      }
     </div>
   </ng-template>
 </div>

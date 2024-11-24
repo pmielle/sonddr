@@ -19,7 +19,10 @@ export async function reviveMessages(dbDocs: DbMessage[], userId: string): Promi
     // convert dbDocs into docs
     const docs: Message[] = dbDocs.map((dbDoc) => {
         const {authorId, reactions, ...data} = dbDoc;
-        if (reactions) { data["reactions"] = _reviveReactions(reactions, users); }
+        if (reactions) {
+            data["reactions"] = _reviveReactions(reactions, users);
+            data["userReaction"] = _findUserReaction(reactions, userId);
+        }
         data["author"] = users.find(u => u.id === authorId);
         return data as any;
     });
@@ -35,4 +38,9 @@ function _reviveReactions(dbReactions: DbReaction[], users: User[]): Reaction[] 
         };
         return reaction;
     });
+}
+
+function _findUserReaction(reactions: DbReaction[], userId: string): string|undefined {
+    let userReaction = reactions.find(r => r.fromUserIds.includes(userId));
+    return userReaction ? userReaction.emoji : undefined;
 }

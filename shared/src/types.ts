@@ -157,6 +157,7 @@ export type Message = {
     content: string,
     deleted: boolean,
     reactions?: Reaction[],
+    userReaction?: string,
 };
 
 export type DbReaction = {
