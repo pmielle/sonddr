@@ -108,6 +108,9 @@ function _addToReactions(reactions: DbReaction[]|undefined, emoji: string, userI
     if (reactions === undefined) {
         return [{emoji: emoji, fromUserIds: [userId]}];
     }
+    // if user has already reacted, remove their previous reaction
+    reactions = _removePreviousReaction(reactions, userId);
+    // add new reaction to preexisting list
     let reaction = reactions.find(r => r.emoji === emoji);
     if (reaction) {
         // someone has already reacted with this emoji
@@ -118,6 +121,19 @@ function _addToReactions(reactions: DbReaction[]|undefined, emoji: string, userI
     } else {
         // first time someone reacts with this emoji
         reactions.push({emoji: emoji, fromUserIds: [userId]});
+    }
+    return reactions;
+}
+
+function _removePreviousReaction(reactions: DbReaction[], userId: string): DbReaction[] {
+    let previousReaction = reactions.find(r => r.fromUserIds.includes(userId));
+    if (previousReaction) {
+        // remove the user from the list
+        previousReaction.fromUserIds = previousReaction.fromUserIds.filter(id => id !== userId);
+        // remove this reaction entirely if it was the only user
+        if (previousReaction.fromUserIds.length === 0) {
+            reactions = reactions.filter(r => r !== previousReaction);
+        }
     }
     return reactions;
 }

@@ -34,19 +34,15 @@ export class MessageComponent implements OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   ngOnDestroy(): void {
-      this.popupSub?.unsubscribe;
+    this.popupSub?.unsubscribe;
   }
 
   // methods
   // --------------------------------------------
   onReactClick() {
-    if (this.message?.userReaction) {
-      console.log("already reacted...");
-      return;
-    }
     this.popupSub = this.dialog.open(EmojiPickerComponent, {panelClass: "custom-popup"})
-      .afterClosed().subscribe(emoji => {
-        if (emoji) { this.react.next(emoji); }
-      });
+    .afterClosed().subscribe(emoji => {
+      if (emoji) { this.react.next(emoji); }
+    });
   }
 }
