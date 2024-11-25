@@ -6,8 +6,15 @@
 }" *transloco="let t">
   <div id="bubble" [cdkContextMenuTriggerFor]="menu">
     <p class="no-margin-bottom">{{ message?.content }}</p>
-    @if(message?.userReaction; as react) {
-    <div id="reaction"><img [src]="emoji.get(react)"></div>
+    @if(message?.reactions; as reactions) {
+    <div id="reactions" class="flex small-gap">
+      @for(react of reactions; track react.emoji) {
+      <img [src]="emoji.get(react.emoji)">
+      }
+      @if(reactions.length > 1) {
+      <span id="counter">{{ reactions.length }}</span>
+      }
+    </div>
     }
   </div>
   <ng-template #menu>
