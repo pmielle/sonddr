@@ -41,9 +41,9 @@ export class ChatRoom {
 	databaseSub?: Subscription;
 	clients = new Map<string, WebSocket>();  // keys are user IDs
 
-	constructor(discussionId: string, userId: string, firstUserSocket: WebSocket) {
+	constructor(discussionId: string, firstUserId: string, firstUserSocket: WebSocket) {
 		this.discussionId = discussionId;
-		this._init(userId, firstUserSocket);
+		this._init(firstUserId, firstUserSocket);
 	}
 
 	async join(userId: string, socket: WebSocket) {
@@ -70,9 +70,9 @@ export class ChatRoom {
 		socket.send(JSON.stringify(payload));
 	}
 
-	async _init(userId: string, firstUserSocket: WebSocket) {
-		await this.join(userId, firstUserSocket);
-		this._listenToDatabase(userId);
+	async _init(firstUserId: string, firstUserSocket: WebSocket) {
+		await this.join(firstUserId, firstUserSocket);
+		this._listenToDatabase();
 	}
 
 	async _getOldMessages(userId: string): Promise<Message[]> {
@@ -84,16 +84,13 @@ export class ChatRoom {
 		return docs;
 	}
 
-	_listenToDatabase(userId: string) {
+	_listenToDatabase() {
 		this.databaseSub = messagesChanges$.pipe(
-			switchMap(change => reviveChange(change, reviveMessage, userId)),
-			rxFilter(change => this._getDiscussionIdOfChange(change) === this.discussionId),
-		).subscribe(change => {
+			rxFilter(change => this._getDiscussionIdOfDbChange(change) === this.discussionId),
+		).subscribe(async dbChange => {
 			for (const [userId, ws] of this.clients) {
-				// finish revival of user object
+                let change = await reviveChange(dbChange, reviveMessage, userId);
 				const isUser = this._getAuthorIdOfChange(change) === userId
-				if (change.docBefore) { change.docBefore.author.isUser = isUser }
-				if (change.docAfter) { change.docAfter.author.isUser = isUser }
 				// a placeholder is inserted client side when a message is send
 				// change the type to "update" for this specific client to replace the placeholder
 				const changeToSend = (isUser && change.type === "insert")
@@ -105,7 +102,7 @@ export class ChatRoom {
 		});
 	}
 
-	_getDiscussionIdOfChange(change: Change<Message>): string {
+	_getDiscussionIdOfDbChange(change: Change<DbMessage>): string {
 		const discussionId = change.docBefore?.discussionId || change.docAfter?.discussionId;
 		if (! discussionId) { throw new Error("Failed to find discussionId of change"); }
 		return discussionId;
