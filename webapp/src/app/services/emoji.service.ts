@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class EmojiService {
 
   root_path = "/assets/emojis";
+  // https://www.blockstatus.com/msn/emoticons
   map = new Map([
     [":)", "smile"],
     [":d", "open_mouthed"],

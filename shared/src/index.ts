@@ -17,4 +17,4 @@ export const placeholder_id = "PLACEHOLDER_ID";
 export const ping_str = "SONDDR_PING";
 export const delete_str = "SONDDR_DELETE";
 export const react_str = "SONDDR_REACT";
-export const sep_str = "|";
+export const sep_str = "@@@";
