@@ -21,6 +21,7 @@
     "dec": "Décembre"
   },
   "misc": {
+    "react": "Réagir",
     "remove": "Enlever",
     "see-other-comments": "Voir {{ n }} autres commentaires",
     "see-other-candidates": "Voir {{ n }} autres candidats",

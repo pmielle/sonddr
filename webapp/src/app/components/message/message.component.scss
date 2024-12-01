@@ -4,11 +4,34 @@
   flex-direction: row;
 
   #bubble {
+    position: relative;
     border-radius: var(--radius);
     border-bottom-left-radius: 0;
     background-color: var(--grey);
     padding: 5px 10px;
     max-width: 80%;
+
+    #reactions {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      transform: translate(10px, 25px);
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 99px;
+
+      img { display: block; }
+
+      #counter {
+        color: var(--background-color);
+        opacity: 0.5;
+        font-weight: bold;
+      }
+    }
+  }
+
+  &.has-reaction {
+    padding-bottom: 25px;
   }
 
   &.from-user {
@@ -18,6 +41,12 @@
       background-color: var(--blue);
       border-bottom-left-radius: var(--radius);
       border-bottom-right-radius: 0;
+
+      #reactions {
+        left: initial;
+        right: 0;
+        transform: translate(-10px, 25px);
+      }
     }
 
   }

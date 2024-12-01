@@ -61,6 +61,7 @@ import { TranslocoRootModule } from './transloco-root.module';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { AboveKeyboardDirective } from './directives/above-keyboard.directive';
 import { AutoGrowDirective } from './directives/auto-grow.directive';
+import { EmojiPickerComponent } from './components/emoji-picker/emoji-picker.component';
 
 
 @NgModule({
@@ -111,6 +112,7 @@ import { AutoGrowDirective } from './directives/auto-grow.directive';
     VolunteersViewComponent,
     AboveKeyboardDirective,
     AutoGrowDirective,
+    EmojiPickerComponent,
   ],
   imports: [
     BrowserModule,

@@ -317,13 +317,17 @@ function _convertFiltersToDbFilter(filters: Filter[], addFullDocument = false): 
 
 function _convertDbDocToDoc(dbDoc: BSON.Document): Doc {
 	const doc: Doc = { id: dbDoc._id.toString() };
-	for (const [key, value] of Object.entries(dbDoc)) {
+	for (let [key, value] of Object.entries(dbDoc)) {
 		if (key == "_id") { continue; }
 		if (key.endsWith("Id")) {
 			doc[key] = (value as ObjectId).toString();
 		} else if (key.endsWith("Ids")) {
 			doc[key] = (value as ObjectId[]).map(x => x.toString());
 		} else {
+            // recurse into nested objects
+            if (isObject(value)) {
+                value = _convertDbDocToDoc(value);
+            }
 			doc[key] = value;
 		}
 	}
@@ -343,15 +347,24 @@ function _convertDocToDbDoc(doc: any, withId: boolean): any {
 		}
 		dbDoc["_id"] = mongoId;
 	}
-	for (const [key, value] of Object.entries(doc)) {
+	for (let [key, value] of Object.entries(doc)) {
 		if (key == "id") { continue; }
 		if (key.endsWith("Id")) {
 			dbDoc[key] = makeMongoId(value as string);
 		} else if (key.endsWith("Ids")) {
 			dbDoc[key] = (value as string[]).map(x => makeMongoId(x));
 		} else {
+            // recurse into nested objects
+            if (isObject(value)) {
+                value = _convertDocToDbDoc(value, false);  // withId is only top-level
+            }
 			dbDoc[key] = value;
 		}
 	}
 	return dbDoc;
+}
+
+// https://www.w3docs.com/snippets/javascript/how-to-check-if-a-value-is-an-object-in-javascript.html
+function isObject(value: any): boolean {
+    return value && typeof value === 'object' && value.constructor === Object;
 }

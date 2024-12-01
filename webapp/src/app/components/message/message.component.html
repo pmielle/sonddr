@@ -1,11 +1,29 @@
-<div id="container" class="flex justify-start gutter" [ngClass]="{'mobile': screen.isMobile$|async ,'from-user': message?.author?.isUser, 'deleted': message?.deleted}" *transloco="let t">
+<div id="container" class="flex justify-start gutter" [ngClass]="{
+  'mobile': screen.isMobile$|async ,
+  'from-user': message?.author?.isUser,
+  'deleted': message?.deleted,
+  'has-reaction': message?.reactions,
+}" *transloco="let t">
   <div id="bubble" [cdkContextMenuTriggerFor]="menu">
     <p class="no-margin-bottom">{{ message?.content }}</p>
+    @if(message?.reactions; as reactions) {
+    <div id="reactions" class="flex small-gap">
+      @for(react of reactions; track react.emoji) {
+      <img [src]="emoji.get(react.emoji)">
+      }
+      @if(reactions.length > 1) {
+      <span id="counter">{{ reactions.length }}</span>
+      }
+    </div>
+    }
   </div>
   <ng-template #menu>
     <div cdkMenu>
       @if(message?.author?.isUser && ! message?.deleted) {
       <button mat-flat-button cdkMenuItem (click)="delete.next()">{{ t('misc.delete') }}</button>
+      }
+      @if(!message?.author?.isUser) {
+      <button mat-flat-button cdkMenuItem (click)="onReactClick()">{{ t('misc.react') }}</button>
       }
     </div>
   </ng-template>

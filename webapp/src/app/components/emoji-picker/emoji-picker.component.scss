@@ -1,0 +1,29 @@
+#container {
+  padding: var(--spacing);
+  background-color: white;
+
+  .emoji {
+    position: relative;
+    height: 36px;
+
+    img {
+      height: 100%;
+    }
+
+    &.selected::after {
+      content: "";
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--background-color);
+      opacity: 0.5;
+      z-index: 1;
+      transform: scale(1.25);
+      border-radius: 99px;
+    }
+
+  }
+
+}
