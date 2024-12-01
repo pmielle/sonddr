@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from "rxjs";
-import { Change, Message, User, placeholder_id, delete_str, react_str, sep_str } from "sonddr-shared";
+import { Change, Message, User, placeholder_id, delete_str, react_str, sep_str, delete_react_str } from "sonddr-shared";
 
 export class ChatRoom {
 
@@ -30,6 +30,10 @@ export class ChatRoom {
   send(message: string): Message {
     this.ws.send(message);
     return this._makePlaceholderMessage(message);
+  }
+
+  deleteReaction(messageId: string) {
+    this.ws.send(`${delete_react_str}${sep_str}${messageId}`);
   }
 
   react(emoji: string, messageId: string) {

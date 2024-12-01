@@ -1,5 +1,7 @@
 <div id="container" class="flex wrap small-gap">
   @for(e of emoji.listAll(); track e) {
-  <img [src]="emoji.get(e)" [mat-dialog-close]="e">
+  <div class="emoji" [class.selected]="e == data.selected" [mat-dialog-close]="e">
+    <img [src]="emoji.get(e)">
+  </div>
   }
 </div>

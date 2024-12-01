@@ -108,8 +108,12 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
     this.content = "";
   }
 
-  react(emoji: string, messageId: string) {
-    this.chatRoom!.react(emoji, messageId);
+  react(emoji: string|undefined, messageId: string) {
+    if (emoji) {
+      this.chatRoom!.react(emoji, messageId);
+    } else {
+      this.chatRoom!.deleteReaction(messageId);
+    }
   }
 
   delete(messageId: string) {

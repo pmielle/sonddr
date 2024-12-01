@@ -25,7 +25,7 @@ export class MessageComponent implements OnDestroy {
   // --------------------------------------------
   @Input("message") message?: Message;
   @Output("delete") delete = new EventEmitter<void>();
-  @Output("react") react = new EventEmitter<string>();
+  @Output("react") react = new EventEmitter<string|undefined>();
 
   // attributes
   // --------------------------------------------
@@ -40,9 +40,15 @@ export class MessageComponent implements OnDestroy {
   // methods
   // --------------------------------------------
   onReactClick() {
-    this.popupSub = this.dialog.open(EmojiPickerComponent, {panelClass: "custom-popup"})
+    this.popupSub = this.dialog.open(EmojiPickerComponent, {panelClass: "custom-popup", data: {selected: this.message?.userReaction}})
     .afterClosed().subscribe(emoji => {
-      if (emoji) { this.react.next(emoji); }
+      if (emoji) {
+        if (emoji === this.message?.userReaction) {
+          this.react.next(undefined);
+          return;
+        }
+        this.react.next(emoji);
+      }
     });
   }
 }

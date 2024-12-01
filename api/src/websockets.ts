@@ -1,7 +1,7 @@
 import { IncomingMessage } from "http";
 import { Server } from "node:http";
 import { WebSocketServer } from "ws";
-import { DbMessage, DbReaction, delete_str, react_str, sep_str } from "sonddr-shared";
+import { DbMessage, DbReaction, delete_react_str, delete_str, react_str, sep_str } from "sonddr-shared";
 import { authenticateIncomingMessage } from "./auth.js";
 import { wsBasePath } from "./routes/routes.js";
 import { ChatRoom, ChatRoomManager } from "./types/chat-room.js";
@@ -66,7 +66,17 @@ export function addWebsockets(server: Server) {
 					[ { field: "reactions", operator: "set", value: reactions } ]
 				);
 
-			} else {
+			} else if (message.startsWith(delete_react_str)) {
+
+                const messageId = message.split(sep_str)[1];
+                let dbMessage = await getDocument<DbMessage>(`messages/${messageId}`);
+                let reactions = _removeReaction(dbMessage.reactions, userId);
+				await patchDocument(
+					`messages/${messageId}`,
+					[ { field: "reactions", operator: "set", value: reactions } ]
+				);
+
+            } else {
 
 				const newMessagePayload = {
 					discussionId: discussionId,
@@ -105,11 +115,11 @@ export function addWebsockets(server: Server) {
 
 function _addToReactions(reactions: DbReaction[]|undefined, emoji: string, userId: string): DbReaction[] {
     // first time someone ever react to this message
-    if (reactions === undefined) {
+    if (!reactions) {
         return [{emoji: emoji, fromUserIds: [userId]}];
     }
     // if user has already reacted, remove their previous reaction
-    reactions = _removePreviousReaction(reactions, userId);
+    reactions = _removeReaction(reactions, userId) || [];
     // add new reaction to preexisting list
     let reaction = reactions.find(r => r.emoji === emoji);
     if (reaction) {
@@ -125,7 +135,7 @@ function _addToReactions(reactions: DbReaction[]|undefined, emoji: string, userI
     return reactions;
 }
 
-function _removePreviousReaction(reactions: DbReaction[], userId: string): DbReaction[] {
+function _removeReaction(reactions: DbReaction[], userId: string): DbReaction[]|undefined {
     let previousReaction = reactions.find(r => r.fromUserIds.includes(userId));
     if (previousReaction) {
         // remove the user from the list
@@ -134,6 +144,8 @@ function _removePreviousReaction(reactions: DbReaction[], userId: string): DbRea
         if (previousReaction.fromUserIds.length === 0) {
             reactions = reactions.filter(r => r !== previousReaction);
         }
+        // return undefined if empty
+        if (reactions.length === 0) { return undefined; }
     }
     return reactions;
 }
