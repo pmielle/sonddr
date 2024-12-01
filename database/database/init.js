@@ -10,4 +10,3 @@ db.createCollection("discussions", { changeStreamPreAndPostImages: { enabled: tr
 db.createCollection("notifications", { changeStreamPreAndPostImages: { enabled: true} })
 db.createCollection("volunteers", { changeStreamPreAndPostImages: { enabled: true} })
 db.createCollection("drafts", { changeStreamPreAndPostImages: { enabled: true} })
-db.createCollection("reactions", { changeStreamPreAndPostImages: { enabled: true} })
