@@ -39,7 +39,7 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-    this.mainNav.flattenNavBar();
+    this.mainNav.hideNavBar();
     this.routeSub = this.route.paramMap.subscribe(async map => {
       const id = map.get("id");
       if (!id) { throw new Error("Missing id route param"); }

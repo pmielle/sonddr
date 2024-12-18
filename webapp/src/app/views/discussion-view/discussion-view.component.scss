@@ -11,15 +11,8 @@
     #messages {
         flex-direction: column-reverse;
         padding-top: var(--large-spacing);
+        padding-bottom: var(--spacing);
         min-height: 100vh;
-
-        &.mobile {
-          padding-bottom: calc(66px + var(--spacing));
-        }
-
-        &:not(.mobile) {
-          padding-bottom: var(--spacing);
-        }
 
         app-message {
             width: 100%;
@@ -40,7 +33,7 @@
 
         &.mobile {
           position: fixed;
-          bottom: var(--nav-bar-height);
+          bottom: 0;
         }
 
         textarea {
