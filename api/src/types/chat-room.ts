@@ -5,7 +5,7 @@ import { getDocument, getDocuments, patchDocument, postDocument } from "../datab
 import { messagesChanges$ } from "../triggers/triggers.js";
 import { reviveMessage, reviveMessages } from "../revivers/messages.js";
 import { reviveChange } from "../revivers/changes.js";
-
+import { writeImage } from "../uploads.js";
 
 export class ChatRoomManager {
 
@@ -50,7 +50,7 @@ export class ChatRoom {
 		const oldMessages = await this._getOldMessages(userId);
 		this._send(oldMessages, socket);
 		this.clients.set(userId, socket);
-        socket.on("message", async (data) => this._recieve(data.toString(), userId));
+        socket.on("message", async (data) => this._handleMessage(data.toString(), userId));
 	}
 
 	disconnect(userId: string) {
@@ -90,7 +90,7 @@ export class ChatRoom {
 		});
 	}
 
-    async _recieve(message: string, userId: string) {
+    async _handleMessage(message: string, userId: string) {
         if (message.startsWith(delete_str)) {
             const messageId = message.split(sep_str)[1];
             this._delete(messageId);
@@ -101,11 +101,18 @@ export class ChatRoom {
             const messageId = message.split(sep_str)[1];
             this._deleteReaction(messageId, userId);
         } else {
-            this._post(message, userId);
+            if (message.match(sep_str)) {
+                const [mess, blob] = message.split(sep_str).slice(1,3);
+                this._post(mess, userId, blob);
+            } else {
+                this._post(message, userId);
+            }
         }
     }
 
-    async _post(message: string, userId: string) {
+    // an image can be optionally added to the message
+    // it must be encoded as a base64 string
+    async _post(message: string, userId: string, img_base64?: string) {
         const newMessagePayload = {
             discussionId: this.discussionId,
             authorId: userId,
@@ -113,6 +120,11 @@ export class ChatRoom {
             content: message,
             deleted: false,
         };
+        if (img_base64) {
+            let img_buffer = Buffer.from(img_base64, "base64");
+            let filename = await writeImage("message", img_buffer);
+            newMessagePayload["img"] = filename;
+        }
         const newMessageId = await postDocument('messages', newMessagePayload);
         patchDocument(
             `discussions/${this.discussionId}`,

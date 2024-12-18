@@ -1,4 +1,4 @@
-FROM node:21
+FROM node:22
 WORKDIR /srv/sonddr
 COPY --from=shared . ../shared/
 RUN (cd ../shared && npm install && npm run build)

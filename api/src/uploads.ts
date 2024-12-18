@@ -3,6 +3,7 @@ import fs from "fs";
 import sharp from "sharp";
 import path from "node:path";
 import { Request, Response, NextFunction, RequestHandler } from "express";
+import { fileTypeFromBuffer } from "file-type";
 
 const b_in_mb = 1048576;
 
@@ -17,10 +18,11 @@ export function deleteUpload(path: string) {
 	fs.unlinkSync(`${uploadPath}/${path}`);
 }
 
-export async function writeImage(file: Express.Multer.File): Promise<string> {
-	const filename = generateFilename(file);
+export async function writeImage(prefix: string, buffer: Buffer): Promise<string> {
+    const filetype = await fileTypeFromBuffer(buffer);
+	const filename = generateFilename(prefix, filetype.ext);
 	const filepath = path.join(uploadPath, filename);
-	await sharp(file.buffer)
+	await sharp(buffer)
 		.resize({ width: 1024 })
 		.withMetadata()
 		.toFile(filepath);
@@ -36,7 +38,8 @@ export function upload(fields: multer.Field[]): RequestHandler {
 					// resize and write the images of this field (e.g. "cover")
 					// and add its filename to each file object
 					for (let i = 0; i < req.files[key].length; i++) {
-						const filename = await writeImage(req.files[key][i]);
+                        let file = req.files[key][i] as Express.Multer.File;
+						const filename = await writeImage(file.fieldname, file.buffer);
 						req.files[key][i].filename = filename;
 					}
 				}
@@ -48,19 +51,12 @@ export function upload(fields: multer.Field[]): RequestHandler {
 
 // private
 // --------------------------------------------
-function generateFilename(file: Express.Multer.File): string {
-	const extension = getImageExtension(file);
+function generateFilename(prefix: string, extension: string): string {
 	const uniqueSuffix = generateUniqueName();
-	const filename = `${file.fieldname}-${uniqueSuffix}.${extension}`;
+	const filename = `${prefix}-${uniqueSuffix}.${extension}`;
 	return filename;
 }
 
 function generateUniqueName(): string {
 	return Date.now() + '-' + Math.round(Math.random() * 1E9);
-}
-
-function getImageExtension(file: Express.Multer.File): string {
-	const [type, extension] = file.mimetype.split("/");
-	if (type !== "image") { throw new Error(`${file.filename} is not an image; its mimetype is ${file.mimetype}`); };
-	return extension;
 }
