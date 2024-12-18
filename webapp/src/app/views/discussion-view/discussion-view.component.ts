@@ -34,7 +34,8 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   content: string = "";
   chatRoom?: ChatRoom;
   chatRoomSub?: Subscription;
-  smallButton = false;
+  img?: File;
+  imgPreview?: string;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -59,6 +60,12 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
 
   // methods
   // --------------------------------------------
+  onImgChange(file: File) {
+    this.img = file;
+    this.imgPreview = URL.createObjectURL(file);
+    console.log(this.img);
+  }
+
   onChatRoomUpdate(data: Message[]|Change<Message>) {
     if (isChange(data)) {
       const change = data as Change<Message>;
@@ -92,7 +99,7 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   }
 
   formIsValid() {
-    return (this.content.length && this.discussion) ? true : false;
+    return ((this.content.length || this.img) && this.discussion) ? true : false;
   }
 
   send() {

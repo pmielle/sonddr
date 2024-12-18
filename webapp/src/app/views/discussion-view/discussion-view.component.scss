@@ -1,5 +1,10 @@
 #container {
     position: relative;
+    --preview-height: 100px;
+
+    &.preview-open.mobile #messages {
+      padding-bottom: calc(var(--spacing) + var(--preview-height));
+    }
 
     app-top-bar {
 
@@ -23,7 +28,7 @@
         }
     }
 
-    #input {
+    #bottom {
         position: sticky;
         left: 0;
         bottom: 0;
@@ -36,12 +41,33 @@
           bottom: 0;
         }
 
-        textarea {
-            margin-left: var(--gutter);
-            margin-right: var(--gutter);
-            flex: 1;
-            margin-bottom: 6px;
+        #preview-container {
+          height: var(--preview-height);
+          width: 100%;
+
+          #preview {
+            height: 100%;
+            aspect-ratio: 1/1;
+            background-color: var(--transparent-foreground-color);
+          }
         }
+
+        #input {
+          width: 100%;
+
+          textarea {
+              margin-left: var(--gutter);
+              margin-right: var(--gutter);
+              flex: 1;
+              margin-bottom: 6px;
+          }
+
+          app-file-picker {
+            color: var(--transparent-foreground-color);
+            transform: translateY(5px);
+          }
+        }
+
     }
 
 
