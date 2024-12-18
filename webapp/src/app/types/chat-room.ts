@@ -1,5 +1,6 @@
 import { BehaviorSubject, Observable } from "rxjs";
 import { Change, Message, User, placeholder_id, delete_str, react_str, sep_str, delete_react_str } from "sonddr-shared";
+import { Buffer } from "buffer";
 
 export class ChatRoom {
 
@@ -27,9 +28,16 @@ export class ChatRoom {
     });
   }
 
-  send(message: string): Message {
-    this.ws.send(message);
-    return this._makePlaceholderMessage(message);
+  async send(message: string, img?: File): Promise<Message> {
+    let payload = message;
+    if (img) {
+      let img_base64 = Buffer
+        .from(await img.arrayBuffer())
+        .toString("base64");
+      payload += `${sep_str}${img_base64}`;
+    }
+    this.ws.send(payload);
+    return this._makePlaceholderMessage(message, img);
   }
 
   deleteReaction(messageId: string) {
@@ -47,15 +55,19 @@ export class ChatRoom {
 
   // private
   // --------------------------------------------
-  _makePlaceholderMessage(content: string): Message {
-    return {
+  _makePlaceholderMessage(content: string, img?: File): Message {
+    let placeholder: Message = {
       id: placeholder_id,
       discussionId: placeholder_id,
       content: content,
       author: this.user$.getValue()!,
       date: new Date(),
       deleted: false,
+    };
+    if (img) {
+      placeholder.img = URL.createObjectURL(img);
     }
+    return placeholder;
   }
 
 }

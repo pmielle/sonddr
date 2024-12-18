@@ -102,12 +102,12 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
     return ((this.content.length || this.img) && this.discussion) ? true : false;
   }
 
-  send() {
+  async send() {
     if (! this.formIsValid()) {
-      throw new Error("send() should not be callable if content is empty");
+      throw new Error("send() should not be callable if there is nothing to send");
     }
     // post the message asynchronously
-    const placeholder = this.chatRoom!.send(this.content);
+    const placeholder = await this.chatRoom!.send(this.content, this.img);
     // add a placeholder message while waiting for the real one
     this.messages!.unshift(placeholder);
     // scroll to the bottom and reset the input

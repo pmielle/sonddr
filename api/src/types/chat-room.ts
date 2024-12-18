@@ -102,7 +102,7 @@ export class ChatRoom {
             this._deleteReaction(messageId, userId);
         } else {
             if (message.match(sep_str)) {
-                const [mess, blob] = message.split(sep_str).slice(1,3);
+                const [mess, blob] = message.split(sep_str);
                 this._post(mess, userId, blob);
             } else {
                 this._post(message, userId);
