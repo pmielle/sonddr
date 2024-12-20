@@ -13,7 +13,6 @@ export class HttpService {
   // --------------------------------------------
   private db = inject(HttpClient);
 
-
   // attributes
   // --------------------------------------------
   private basePath = "/api";
@@ -135,8 +134,12 @@ export class HttpService {
     return this._patch(`/notifications/${notificationId}`, {});
   }
 
-  getImageUrl(filename: string): string {
-    return `${this.basePath}/uploads/${filename}`;
+  // sometimes a local url is used,
+  // otherwise it is assumed to be the basename of an image on the server
+  getImageUrl(str: string): string {
+    return str.startsWith("blob:")
+      ? str
+      : `${this.basePath}/uploads/${str}`;
   }
 
   async deleteVote(commentId: string, userId: string) {

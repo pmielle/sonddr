@@ -1,7 +1,12 @@
 #container {
   --radius: var(--spacing);
   width: 100%;
-  flex-direction: row;
+
+  #img {
+    width: 80%;
+    border-radius: var(--spacing);
+    transform: translateY(7px);
+  }
 
   #bubble {
     position: relative;
@@ -35,7 +40,7 @@
   }
 
   &.from-user {
-    flex-direction: row-reverse;
+    align-items: flex-end;
 
     #bubble {
       background-color: var(--blue);

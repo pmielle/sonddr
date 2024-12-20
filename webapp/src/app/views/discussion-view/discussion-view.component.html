@@ -1,4 +1,7 @@
-<div id="container">
+<div id="container" [ngClass]="{
+  'mobile': screen.isMobile$|async,
+  'preview-open': imgPreview !== undefined,
+  }">
   <app-top-bar left-item="back" [reverse-scroll]="true">
     @if (findOtherUser(); as otherUser) {
     <app-profile-picture class="pointer" [user]="otherUser"
@@ -29,22 +32,30 @@
   }
 
   <div
-    id="input"
-    class="flex gutter frosted align-end"
+    id="bottom"
+    class="flex column gutter frosted"
     [ngClass]="{'mobile': screen.isMobile$|async}"
     appAboveKeyboard
-    (open)="smallButton = true"
-    (close)="smallButton = false"
   >
-    <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
-    <textarea
-      appAutoGrow
-      placeholder="Your message"
-      [(ngModel)]="content"
-      (keydown.enter)="formIsValid() && send()"
-    ></textarea>
-    <app-chip label="Message" color="var(--blue)" icon="send" (click)="send()"
-      [class.disabled]="!this.formIsValid()" [no-label]="smallButton"></app-chip>
+    @if(imgPreview) {
+    <div id="preview-container" class="flex justify-start">
+      <div id="preview" class="bg cover" [style.backgroundImage]="'url('+imgPreview+')'"></div>
+    </div>
+    }
+    <div id="input" class="flex align-end">
+      <app-profile-picture [user]="userData.user$|async"></app-profile-picture>
+      <textarea
+        appAutoGrow
+        placeholder="Your message"
+        [(ngModel)]="content"
+        (keydown.enter)="formIsValid() && send()"
+      ></textarea>
+      <app-file-picker (file-change)="onImgChange($event)">
+        <button mat-icon-button><mat-icon>add_photo_alternate</mat-icon></button>
+      </app-file-picker>
+      <app-chip label="Message" color="var(--blue)" icon="send" (click)="send()"
+        [class.disabled]="!this.formIsValid()" [no-label]="(screen.isMobile$|async) ? true : false"></app-chip>
+    </div>
   </div>
 
 

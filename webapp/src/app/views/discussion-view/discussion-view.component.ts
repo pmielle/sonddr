@@ -34,12 +34,13 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   content: string = "";
   chatRoom?: ChatRoom;
   chatRoomSub?: Subscription;
-  smallButton = false;
+  img?: File;
+  imgPreview?: string;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-    this.mainNav.flattenNavBar();
+    this.mainNav.hideNavBar();
     this.routeSub = this.route.paramMap.subscribe(async map => {
       const id = map.get("id");
       if (!id) { throw new Error("Missing id route param"); }
@@ -59,6 +60,11 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
 
   // methods
   // --------------------------------------------
+  onImgChange(file: File) {
+    this.img = file;
+    this.imgPreview = URL.createObjectURL(file);
+  }
+
   onChatRoomUpdate(data: Message[]|Change<Message>) {
     if (isChange(data)) {
       const change = data as Change<Message>;
@@ -92,20 +98,26 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   }
 
   formIsValid() {
-    return (this.content.length && this.discussion) ? true : false;
+    return ((this.content.length || this.img) && this.discussion) ? true : false;
   }
 
-  send() {
+  async send() {
     if (! this.formIsValid()) {
-      throw new Error("send() should not be callable if content is empty");
+      throw new Error("send() should not be callable if there is nothing to send");
     }
     // post the message asynchronously
-    const placeholder = this.chatRoom!.send(this.content);
+    const placeholder = await this.chatRoom!.send(this.content, this.img);
     // add a placeholder message while waiting for the real one
     this.messages!.unshift(placeholder);
     // scroll to the bottom and reset the input
     this.mainNav.scrollToBottom();
+    this.reset();
+  }
+
+  reset() {
     this.content = "";
+    this.img = undefined;
+    this.imgPreview = undefined;
   }
 
   react(emoji: string|undefined, messageId: string) {

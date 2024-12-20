@@ -158,6 +158,7 @@ export type Message = {
     deleted: boolean,
     reactions?: Reaction[],
     userReaction?: string,
+    img?: string,
 };
 
 export type DbReaction = {
@@ -178,6 +179,7 @@ export type DbMessage = {
     content: string,
     deleted: boolean,
     reactions?: DbReaction[],
+    img?: string,
 };
 
 export type Cheer = {
