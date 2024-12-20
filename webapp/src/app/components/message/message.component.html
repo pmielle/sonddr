@@ -1,9 +1,12 @@
-<div id="container" class="flex justify-start gutter" [ngClass]="{
+<div id="container" class="flex column align-start gutter" [ngClass]="{
   'mobile': screen.isMobile$|async ,
   'from-user': message?.author?.isUser,
   'deleted': message?.deleted,
   'has-reaction': message?.reactions,
 }" *transloco="let t">
+  @if(message?.img; as img) {
+  <img id="img" [src]="http.getImageUrl(img)">
+  }
   <div id="bubble" [cdkContextMenuTriggerFor]="menu">
     <p class="no-margin-bottom">{{ message?.content }}</p>
     @if(message?.reactions; as reactions) {
