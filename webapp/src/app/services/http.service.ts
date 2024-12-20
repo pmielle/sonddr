@@ -137,7 +137,7 @@ export class HttpService {
   // sometimes a local url is used,
   // otherwise it is assumed to be the basename of an image on the server
   getImageUrl(str: string): string {
-    return str.startsWith("http")
+    return str.startsWith("blob:")
       ? str
       : `${this.basePath}/uploads/${str}`;
   }

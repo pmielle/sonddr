@@ -7,6 +7,8 @@ import { reviveMessage, reviveMessages } from "../revivers/messages.js";
 import { reviveChange } from "../revivers/changes.js";
 import { writeImage } from "../uploads.js";
 
+export const deleted = "Deleted";
+
 export class ChatRoomManager {
 
 	rooms = new Map<string, ChatRoom>();  // keys are discussion IDs
@@ -141,7 +143,8 @@ export class ChatRoom {
             `messages/${messageId}`,
             [
                 { field: "deleted", operator: "set", value: true },
-                { field: "content", operator: "set", value: "Deleted" },
+                { field: "content", operator: "set", value: deleted},
+                { field: "img", operator: "unset", value: '' },
             ]
         );
     }

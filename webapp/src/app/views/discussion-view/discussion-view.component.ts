@@ -63,7 +63,6 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   onImgChange(file: File) {
     this.img = file;
     this.imgPreview = URL.createObjectURL(file);
-    console.log(this.img);
   }
 
   onChatRoomUpdate(data: Message[]|Change<Message>) {
@@ -112,7 +111,13 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
     this.messages!.unshift(placeholder);
     // scroll to the bottom and reset the input
     this.mainNav.scrollToBottom();
+    this.reset();
+  }
+
+  reset() {
     this.content = "";
+    this.img = undefined;
+    this.imgPreview = undefined;
   }
 
   react(emoji: string|undefined, messageId: string) {
