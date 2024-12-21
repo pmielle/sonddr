@@ -3,6 +3,6 @@
   <mat-icon [fontSet]="outlined ? 'material-icons-outlined' : 'material-icons'">{{ this.icon }}</mat-icon>
   <span class="mat-caption">{{ this.label }}</span>
   @if (badge) {
-    <div id="badge" [class.mobile]="screen.isMobile$|async">{{ badge }}</div>
+    <div id="badge">{{ badge }}</div>
   }
 </div>

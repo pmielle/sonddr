@@ -1,5 +1,11 @@
 #container {
 
+  /* display title in the top-bar on desktop */
+  #title, #top-bar-title { display: none; }
+  &.mobile { #title { display: block; } }
+  &:not(.mobile) { #top-bar-title { display: block; } }
+
+
     #header {
         position: relative;
         padding-top: var(--spacing);

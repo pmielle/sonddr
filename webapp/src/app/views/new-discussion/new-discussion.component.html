@@ -1,4 +1,4 @@
-<div id="container" class="swipe-up" *transloco="let t">
+<div id="container" class="swipe-up" *transloco="let t" [class.mobile]="screen.isMobile$|async">
 
   <app-top-bar left-item="close">
     <h2 class="no-margin-bottom">{{ t('misc.new-discussion') }}</h2>
@@ -9,7 +9,6 @@
 
   <div
     id="content"
-    [class.mobile]="screen.isMobile$|async"
   >
     <div id="to" class="gutter">
       @if (selectedUser; as u) {
@@ -43,7 +42,6 @@
   <div
     id="input"
     class="flex gutter frosted align-end"
-    [ngClass]="{'mobile': screen.isMobile$|async}"
     appAboveKeyboard
     (open)="smallButton = true"
     (close)="smallButton = false"

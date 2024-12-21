@@ -6,6 +6,10 @@
     right: var(--spacing);
     bottom: calc(var(--spacing) + var(--nav-bar-height));
     z-index: 99;
+
+    #label {
+      display: none;
+    }
   }
 
   &.out-of-sight, &.updating {
@@ -25,9 +29,5 @@
     text-align: center;
     width: var(--nav-bar-width);
     transform: translate(-50%, calc(100% + var(--small-spacing)));
-
-    &.mobile {
-      display: none;
-    }
   }
 }

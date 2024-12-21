@@ -1,5 +1,5 @@
 @if (displayedMode) {
-<div id="container" class="expo-out" [class]="{
+<div id="container" class="expo-out" [ngClass]="{
         'mobile': screen.isMobile$|async,
         'out-of-sight': hidden || ((screen.isMobile$|async) && mainNav.isFabHidden),
         'disabled': mainNav.isFabDisabled,
@@ -8,6 +8,6 @@
   <button mat-fab [style.backgroundColor]="displayedMode.color" (click)="displayedMode.action()">
     <mat-icon>{{ displayedMode.icon }}</mat-icon>
   </button>
-  <span id="label" [class.mobile]="screen.isMobile$|async" [style.color]="displayedMode.color" [innerHTML]="displayedMode.label"></span>
+  <span id="label" [style.color]="displayedMode.color" [innerHTML]="displayedMode.label"></span>
 </div>
 }

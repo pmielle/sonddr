@@ -1,19 +1,14 @@
-<div id="container" *transloco="let t; prefix: 'all-ideas'">
+<div id="container" *transloco="let t; prefix: 'all-ideas'" [class.mobile]="screen.isMobile$ | async">
 
   <app-top-bar [left-item]="(screen.isMobile$ | async) ? 'logo' : undefined">
-    @if (!(screen.isMobile$|async)) {
-    <h1 class="no-margin-bottom">{{ t('title') }}</h1>
-    }
+    <h1 id="top-bar-title" class="no-margin-bottom">{{ t('title') }}</h1>
     <div class="spacer"></div>
     <app-profile-picture class="pointer" [user]="userData.user$|async"
       (click)="userData.goToProfileOrAuth()"></app-profile-picture>
   </app-top-bar>
 
   <div id="header">
-    @if (screen.isMobile$ | async) {
     <h1 id="title" class="gutter">{{ t('title') }}</h1>
-    }
-
     <p class="gutter" [class.reduce-width]="screen.isWide$ | async">{{ t('header') }}</p>
 
     <app-h-scroll>

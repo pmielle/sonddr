@@ -1,16 +1,12 @@
-<div id="container" *transloco="let t; prefix: 'misc'">
+<div id="container" *transloco="let t; prefix: 'misc'" [class.mobile]="screen.isMobile$ | async">
 
   <app-top-bar>
-    @if (!(screen.isMobile$|async)) {
-    <h1 class="no-margin-bottom">Messages</h1>
-    }
+    <h1 id="top-bar-title" class="no-margin-bottom">Messages</h1>
     <div class="spacer"></div>
     <app-profile-picture class="pointer" [user]="userData.user$|async" (click)="userData.goToProfileOrAuth()"></app-profile-picture>
   </app-top-bar>
 
-  @if (screen.isMobile$ | async) {
   <h1 id="title" class="gutter no-margin-bottom">Messages</h1>
-  }
 
   @if (userData.activeDiscussions.length > 0) {
   <div id="new-discussions" class="discussions">

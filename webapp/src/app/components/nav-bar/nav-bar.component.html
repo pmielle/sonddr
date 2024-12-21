@@ -1,7 +1,7 @@
 <div
     id="container"
     class="flex column large-gap frosted expo-out"
-    [class]="{
+    [ngClass]="{
         'out-of-sight':
           (screen.isMobile$|async)
           && (mainNav.isNavBarHidden

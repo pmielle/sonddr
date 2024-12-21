@@ -6,6 +6,13 @@
       padding-bottom: calc(var(--spacing) + var(--preview-height));
     }
 
+    &.mobile {
+      #bottom {
+          position: fixed;
+          bottom: 0;
+      }
+    }
+
     app-top-bar {
 
         #title {
@@ -34,11 +41,6 @@
         padding-top: var(--spacing);
         padding-bottom: var(--spacing);
         width: 100%;
-
-        &.mobile {
-          position: fixed;
-          bottom: 0;
-        }
 
         #preview-container {
           height: var(--preview-height);

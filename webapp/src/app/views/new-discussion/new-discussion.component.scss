@@ -1,8 +1,7 @@
 #container {
 
-  #content {
-
-    &.mobile {
+  &.mobile {
+    #content {
       min-height: calc(
       100vh
       - var(--nav-bar-height)
@@ -11,7 +10,14 @@
       );
     }
 
-    &:not(.mobile) {
+    #input {
+      position: fixed;
+      bottom: var(--nav-bar-height);
+    }
+  }
+
+  &:not(.mobile) {
+    #content {
       min-height: calc(
       100vh
       - var(--top-bar-height)
@@ -19,6 +25,9 @@
       - 20px
       );
     }
+  }
+
+  #content {
 
     #to {
       padding-top: var(--spacing);
@@ -64,11 +73,6 @@
     padding-top: var(--spacing);
     padding-bottom: var(--spacing);
     width: 100%;
-
-    &.mobile {
-      position: fixed;
-      bottom: var(--nav-bar-height);
-    }
 
     textarea {
       margin-left: var(--gutter);
