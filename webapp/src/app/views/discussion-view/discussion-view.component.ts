@@ -115,9 +115,11 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.content = "";
-    this.img = undefined;
-    this.imgPreview = undefined;
+    setTimeout(() => {
+      this.content = "";
+      this.img = undefined;
+      this.imgPreview = undefined;
+    }, 0); // setTimeout otherwise Enter leaves a blank space
   }
 
   react(emoji: string|undefined, messageId: string) {
