@@ -39,7 +39,9 @@
   >
     @if(imgPreview) {
     <div id="preview-container" class="flex justify-start">
-      <div id="preview" class="bg cover" [style.backgroundImage]="'url('+imgPreview+')'"></div>
+      <div id="preview" class="bg cover" [style.backgroundImage]="'url('+imgPreview+')'">
+        <app-delete-pill (click)="clearImg()"></app-delete-pill>
+      </div>
     </div>
     }
     <div id="input" class="flex align-end">

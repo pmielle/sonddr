@@ -1,10 +1,10 @@
 #container {
   display: inline-flex;
-  background-color: var(--background-color);
+  background-color: var(--lighter-background-color);
   border-radius: 99px;
   position: absolute;
   top: -5px;
-  right: 0px;
+  right: -5px;
 
   mat-icon { transform: scale(0.66); }
 }
