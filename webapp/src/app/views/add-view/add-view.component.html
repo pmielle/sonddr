@@ -30,7 +30,10 @@
           }
         </mat-menu>
         @for (g of selectedGoals; track g.id) {
-        <app-goal-chip [goal]="g"></app-goal-chip>
+        <div class="selected-goal">
+          <app-goal-chip [goal]="g"></app-goal-chip>
+          <app-delete-pill (click)="deselectGoal(g)"></app-delete-pill>
+        </div>
         }
       </app-h-scroll>
     </div>
