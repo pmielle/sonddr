@@ -1,7 +1,10 @@
-<div id="container" [ngClass]="{
-  'mobile': screen.isMobile$|async,
-  'preview-open': imgPreview !== undefined,
-  }">
+<div id="container"
+     [ngClass]="{
+                'mobile': screen.isMobile$|async,
+                'preview-open': imgPreview !== undefined,
+                }"
+     [style.--input-height]="inputHeight + 'px'"
+  >
   <app-top-bar left-item="back" [reverse-scroll]="true">
     @if (findOtherUser(); as otherUser) {
     <app-profile-picture class="pointer" [user]="otherUser"
@@ -34,6 +37,7 @@
     id="bottom"
     class="flex column gutter frosted"
     appAboveKeyboard
+    #input
   >
     @if(imgPreview) {
     <div id="preview-container" class="flex justify-start">
@@ -49,6 +53,7 @@
         placeholder="Your message"
         [(ngModel)]="content"
         (keydown.enter)="formIsValid() && send()"
+        (keyup)="refreshInputHeight()"
       ></textarea>
       <app-file-picker (file-change)="onImgChange($event)">
         <button mat-icon-button><mat-icon>add_photo_alternate</mat-icon></button>

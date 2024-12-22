@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Discussion, Message, User, Change, isChange } from 'sonddr-shared';
@@ -15,7 +15,7 @@ import { UserDataService } from 'src/app/services/user-data.service';
   templateUrl: './discussion-view.component.html',
   styleUrls: ['./discussion-view.component.scss']
 })
-export class DiscussionViewComponent implements OnInit, OnDestroy {
+export class DiscussionViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // dependencies
   // --------------------------------------------
@@ -36,6 +36,8 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   chatRoomSub?: Subscription;
   img?: File;
   imgPreview?: string;
+  @ViewChild("input") input?: ElementRef;
+  inputHeight = 0;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -53,6 +55,10 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
     this.mainNav.disableFullScreenOnScroll();
   }
 
+  ngAfterViewInit(): void {
+      this.refreshInputHeight();
+  }
+
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
     this.chatRoomSub?.unsubscribe();
@@ -63,6 +69,13 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   onImgChange(file: File) {
     this.img = file;
     this.imgPreview = URL.createObjectURL(file);
+    setTimeout(() => this.refreshInputHeight(), 0);
+  }
+
+  refreshInputHeight() {
+    setTimeout(() => {  // time for UI updates
+      this.inputHeight = (this.input!.nativeElement as HTMLElement).clientHeight;
+    }, 0);
   }
 
   onChatRoomUpdate(data: Message[]|Change<Message>) {
@@ -117,13 +130,14 @@ export class DiscussionViewComponent implements OnInit, OnDestroy {
   reset() {
     setTimeout(() => {
       this.content = "";
-      this.clearImg();
+      this.clearImg(); // clearImg calls inputHeight refresh
     }, 0); // setTimeout otherwise Enter leaves a blank space
   }
 
   clearImg() {
     this.img = undefined;
     this.imgPreview = undefined;
+    this.refreshInputHeight();
   }
 
   react(emoji: string|undefined, messageId: string) {
