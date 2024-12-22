@@ -23,6 +23,7 @@ export class AutoGrowDirective implements OnInit {
 
   ngOnInit(): void {
     let ele = (this.ele.nativeElement as HTMLTextAreaElement);
+    console.log(ele);
     ele.rows = 1;
     this.setStyles(ele);
   }
@@ -30,7 +31,7 @@ export class AutoGrowDirective implements OnInit {
   // methods
   // --------------------------------------------
   setStyles(ele: HTMLTextAreaElement) {
-    ele.style.setProperty("fieldSizing", "content");
+    ele.style.setProperty("field-sizing", "content");
     ele.style.maxHeight = "5lh";
   }
 

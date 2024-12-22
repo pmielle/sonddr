@@ -68,7 +68,8 @@
               margin-left: var(--gutter);
               margin-right: var(--gutter);
               flex: 1;
-              margin-bottom: 6px;
+              margin-bottom: 6px;  // precise alignment
+              margin-top: 6px;  // to make it symmetric
           }
 
           app-file-picker {
