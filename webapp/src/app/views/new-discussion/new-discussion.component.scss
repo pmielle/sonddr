@@ -1,33 +1,26 @@
 #container {
+  --input-height: 67px;
 
   &.mobile {
     #content {
-      min-height: calc(
-      100vh
-      - var(--nav-bar-height)
-      - var(--top-bar-height)
-      - 67px
-      );
+      min-height: calc(100vh - var(--top-bar-height));
     }
 
-    #input {
-      position: fixed;
-      bottom: var(--nav-bar-height);
-    }
+    #input { position: fixed; }
   }
 
   &:not(.mobile) {
     #content {
-      min-height: calc(
-      100vh
-      - var(--top-bar-height)
-      - 67px
-      - 20px
-      );
+      min-height: calc(100vh - var(--top-bar-height) - var(--input-height) - 20px);
+      padding-bottom: 0;
     }
+
+    #input { position: sticky; }
   }
 
   #content {
+    padding-bottom: var(--input-height);
+    min-height: 100vh;
 
     #to {
       padding-top: var(--spacing);
@@ -67,7 +60,6 @@
   }
 
   #input {
-    position: sticky;
     left: 0;
     bottom: 0;
     padding-top: var(--spacing);
