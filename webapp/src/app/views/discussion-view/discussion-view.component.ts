@@ -42,7 +42,7 @@ export class DiscussionViewComponent implements OnInit, AfterViewInit, OnDestroy
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-    this.mainNav.hideNavBar();
+    setTimeout(() => this.mainNav.hideNavBar(), 0);  // NG100 otherwise
     this.routeSub = this.route.paramMap.subscribe(async map => {
       const id = map.get("id");
       if (!id) { throw new Error("Missing id route param"); }

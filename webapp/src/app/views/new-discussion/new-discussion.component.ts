@@ -36,7 +36,7 @@ export class NewDiscussionComponent implements OnInit, OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-    this.mainNav.hideNavBar();
+    setTimeout(() => this.mainNav.hideNavBar(), 0);  // NG100 otherwise
     this.routeSub = this.route.queryParamMap.subscribe(async map => {
       const id = map.get("preselected");
       if (id) {

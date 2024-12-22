@@ -23,7 +23,6 @@ export class AutoGrowDirective implements OnInit {
 
   ngOnInit(): void {
     let ele = (this.ele.nativeElement as HTMLTextAreaElement);
-    console.log(ele);
     ele.rows = 1;
     this.setStyles(ele);
   }
