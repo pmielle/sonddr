@@ -1,15 +1,24 @@
 #container {
     position: relative;
     --preview-height: 100px;
+    --input-height: 80px;
 
     &.preview-open.mobile #messages {
       padding-bottom: calc(var(--spacing) + var(--preview-height));
     }
 
     &.mobile {
-      #bottom {
-          position: fixed;
-          bottom: 0;
+      #bottom { position: fixed; } /* for aboveKeyboard */
+      #messages {
+        min-height: calc(100vh - var(--top-bar-height));
+      }
+    }
+
+    &:not(.mobile) {
+      #bottom { position: sticky; } /* width is wrong when using fixed */
+      #messages {
+        min-height: calc(100vh - var(--top-bar-height) - var(--input-height) - 20px);
+        padding-bottom: 0;
       }
     }
 
@@ -23,6 +32,7 @@
     #messages {
         flex-direction: column-reverse;
         padding-top: var(--large-spacing);
+        padding-bottom: var(--input-height);
         min-height: 100vh;
 
         app-message {
@@ -35,7 +45,6 @@
     }
 
     #bottom {
-        position: sticky;
         left: 0;
         bottom: 0;
         padding-top: var(--spacing);
