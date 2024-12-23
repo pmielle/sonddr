@@ -1,42 +1,48 @@
 #container {
+  position: relative;
   --radius: var(--spacing);
   width: 100%;
 
   #img {
     width: 80%;
     border-radius: var(--spacing);
-    transform: translateY(7px);
+    z-index: 1;
   }
 
   #bubble {
-    position: relative;
     border-radius: var(--radius);
     border-bottom-left-radius: 0;
     background-color: var(--grey);
     padding: 5px 10px;
     max-width: 80%;
+    z-index: 2;
+  }
 
-    #reactions {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      transform: translate(10px, 25px);
-      background-color: white;
-      padding: 5px 10px;
-      border-radius: 99px;
+  #reactions {
+    position: absolute;
+    left: 10px;
+    bottom: 0;
+    transform: translate(10px, 25px);
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 99px;
+    z-index: 3;
 
-      img { display: block; }
+    img { display: block; }
 
-      #counter {
-        color: var(--background-color);
-        opacity: 0.5;
-        font-weight: bold;
-      }
+    #counter {
+      color: var(--background-color);
+      opacity: 0.5;
+      font-weight: bold;
     }
   }
 
+  &.has-img #bubble {
+    margin-top: -7px;
+  }
+
   &.has-reaction {
-    padding-bottom: 25px;
+    margin-bottom: 25px;
   }
 
   &.from-user {
@@ -46,12 +52,13 @@
       background-color: var(--blue);
       border-bottom-left-radius: var(--radius);
       border-bottom-right-radius: 0;
+    }
 
-      #reactions {
-        left: initial;
-        right: 0;
-        transform: translate(-10px, 25px);
-      }
+    #reactions {
+      left: initial;
+      left: initial;
+      right: 10px;
+      transform: translate(-10px, 25px);
     }
 
   }

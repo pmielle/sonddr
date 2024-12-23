@@ -3,26 +3,33 @@
   'from-user': message?.author?.isUser,
   'deleted': message?.deleted,
   'has-reaction': message?.reactions,
+  'has-img': message?.img,
 }" *transloco="let t">
+
   @if(message?.img; as img) {
-  <img id="img" [src]="http.getImageUrl(img)" [appOpenImage]="img">
+  <img id="img" [src]="http.getImageUrl(img)" [appOpenImage]="img" [cdkContextMenuTriggerFor]="menu">
   }
+
+  @if(message?.content; as content) {
   <div id="bubble" [cdkContextMenuTriggerFor]="menu">
-    <p class="no-margin-bottom">{{ message?.content }}</p>
-    @if(message?.reactions; as reactions) {
-    <div id="reactions" class="flex small-gap">
-      @for(react of reactions; track react.emoji) {
-      <img [src]="emoji.get(react.emoji)">
-      }
-      @if(reactions.length > 1) {
-      <span id="counter">{{ reactions.length }}</span>
-      }
-    </div>
+    <p class="no-margin-bottom">{{ content }}</p>
+  </div>
+  }
+
+  @if(message?.reactions; as reactions) {
+  <div id="reactions" class="flex small-gap">
+    @for(react of reactions; track react.emoji) {
+    <img [src]="emoji.get(react.emoji)">
+    }
+    @if(reactions.length > 1) {
+    <span id="counter">{{ reactions.length }}</span>
     }
   </div>
+  }
+
   <ng-template #menu>
     <div cdkMenu>
-      @if(message?.author?.isUser && ! message?.deleted) {
+      @if(message?.author?.isUser && !message?.deleted) {
       <button mat-flat-button cdkMenuItem (click)="delete.next()">{{ t('misc.delete') }}</button>
       }
       @if(!message?.author?.isUser) {

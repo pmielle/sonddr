@@ -25,6 +25,7 @@
     }
 
     #messages {
+        z-index: 1;
         flex-direction: column-reverse;
         padding-top: var(--large-spacing);
 
@@ -43,6 +44,7 @@
         padding-top: var(--spacing);
         padding-bottom: var(--spacing);
         width: 100%;
+        z-index: 2;
 
         #preview-container {
           height: 100px;
