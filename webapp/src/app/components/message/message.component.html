@@ -5,7 +5,7 @@
   'has-reaction': message?.reactions,
 }" *transloco="let t">
   @if(message?.img; as img) {
-  <img id="img" [src]="http.getImageUrl(img)">
+  <img id="img" [src]="http.getImageUrl(img)" [appOpenImage]="img">
   }
   <div id="bubble" [cdkContextMenuTriggerFor]="menu">
     <p class="no-margin-bottom">{{ message?.content }}</p>
