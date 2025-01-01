@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
 import { NavigationEnd, Router, NavigationStart, NavigationBehaviorOptions } from '@angular/router';
-import { BehaviorSubject, Subscription, filter } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { TranslationService } from './translation.service';
 import { ScreenSizeService } from './screen-size.service';

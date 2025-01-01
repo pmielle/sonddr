@@ -8,6 +8,7 @@ import { KeycloakProfile } from 'keycloak-js';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MainNavService } from './main-nav.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class UserDataService {
   http = inject(HttpService);
   router = inject(Router);
   mainNav = inject(MainNavService);
+  notifications = inject(NotificationService);
 
   // attributes
   // --------------------------------------------
@@ -61,27 +63,25 @@ export class UserDataService {
   }
 
   async _onProfileUpdate(profile: KeycloakProfile | undefined) {
-    if (!profile) {
-      // nobody is logged in
-      this._reset();
-    } else if (!this._isSameUser(profile)) {
-      // login user changed
-      this._reset();
-      this.user$.next(await this._fetchOrCreateUser(profile));
-      this.discussionsSub = (await this.sse.getDiscussions()).subscribe(
-        data => this._onDiscussionsUpdate(data)
-      );
-      this.notificationsSub = (await this.sse.getNotifications()).subscribe(
-        data => this._onNotificationsUpdate(data)
-      );
-    }
+    if (this._isSameUser(profile)) { return; }
+    await this._reset();
+    if (!profile) { return; }
+    // login user changed
+    this.user$.next(await this._fetchOrCreateUser(profile));
+    this.discussionsSub = (await this.sse.getDiscussions()).subscribe(
+      data => this._onDiscussionsUpdate(data)
+    );
+    this.notificationsSub = (await this.sse.getNotifications()).subscribe(
+      data => this._onNotificationsUpdate(data)
+    );
+    this.notifications.start();
   }
 
-  _isSameUser(profile: KeycloakProfile): boolean {
-    return (this._getUser()?.id === profile.id);
+  _isSameUser(profile: KeycloakProfile | undefined): boolean {
+    return (this._getUser()?.id === profile?.id);
   }
 
-  _reset() {
+  async _reset() {
     this.discussionsSub?.unsubscribe();
     this.notificationsSub?.unsubscribe();
     this.newNotifications = [];
@@ -89,6 +89,7 @@ export class UserDataService {
     this.olderDiscussions = [];
     this.activeDiscussions = [];
     this.user$.next(undefined);
+    this.notifications.stop();
   }
 
   async _fetchOrCreateUser(profile: KeycloakProfile): Promise<User> {

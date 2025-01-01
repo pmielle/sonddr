@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import chalk from "chalk";
+import morgan from "morgan";
 import { createServer } from "http";
 import { NotFoundError } from "./types/types.js";
 import { addRoutes, basePath } from "./routes/routes.js";
@@ -14,19 +15,16 @@ const port = 3000;
 const app = express();
 const server = createServer(app);
 
-app.use(express.json());  // otherwise req.body is undefined
-
-
-// store
-// --------------------------------------------
-const store = await init_session(app);
-
+// misc
+// ----------------------------------------------
+app.use(express.json()); // otherwise req.body is undefined
+app.use(morgan("tiny")); // logging
 
 // authentication
 // ----------------------------------------------
+const store = await init_session(app);
 init_keycloak(store);
 app.use(keycloak.middleware());
-
 
 // routes
 // ----------------------------------------------
@@ -35,26 +33,24 @@ router.use("/uploads", express.static(uploadPath));
 addRoutes(router);
 app.use(basePath, router);
 
-
 // websockets
 // ----------------------------------------------
 addWebsockets(server);
-
 
 // triggers
 // ----------------------------------------------
 startAllTriggers();
 
-
 // error handling
 // ----------------------------------------------
 app.use(_errorHandler);
 
+// main
+// ----------------------------------------------
 server.listen(port, () => {
 	console.log(`Listening on port ${port}`);
 	console.log(`\n`);
 });
-
 
 // private
 // ----------------------------------------------

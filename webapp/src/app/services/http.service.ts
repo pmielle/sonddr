@@ -25,7 +25,20 @@ export class HttpService {
   // public methods
   // --------------------------------------------
 
-  // <drafts>
+  async getVapidPublicKey(): Promise<string> {
+    return this._get<string>(`/vapid`);
+  }
+
+  // returns a string that uniquely identifies this service worker:
+  // it will be used to cancel this subscription when the user logs out
+  async registerSubscription(sub: PushSubscription): Promise<string> {
+    return this._post(`/push`, {subscription: sub});
+  }
+
+  // when the user logs out
+  async deleteSubscription(id: string) {
+    return this._delete(`/push/${id}`);
+  }
 
   async deleteDraft(draftId: string): Promise<void> {
     return this._delete(`/drafts/${draftId}`);
@@ -53,8 +66,6 @@ export class HttpService {
     };
     return this._post(`/drafts`, payload);
   }
-
-  // </drafts>
 
   async addVolunteerCandidate(volunteerId: string) {
     return this._patch(`volunteers/${volunteerId}`, {addCandidate: true});
