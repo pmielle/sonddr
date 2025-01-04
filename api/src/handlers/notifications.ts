@@ -15,7 +15,7 @@ export function getVapidPublicKey(_req: Request, res: Response, _next: NextFunct
 export async function registerEndpoint(req: Request, res: Response, _: NextFunction) {
 	const payload = {
         userId: req["userId"],
-		url: _getFromReqBody("url", req),
+		subscription: _getFromReqBody("subscription", req),
     };
 	const insertedId = await postDocument(_getReqPath(req), payload);
 	res.json({ insertedId: insertedId });

@@ -64,7 +64,7 @@ export class UserDataService {
 
   async _onProfileUpdate(profile: KeycloakProfile | undefined) {
     if (this._isSameUser(profile)) { return; }
-    await this._reset();
+    if (this.user$.getValue()) { await this._reset(); }
     if (!profile) { return; }
     // login user changed
     this.user$.next(await this._fetchOrCreateUser(profile));

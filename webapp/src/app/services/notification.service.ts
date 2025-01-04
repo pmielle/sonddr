@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SwPush } from '@angular/service-worker';
 import { HttpService } from './http.service';
+import { firstValueFrom } from 'rxjs';
 
 const storageKey = 'push';
 
@@ -15,8 +16,12 @@ export class NotificationService {
   constructor() { }
 
   async start() {
-    if (this._isEnabled()) {
-      console.log("swPush is already enabled");
+    if (! this._isEnabled()) {
+      console.log("web-push is not enabled for this browser");
+      return;
+    }
+    if (await this._isActive()) {
+      console.log("web-push is already active");
       return;
     }
     this._requestSubscription()
@@ -27,7 +32,13 @@ export class NotificationService {
   }
 
   async stop() {
-    if (!this._isEnabled()) { throw new Error("swPush is not enabled"); }
+    if (! this._isEnabled()) {
+      console.log("web-push is not enabled for this browser");
+      return;
+    }
+    if (! await this._isActive()) {
+      throw new Error("web-push is not active");
+    }
     const id = localStorage.getItem(storageKey);
     if (!id) {
       throw new Error(`'${storageKey}' is not defined in localStorage`);
@@ -38,6 +49,11 @@ export class NotificationService {
 
   // private
   // --------------------------------------------
+  async _isActive(): Promise<boolean> {
+    return firstValueFrom(this.swPush.subscription)
+      .then(sub => sub ? true : false);
+  }
+
   async _requestSubscription(): Promise<PushSubscription> {
     const vapidPublicKey = await this.http.getVapidPublicKey();
     let res = await this.swPush.requestSubscription({
@@ -47,7 +63,6 @@ export class NotificationService {
   }
 
   _isEnabled(): boolean {
-    console.log(JSON.stringify(this.swPush.isEnabled));
     return this.swPush.isEnabled;
   }
 
