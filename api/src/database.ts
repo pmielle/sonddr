@@ -128,7 +128,7 @@ export async function getDocuments<T extends Doc>(path: string, order?: Order, f
 	// await
 	const dbDocs = await cursor.toArray();
 	// format
-	const docs = dbDocs.map(_convertDbDocToDoc);
+	const docs = dbDocs.map((dbDoc) => _convertDbDocToDoc(dbDoc));
 	// return
 	return docs as any;
 }
@@ -315,8 +315,9 @@ function _convertFiltersToDbFilter(filters: Filter[], addFullDocument = false): 
 	return filterObj;
 }
 
-function _convertDbDocToDoc(dbDoc: BSON.Document): Doc {
-	const doc: Doc = { id: dbDoc._id.toString() };
+function _convertDbDocToDoc(dbDoc: BSON.Document, withId: boolean = true): any {
+    let doc: any = {};
+    if (withId) { doc["id"] = dbDoc._id.toString(); }
 	for (let [key, value] of Object.entries(dbDoc)) {
 		if (key == "_id") { continue; }
 		if (key.endsWith("Id")) {
@@ -326,7 +327,7 @@ function _convertDbDocToDoc(dbDoc: BSON.Document): Doc {
 		} else {
             // recurse into nested objects
             if (isObject(value)) {
-                value = _convertDbDocToDoc(value);
+                value = _convertDbDocToDoc(value, false);
             }
 			doc[key] = value;
 		}

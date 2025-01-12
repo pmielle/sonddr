@@ -28,8 +28,6 @@
     }
   ],
   "navigationUrls": [
-    "!/auth/**",
-    "!/api/**",
-    "!/monitoring/**"
+    "!/**"
   ]
 }
