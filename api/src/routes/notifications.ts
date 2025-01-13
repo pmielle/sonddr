@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteEndpoint, getNotifications, getVapidPublicKey, patchNotification, registerEndpoint } from "../handlers/notifications.js";
+import { checkEndpoint, getNotifications, getVapidPublicKey, patchEndpoint, patchNotification, registerEndpoint } from "../handlers/notifications.js";
 import { authenticateRequest, maybeFetchUserId, keycloak } from "../auth.js";
 
 export function addNotificationsRoutes(router: Router) {
@@ -37,8 +37,9 @@ export function addNotificationsRoutes(router: Router) {
 			}
 		});
 
-    router.post(
-        '/push',
+    /* client browser id */
+    router.put(
+        '/push/:id',
         keycloak.protect(),
         maybeFetchUserId,
         async (req, res, next) => {
@@ -50,17 +51,28 @@ export function addNotificationsRoutes(router: Router) {
         }
     );
 
-    router.delete(
+    router.head(
         '/push/:id',
         keycloak.protect(),
-        maybeFetchUserId,
         async (req, res, next) => {
             try {
-                await deleteEndpoint(req, res, next);
+                await checkEndpoint(req, res, next);
             } catch (err) {
                 next(err);
             }
         }
     );
 
+    router.patch(
+        '/push/:id',
+        keycloak.protect(),
+        maybeFetchUserId,
+        async (req, res, next) => {
+            try {
+                await patchEndpoint(req, res, next);
+            } catch (err) {
+                next(err);
+            }
+        }
+    );
 }

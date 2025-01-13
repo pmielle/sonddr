@@ -3,6 +3,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { BehaviorSubject } from 'rxjs';
 import { KeycloakProfile } from 'keycloak-js';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class AuthService {
   // --------------------------------------------
   keycloak = inject(KeycloakService);
   snack = inject(MatSnackBar);
+  notifications = inject(NotificationService);
 
   // attributes
   // --------------------------------------------
@@ -41,7 +43,8 @@ export class AuthService {
     this.keycloak.login();
   }
 
-  logOut() {
+  async logOut() {
+    await this.notifications.stop();
     this.keycloak.logout(`https://${location.hostname}/ideas`);
   }
 

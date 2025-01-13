@@ -3,8 +3,6 @@ import { SwPush } from '@angular/service-worker';
 import { HttpService } from './http.service';
 import { firstValueFrom } from 'rxjs';
 
-const storageKey = 'push';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -12,46 +10,61 @@ export class NotificationService {
 
   swPush = inject(SwPush);
   http = inject(HttpService);
+  browserId = this._getBrowserId();
 
   constructor() { }
 
-  async start() {
-    if (! this._isEnabled()) {
-      console.log("web-push is not enabled for this browser");
-      return;
+  _getBrowserId(): string {
+    const key = "browserId";
+    let browserId = localStorage.getItem(key);
+    if (browserId) {
+      return browserId;
+    } else {
+      let browserId = crypto.randomUUID();
+      localStorage.setItem(key, browserId);
+      return browserId;
     }
-    if (await this._isActive()) {
-      console.log("web-push is already active");
-      return;
-    }
-    this._requestSubscription()
-      .then(url => this.http.registerSubscription(url))
-      .then(id => {
-        localStorage.setItem(storageKey, id)
-      });
   }
 
-  async stop() {
-    if (! this._isEnabled()) {
+  async start() {
+    if (! this._isSupported()) {
       console.log("web-push is not enabled for this browser");
       return;
     }
     if (! await this._isActive()) {
-      throw new Error("web-push is not active");
+      this._requestSubscription()
+        .then(url => this.http.registerSubscription(this.browserId, url));
+    } else {
+      this.http.updateSubscriptionUser(this.browserId);
     }
-    const id = localStorage.getItem(storageKey);
-    if (!id) {
-      throw new Error(`'${storageKey}' is not defined in localStorage`);
+  }
+
+  async stop() {
+    if (! this._isSupported()) {
+      console.log("web-push is not enabled for this browser");
+      return;
     }
-    this.http.deleteSubscription(id)
-      .then(() => localStorage.removeItem(storageKey));
+    if (! await this._isActive()) {
+      console.log("web-push is not active");
+      return;
+    }
+    this.http.deleteSubscriptionUser(this.browserId);
   }
 
   // private
   // --------------------------------------------
   async _isActive(): Promise<boolean> {
-    return firstValueFrom(this.swPush.subscription)
-      .then(sub => sub ? true : false);
+    // sw = service worker (notif enabled in the browser)
+    // db = database (notif endpoint exists in database)
+    let swPush = await firstValueFrom(this.swPush.subscription);
+    if (! swPush) { return false; }
+    let dbPush = await this.http.checkSubcription(this.browserId);
+    if (dbPush) { return true; }
+    // edge case: sw ok but nothing in db (should not happen)
+    // in this case, get the url from sw and save it in db
+    await this._requestSubscription()
+      .then(url => this.http.registerSubscription(this.browserId, url));
+    return true;
   }
 
   async _requestSubscription(): Promise<PushSubscription> {
@@ -62,7 +75,7 @@ export class NotificationService {
     return res;
   }
 
-  _isEnabled(): boolean {
+  _isSupported(): boolean {
     return this.swPush.isEnabled;
   }
 

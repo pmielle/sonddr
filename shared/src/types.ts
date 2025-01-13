@@ -12,6 +12,10 @@ export type Draft = {
     content?: string,
 };
 
+export type HeadResponse = {
+    exists: boolean,
+};
+
 export type PostResponse = {
     insertedId: string,
 };

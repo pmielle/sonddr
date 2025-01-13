@@ -29,7 +29,6 @@ export async function maybeFetchUserId(req: Request, res: Response, next: NextFu
 		const profile = await keycloak.grantManager.userInfo(token);
 		req["userId"] = makeMongoId(profile["sub"]).toString();
 	} catch (err) {
-		console.log(err);
 		req["userId"] = undefined;
 	}
 	next();

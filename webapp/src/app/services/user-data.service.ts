@@ -89,7 +89,6 @@ export class UserDataService {
     this.olderDiscussions = [];
     this.activeDiscussions = [];
     this.user$.next(undefined);
-    this.notifications.stop();
   }
 
   async _fetchOrCreateUser(profile: KeycloakProfile): Promise<User> {
