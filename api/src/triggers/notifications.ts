@@ -8,7 +8,12 @@ export function watchNotifications() {
         if (change.type === "insert") {
             let payload = {
                 notification: {
-                    title: change.docAfter.content
+                    title: change.docAfter.content,
+                    data: {
+                        onActionClick: {
+                            default: { operation: "openWindow", "url": change.docAfter.href }
+                        },
+                    },
                 }
             };
             const toUserIds = change.docAfter.toIds;
