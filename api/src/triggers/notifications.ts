@@ -1,6 +1,6 @@
 import { Notification, Push } from "sonddr-shared";
 import { deleteDocument, getDocuments, watchCollection } from "../database.js";
-import webpush, { PushSubscription, WebPushError } from "web-push";
+import webpush, { WebPushError } from "web-push";
 
 export function watchNotifications() {
     _setupVapidKeys();
