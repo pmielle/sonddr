@@ -1,6 +1,6 @@
 import { Notification, Push } from "sonddr-shared";
-import { getDocuments, watchCollection } from "../database.js";
-import webpush from "web-push";
+import { deleteDocument, getDocuments, watchCollection } from "../database.js";
+import webpush, { PushSubscription, WebPushError } from "web-push";
 
 export function watchNotifications() {
     _setupVapidKeys();
@@ -21,12 +21,19 @@ export function watchNotifications() {
                 field: "userId",
                 operator: "in",
                 value: toUserIds,
-            }).then(push => push.map(p => p.subscription));
-            await Promise.all(endpoints.map(sub => {
-                webpush.sendNotification(sub, JSON.stringify(payload));
+            });
+            await Promise.all(endpoints.map(endpoint => {
+                webpush.sendNotification(endpoint.subscription, JSON.stringify(payload))
+                    .catch(async (err: WebPushError) => _onWebpushError(err, endpoint.id));
             }));
         }
     });
+}
+
+async function _onWebpushError(err: WebPushError, pushId: string) {
+    if (err.statusCode === 410) { // "Gone" e.g. the user revoked permission
+        await deleteDocument(`push/${pushId}`);
+    }
 }
 
 function _setupVapidKeys() {
