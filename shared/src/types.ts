@@ -1,9 +1,19 @@
+export type Push = {
+    id: string,
+    userId: string,
+    subscription: any,  // should be PushSubscription but tsc does not find it for some reason
+};
+
 export type Draft = {
     id: string,
     title?: string,
     authorId: string,
     goalIds?: string[],
     content?: string,
+};
+
+export type HeadResponse = {
+    exists: boolean,
 };
 
 export type PostResponse = {

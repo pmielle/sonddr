@@ -1,8 +1,20 @@
 import { Router } from "express";
-import { getNotifications, patchNotification } from "../handlers/notifications.js";
+import { checkEndpoint, getNotifications, getVapidPublicKey, patchEndpoint, patchNotification, registerEndpoint } from "../handlers/notifications.js";
 import { authenticateRequest, maybeFetchUserId, keycloak } from "../auth.js";
 
 export function addNotificationsRoutes(router: Router) {
+
+    router.get(
+        '/vapid',
+        keycloak.protect(),
+        async (req, res, next) => {
+            try {
+                getVapidPublicKey(req, res, next);
+            } catch(err) {
+                next(err);
+            }
+        }
+    );
 
 	router.patch('/notifications/:id',
 		keycloak.protect(),
@@ -25,4 +37,42 @@ export function addNotificationsRoutes(router: Router) {
 			}
 		});
 
+    /* client browser id */
+    router.put(
+        '/push/:id',
+        keycloak.protect(),
+        maybeFetchUserId,
+        async (req, res, next) => {
+            try {
+                await registerEndpoint(req, res, next);
+            } catch (err) {
+                next(err);
+            }
+        }
+    );
+
+    router.head(
+        '/push/:id',
+        keycloak.protect(),
+        async (req, res, next) => {
+            try {
+                await checkEndpoint(req, res, next);
+            } catch (err) {
+                next(err);
+            }
+        }
+    );
+
+    router.patch(
+        '/push/:id',
+        keycloak.protect(),
+        maybeFetchUserId,
+        async (req, res, next) => {
+            try {
+                await patchEndpoint(req, res, next);
+            } catch (err) {
+                next(err);
+            }
+        }
+    );
 }

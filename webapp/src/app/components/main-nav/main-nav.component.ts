@@ -19,7 +19,6 @@ export class MainNavComponent implements AfterViewInit {
     this.tabs!.nativeElement.onscroll = (e: Event) => {
       this.mainNav.onScroll(e.target as Element);
     };
-
   }
 
 }

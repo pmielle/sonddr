@@ -7,6 +7,7 @@ import { watchVotes } from "./votes.js";
 import { watchCheers } from "./cheers.js";
 import { watchVolunteers } from "./volunteers.js";
 import { watchMessages } from "./messages.js";
+import { watchNotifications } from "./notifications.js";
 
 
 // init private triggers
@@ -18,6 +19,7 @@ export function startAllTriggers() {
 	watchCheers();
 	watchVolunteers();
     watchMessages();
+    watchNotifications();
 }
 
 

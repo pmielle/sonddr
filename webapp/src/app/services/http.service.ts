@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Cheer, Discussion, Goal, Idea, Message, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink, Volunteer, Draft } from 'sonddr-shared';
+import { Cheer, Discussion, Goal, Idea, Message, HeadResponse, PostResponse, User, makeCheerId, makeVoteId, Comment, ExternalLink, Volunteer, Draft } from 'sonddr-shared';
 import { SortBy } from '../components/idea-list/idea-list.component';
 import { lastValueFrom } from 'rxjs';
 
@@ -25,7 +25,25 @@ export class HttpService {
   // public methods
   // --------------------------------------------
 
-  // <drafts>
+  async getVapidPublicKey(): Promise<string> {
+    return this._get<string>(`/vapid`);
+  }
+
+  async checkSubcription(subId: string): Promise<boolean> {
+    return this._head(`/push/${subId}`);
+  }
+
+  async registerSubscription(id: string, sub: PushSubscription) {
+    return this._put(`/push/${id}`, {subscription: sub});
+  }
+
+  async updateSubscriptionUser(subId: string) {
+    return this._patch(`/push/${subId}`, {active: true});
+  }
+
+  async deleteSubscriptionUser(subId: string) {
+    return this._patch(`/push/${subId}`, {active: false});
+  }
 
   async deleteDraft(draftId: string): Promise<void> {
     return this._delete(`/drafts/${draftId}`);
@@ -53,8 +71,6 @@ export class HttpService {
     };
     return this._post(`/drafts`, payload);
   }
-
-  // </drafts>
 
   async addVolunteerCandidate(volunteerId: string) {
     return this._patch(`volunteers/${volunteerId}`, {addCandidate: true});
@@ -285,6 +301,19 @@ export class HttpService {
 
   async _addExternalLink(type: "user"|"idea", id: string, externalLink: ExternalLink): Promise<void> {
     return this._patch(`/${type}s/${id}`, {addExternalLink: externalLink});
+  }
+
+  private async _head(path: string): Promise<boolean> {
+    let response;
+    try {
+      response = await lastValueFrom(this.db.head(`${this.basePath}/${path}`));
+      return true;
+    } catch(err) {
+      if (err instanceof HttpErrorResponse) {
+        if (err.status === 404) { return false; }
+      }
+      throw err;
+    }
   }
 
   private async _get<T>(path: string): Promise<T> {
