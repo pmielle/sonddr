@@ -22,6 +22,8 @@ POSTGRES_PASSWORD='postgres'
 POSTGRES_DB='keycloak'
 GF_SECURITY_ADMIN_USER='grafana'
 GF_SECURITY_ADMIN_PASSWORD='grafana'
+VAPID_PUBLIC_KEY='<public_key>'
+VAPID_PRIVATE_KEY='<private_key>'
 ```
 
 - add `<your_ip> <your_hostname>` to `/etc/hosts` if you are on a hotspot
