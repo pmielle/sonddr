@@ -32,10 +32,10 @@ export class NotificationService {
       return;
     }
     if (! await this._isActive()) {
-      this._requestSubscription()
-        .then(url => this.http.registerSubscription(this.browserId, url));
+      await this._requestSubscription()
+        .then(sub => this.http.registerSubscription(this.browserId, sub));
     } else {
-      this.http.updateSubscriptionUser(this.browserId);
+      await this.http.updateSubscriptionUser(this.browserId);
     }
   }
 
@@ -63,7 +63,7 @@ export class NotificationService {
     // edge case: sw ok but nothing in db (should not happen)
     // in this case, get the url from sw and save it in db
     await this._requestSubscription()
-      .then(url => this.http.registerSubscription(this.browserId, url));
+      .then(sub => this.http.registerSubscription(this.browserId, sub));
     return true;
   }
 
