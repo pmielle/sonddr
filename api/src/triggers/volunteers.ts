@@ -72,6 +72,7 @@ export function watchVolunteers() {
 					readByIds: [],
 					content: `${newCandidate.name} has applied for a volunteer position for ${dbIdea.title}.`,
                     href: `/ideas/idea/${dbIdea.id}`,
+                    picture: newCandidate.profilePicture,
 				};
 				postDocument(`notifications`, notificationPayload);
 			}

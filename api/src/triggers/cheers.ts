@@ -36,6 +36,7 @@ async function _notifyAuthor(cheer: Cheer) {
 		readByIds: [],
 		content: `${cheerAuthor.name} cheers for ${idea.title}`,
         href: `/ideas/idea/${idea.id}`,
+        picture: cheerAuthor.profilePicture,
 	};
 	postDocument(`notifications`, notificationPayload);
 }

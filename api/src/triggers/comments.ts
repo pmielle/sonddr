@@ -22,6 +22,7 @@ export function watchComments() {
 				readByIds: [],
 				content: `${commentAuthor.name} has commented on ${idea.title}: "${dbComment.content}"`,
                 href: `/ideas/idea/${idea.id}`,
+                picture: commentAuthor.profilePicture,
 			};
 			postDocument(`notifications`, notificationPayload);
 		}

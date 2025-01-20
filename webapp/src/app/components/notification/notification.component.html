@@ -1,6 +1,6 @@
 <div id="container" class="flex column align-start small-gap pointer" mat-ripple>
     <span id="content">
-        <app-notification-image></app-notification-image>
+        <app-notification-image [notification]="notification"></app-notification-image>
         <div class="ellipsis multi-4">{{ notification?.content }}</div>
     </span>
     <span id="ago">{{ time.makeAgo(notification?.date) }}</span>
