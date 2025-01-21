@@ -33,6 +33,7 @@ export class UserDataService {
   newNotifications: Notification[] = [];
   olderDiscussions: Discussion[] = [];
   activeDiscussions: Discussion[] = [];
+  retryDelay = 10 * 1e3;  // 10 seconds
 
   // lifecycle hooks
   // --------------------------------------------
@@ -68,13 +69,27 @@ export class UserDataService {
     if (!profile) { return; }
     // login user changed
     this.user$.next(await this._fetchOrCreateUser(profile));
-    this.discussionsSub = (await this.sse.getDiscussions()).subscribe(
-      data => this._onDiscussionsUpdate(data)
-    );
-    this.notificationsSub = (await this.sse.getNotifications()).subscribe(
-      data => this._onNotificationsUpdate(data)
-    );
+    this._subscribeToDiscussions();
+    this._subscribeToNotifications();
     this.notifications.start();
+  }
+
+  async _subscribeToDiscussions() {
+    this.discussionsSub = (await this.sse.getDiscussions()).subscribe({
+      next: data => this._onDiscussionsUpdate(data),
+      error: _ => setTimeout(() => {
+        this._subscribeToDiscussions();
+      }, this.retryDelay),
+    });
+  }
+
+  async _subscribeToNotifications() {
+    this.notificationsSub = (await this.sse.getNotifications()).subscribe({
+      next: data => this._onNotificationsUpdate(data),
+      error: _ => setTimeout(() => {
+        this._subscribeToNotifications();
+      }, this.retryDelay),
+    });
   }
 
   _isSameUser(profile: KeycloakProfile | undefined): boolean {
