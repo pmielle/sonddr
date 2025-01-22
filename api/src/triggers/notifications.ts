@@ -11,7 +11,7 @@ export function watchNotifications() {
                     title: change.docAfter.content,
                     data: {
                         onActionClick: {
-                            default: { operation: "openWindow", "url": change.docAfter.href }
+                            default: { operation: "navigateLastFocusedOrOpen", "url": change.docAfter.href }
                         },
                     },
                 }
