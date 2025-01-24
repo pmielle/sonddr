@@ -67,6 +67,12 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  onMouseup(e: MouseEvent) {
+    let sele = document.getSelection()!;  // never null is it?
+    if (sele.type !== "Range") { return; }
+    console.log(e);
+  }
+
   setHasCheered(hasCheered: boolean, firstLoad = false) {
     if (!this.idea) { throw new Error("cannot set userHasCheered if idea is undefined"); }
     if (hasCheered) {
