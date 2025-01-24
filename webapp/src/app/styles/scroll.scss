@@ -2,6 +2,10 @@
     display: none;
 }
 
+* {
+  scrollbar-width: none;
+}
+
 .h-scroll {
     overflow-y: hidden;
     overflow-x: auto;
