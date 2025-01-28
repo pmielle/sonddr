@@ -81,7 +81,7 @@
     </mat-accordion>
     }
 
-    <div id="content" [innerHTML]="idea?.content" (mouseup)="onMouseup($event)"></div>
+    <div id="content" [innerHTML]="idea?.content" (mousedown)="onMouseDown($event)" (mouseup)="onMouseup($event)"></div>
 
     <app-comment-section [comments]="comments" (sort-by-change)="onSortByChange($event)"
       (post-comment)="postComment($event)" (upvote)="upvoteComment($event)" (downvote)="downvoteComment($event)"

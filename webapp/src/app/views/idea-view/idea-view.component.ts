@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
 
 @Component({
   selector: 'app-idea-view',
@@ -43,6 +44,7 @@ export class IdeaViewComponent implements OnDestroy {
   volunteers?: Volunteer[];
   routeSub?: Subscription;
   popupSub?: Subscription;
+  mouseDown?: MouseEvent;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -67,10 +69,39 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  onMouseDown(e: MouseEvent) {
+    this.mouseDown = e;
+  }
   onMouseup(e: MouseEvent) {
     let sele = document.getSelection()!;  // never null is it?
     if (sele.type !== "Range") { return; }
-    console.log(e);
+    if (this._isFalsePositive(e)) { return; }
+    let range = sele.getRangeAt(0);
+    this._openLocalizedCommentPopup(range.toString());
+  }
+
+  _openLocalizedCommentPopup(quote: string) {
+    const dialogRef = this.dialog.open(AddLocalizedCommentPopupComponent, {
+      data: { quote: quote },
+      panelClass: "custom-popup",
+    });
+    this.popupSub = dialogRef.afterClosed().subscribe((body) => {
+      if (body) {
+        console.log(`new comment body is ${body}`);
+      }
+    });
+  }
+
+  _positionComment(range: Range, commentId: string) {
+    let span = document.createElement("span");
+    span.classList.add("");
+    range.surroundContents(span);
+  }
+
+  _isFalsePositive(e: MouseEvent) {
+    if (! this.mouseDown) { return true; }
+    if (this.mouseDown.x === e.x && this.mouseDown.y === e.y) { return true; }
+    return false;
   }
 
   setHasCheered(hasCheered: boolean, firstLoad = false) {
