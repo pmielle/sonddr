@@ -84,7 +84,7 @@
     <div id="content" [innerHTML]="idea?.content" (mousedown)="onMouseDown($event)" (mouseup)="onMouseup($event)"></div>
 
     <app-comment-section [comments]="comments" (sort-by-change)="onSortByChange($event)"
-      (post-comment)="postComment($event)" (upvote)="upvoteComment($event)" (downvote)="downvoteComment($event)"
+      (post-comment)="onPostCommentClick($event)" (upvote)="upvoteComment($event)" (downvote)="downvoteComment($event)"
       (delete-vote)="deleteCommentVote($event)" (delete-comment)="deleteComment($event)"></app-comment-section>
 
   </div>

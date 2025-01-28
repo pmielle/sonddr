@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, lastValueFrom } from 'rxjs';
 import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
@@ -72,30 +72,35 @@ export class IdeaViewComponent implements OnDestroy {
   onMouseDown(e: MouseEvent) {
     this.mouseDown = e;
   }
-  onMouseup(e: MouseEvent) {
+  async onMouseup(e: MouseEvent) {
     let sele = document.getSelection()!;  // never null is it?
     if (sele.type !== "Range") { return; }
     if (this._isFalsePositive(e)) { return; }
     let range = sele.getRangeAt(0);
-    this._openLocalizedCommentPopup(range.toString());
+    let body = await this._openLocalizedCommentPopup(range.toString());
+    if (body) {
+      let id = await this.postComment(body);
+      this._positionComment(id, range);
+    }
   }
 
-  _openLocalizedCommentPopup(quote: string) {
+  async _openLocalizedCommentPopup(quote: string): Promise<string> {
     const dialogRef = this.dialog.open(AddLocalizedCommentPopupComponent, {
       data: { quote: quote },
       panelClass: "custom-popup",
     });
-    this.popupSub = dialogRef.afterClosed().subscribe((body) => {
-      if (body) {
-        console.log(`new comment body is ${body}`);
-      }
-    });
+    let body = await lastValueFrom(dialogRef.afterClosed()) as string;
+    return body;
   }
 
-  _positionComment(range: Range, commentId: string) {
-    let span = document.createElement("span");
-    span.classList.add("");
-    range.surroundContents(span);
+  _positionComment(commentId: string, range: Range) {
+    let startSpan = document.createElement("span");
+    startSpan.id = `start:${commentId}`;
+    let endSpan = document.createElement("span");
+    endSpan.id = `end:${commentId}`;
+    range.insertNode(startSpan); // at the beginning of the range
+    range.collapse(false); // trick: collapse to the end and insertNode again
+    range.insertNode(endSpan);
   }
 
   _isFalsePositive(e: MouseEvent) {
@@ -241,19 +246,21 @@ export class IdeaViewComponent implements OnDestroy {
     this.http.deleteComment(commentId);
   }
 
-  postComment(body: string) {
-    if (!this.idea) { throw new Error("Cannot post comment if idea is not loaded"); }
-    if (!this.comments) { throw new Error("Cannot post comment if comments are not loaded"); }
+  onPostCommentClick(body: string) {
     if (!this.auth.isLoggedIn()) {
       this.auth.openAuthSnack();
       return;
     }
-    const placeholderComment = this.makePlaceholderComment(body, this.idea.id);
-    this.comments = [placeholderComment, ...this.comments];  // otherwise same reference, and @Input is not updated
-    this.http.postComment(this.idea.id, body).then(async insertedId => {
-      const comment = await this.http.getComment(insertedId);
-      this.replacePlaceholderComment(comment);
-    });
+    this.postComment(body);
+  }
+
+  async postComment(body: string): Promise<string> {
+    const placeholderComment = this.makePlaceholderComment(body, this.idea!.id);
+    this.comments = [placeholderComment, ...this.comments!];  // otherwise same reference, and @Input is not updated
+    let insertedId = await this.http.postComment(this.idea!.id, body);
+    const comment = await this.http.getComment(insertedId);
+    this.replacePlaceholderComment(comment);
+    return insertedId;
   }
 
   makePlaceholderComment(body: string, ideaId: string): Comment {
