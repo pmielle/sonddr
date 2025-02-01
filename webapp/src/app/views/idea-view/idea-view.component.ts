@@ -60,7 +60,7 @@ export class IdeaViewComponent implements OnDestroy {
       });
       this.http.getComments("recent", id, undefined).then(c => {
         this.comments = c;
-        setTimeout(() => this.placeLocalizedComments(c));
+        setTimeout(() => this.placeLocalizedComments(c), 500);
       });
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
@@ -108,7 +108,6 @@ export class IdeaViewComponent implements OnDestroy {
       let text = node as Text;
       for (let i = 0; i < text.textContent!.length; i++) {
         if (offset === localization!.offset) {
-          console.log(`i=${i} and offset=${offset}`);
           this._insertSpan(localization!, text, i);
           localization = localizations.shift();
           if (!localization) { return; }
@@ -116,7 +115,7 @@ export class IdeaViewComponent implements OnDestroy {
         offset += 1;
       }
     }
-    if (localization) { throw new Error("Failed to place every comments"); }
+    if (localization) { throw new Error("Failed to place some comments"); }
   }
 
   onContentMouseDown(e: MouseEvent) {
