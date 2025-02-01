@@ -81,7 +81,20 @@
     </mat-accordion>
     }
 
-    <div id="content" [innerHTML]="idea?.content" (mousedown)="onContentMouseDown($event)" (mouseup)="onContentMouseUp($event)" #content></div>
+    <div id="content-container">
+      <div id="content"
+           [innerHTML]="idea?.content"
+           (mousedown)="onContentMouseDown($event)"
+           (mouseup)="onContentMouseUp($event)"
+           #content>
+      </div>
+      @for(c of localizedComments; track c.comment.id) {
+        <app-profile-picture class="comment-bubble"
+          [user]="c.comment.author"
+          [style.top]="chooseBubbleTop(c)"
+        ></app-profile-picture>
+      }
+    </div>
 
     <app-comment-section [comments]="comments" (sort-by-change)="onSortByChange($event)"
       (post-comment)="onPostCommentClick($event)" (upvote)="upvoteComment($event)" (downvote)="downvoteComment($event)"

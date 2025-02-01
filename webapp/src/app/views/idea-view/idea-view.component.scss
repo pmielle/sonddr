@@ -147,12 +147,23 @@
       }
     }
 
-    #content {
-      font-size: var(--content-font-size);
+    #content-container {
       width: 100%;
       min-height: 60px;
       padding-left: calc(32px + 2 * var(--gutter));
       padding-right: var(--gutter);
+      position: relative;
+
+      #content {
+        font-size: var(--content-font-size);
+      }
+
+      .comment-bubble {
+        position: absolute;
+        left: var(--gutter);
+        margin-top: 0;
+        // top is set dynamically
+      }
     }
 
     app-comment-section {

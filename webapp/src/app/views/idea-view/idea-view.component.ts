@@ -87,6 +87,14 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  chooseBubbleTop(localizedComment: LocalizedComment): string {
+    let [startSpan, endSpan] = localizedComment.spans;
+    let top = startSpan.offsetTop === endSpan.offsetTop
+      ? startSpan.offsetTop
+      : startSpan.offsetTop + endSpan.offsetTop / 2;
+    return `${top}px`;
+  }
+
   setLocalizedComments() {
     let spans = document.querySelectorAll(".localized-comment");
     let pairs: Map<string, [HTMLElement|undefined, HTMLElement|undefined]> = new Map();
@@ -108,7 +116,10 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   refreshLocalizedCommentsDisplay() {
-    // TODO continue here
+    let content = this.contentRef?.nativeElement as HTMLElement;
+    this.localizedComments?.forEach((localizedComment) => {
+
+    });
   }
 
   _buildLocalizedComments(spans: NodeList): LocalizedComment[] {
