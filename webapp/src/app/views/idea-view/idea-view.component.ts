@@ -47,7 +47,7 @@ export class IdeaViewComponent implements OnDestroy {
   // --------------------------------------------
   idea?: Idea;
   comments?: Comment[];
-  localizedComments?: LocalizedComment[];
+  localizedComments: LocalizedComment[] = [];
   volunteers?: Volunteer[];
   routeSub?: Subscription;
   popupSub?: Subscription;
@@ -57,9 +57,6 @@ export class IdeaViewComponent implements OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-    this.resizeSub = this.screen.resize$.subscribe(() => {
-      this.refreshLocalizedCommentsDisplay();
-    });
     this.routeSub = this.route.paramMap.subscribe(map => {
       const id = map.get("id");
       if (!id) { throw new Error("id not found in url params"); }
@@ -72,7 +69,6 @@ export class IdeaViewComponent implements OnDestroy {
         setTimeout(() => {
           this.placeLocalizedComments(c);
           this.setLocalizedComments();
-          this.refreshLocalizedCommentsDisplay();
         }, 500);
       });
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
@@ -113,13 +109,6 @@ export class IdeaViewComponent implements OnDestroy {
       });
     });
     this.localizedComments = localizedComments;
-  }
-
-  refreshLocalizedCommentsDisplay() {
-    let content = this.contentRef?.nativeElement as HTMLElement;
-    this.localizedComments?.forEach((localizedComment) => {
-
-    });
   }
 
   _buildLocalizedComments(spans: NodeList): LocalizedComment[] {
@@ -197,9 +186,10 @@ export class IdeaViewComponent implements OnDestroy {
     if (body) {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
       let [startOffset, endOffset] = this._getOffsetsInContent(startSpan, endSpan);
-      let id = await this.postComment(body, [startOffset, endOffset]);
-      startSpan.id = this._makeSpanId('start', id);
-      endSpan.id = this._makeSpanId('end', id);
+      let comment = await this.postComment(body, [startOffset, endOffset]);
+      startSpan.id = this._makeSpanId('start', comment.id);
+      endSpan.id = this._makeSpanId('end', comment.id);
+      this.localizedComments.push({comment: comment, spans: [startSpan, endSpan]});
     }
   }
 
@@ -406,13 +396,13 @@ export class IdeaViewComponent implements OnDestroy {
     this.postComment(body);
   }
 
-  async postComment(body: string, location?: [number, number]): Promise<string> {
+  async postComment(body: string, location?: [number, number]): Promise<Comment> {
     const placeholderComment = this.makePlaceholderComment(body, this.idea!.id);
     this.comments = [placeholderComment, ...this.comments!];  // otherwise same reference, and @Input is not updated
     let insertedId = await this.http.postComment(this.idea!.id, body, location);
     const comment = await this.http.getComment(insertedId);
     this.replacePlaceholderComment(comment);
-    return insertedId;
+    return comment;
   }
 
   makePlaceholderComment(body: string, ideaId: string): Comment {
