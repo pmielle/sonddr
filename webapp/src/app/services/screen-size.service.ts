@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { BehaviorSubject, Subject, Subscription, debounceTime, fromEvent } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, debounceTime, fromEvent } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,7 @@ export class ScreenSizeService implements OnDestroy {
   isMobile$ = new BehaviorSubject<boolean>(this.checkIsMobile());
   isWide$ = new BehaviorSubject<boolean>(this.checkIsWide());
   keyboard$ = new Subject<"open"|"closed">();
+  resize$: Observable<Event>;
   // keep in sync with scss styles
   previousHeightDiff: number = 0;
   breakpointSub?: Subscription;
@@ -30,10 +31,9 @@ export class ScreenSizeService implements OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   constructor() {
+    this.resize$ = fromEvent(window.visualViewport!, "resize").pipe(debounceTime(300));
     // listen to viewport resize
-    this.resizeSub = fromEvent(window.visualViewport!, "resize").pipe(
-      debounceTime(300)
-    ).subscribe(() => {
+    this.resizeSub = this.resize$.subscribe(() => {
       this.onViewportResize();
     });
     // listen to breakpoints

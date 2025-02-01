@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, lastValueFrom } from 'rxjs';
-import { Comment, localized_comment_start, localized_comment_end, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
+import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
@@ -13,6 +13,10 @@ import { TranslationService } from 'src/app/services/translation.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
 
+type LocalizedComment = {
+  comment: Comment,
+  spans: [HTMLElement, HTMLElement],
+};
 type Localization = { offset: number, type: 'start'|'end', commentId: string };
 
 @Component({
@@ -43,14 +47,19 @@ export class IdeaViewComponent implements OnDestroy {
   // --------------------------------------------
   idea?: Idea;
   comments?: Comment[];
+  localizedComments?: LocalizedComment[];
   volunteers?: Volunteer[];
   routeSub?: Subscription;
   popupSub?: Subscription;
+  resizeSub?: Subscription;
   mouseDown?: MouseEvent;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
+    this.resizeSub = this.screen.resize$.subscribe(() => {
+      this.refreshLocalizedCommentsDisplay();
+    });
     this.routeSub = this.route.paramMap.subscribe(map => {
       const id = map.get("id");
       if (!id) { throw new Error("id not found in url params"); }
@@ -60,20 +69,67 @@ export class IdeaViewComponent implements OnDestroy {
       });
       this.http.getComments("recent", id, undefined).then(c => {
         this.comments = c;
-        setTimeout(() => this.placeLocalizedComments(c), 500);
+        setTimeout(() => {
+          this.placeLocalizedComments(c);
+          this.setLocalizedComments();
+          this.refreshLocalizedCommentsDisplay();
+        }, 500);
       });
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
-
   }
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
     this.popupSub?.unsubscribe();
+    this.resizeSub?.unsubscribe();
   }
 
   // methods
   // --------------------------------------------
+  setLocalizedComments() {
+    let spans = document.querySelectorAll(".localized-comment");
+    let pairs: Map<string, [HTMLElement|undefined, HTMLElement|undefined]> = new Map();
+    spans.forEach((_span) => {
+      const span = _span as HTMLElement;
+      const [type, commentId] = span.id.split(":");
+      if (! pairs.has(commentId)) { pairs.set(commentId, [ undefined, undefined ]); }
+      pairs.get(commentId)![type === 'start' ? 0 : 1] = span;  // [startSpan, endSpan]
+    });
+    let localizedComments: LocalizedComment[] = [];
+    pairs.forEach((spans, commentId) => {
+      let comment = this.comments!.find(c => c.id === commentId)!;
+      localizedComments.push({
+        comment: comment,
+        spans: spans as [HTMLElement, HTMLElement],
+      });
+    });
+    this.localizedComments = localizedComments;
+  }
+
+  refreshLocalizedCommentsDisplay() {
+    // TODO continue here
+  }
+
+  _buildLocalizedComments(spans: NodeList): LocalizedComment[] {
+    let pairs: Map<string, [HTMLElement|undefined, HTMLElement|undefined]> = new Map();
+    spans.forEach((_span) => {
+      const span = _span as HTMLElement;
+      const [type, commentId] = span.id.split(":");
+      if (! pairs.has(commentId)) { pairs.set(commentId, [ undefined, undefined ]); }
+      pairs.get(commentId)![type === 'start' ? 0 : 1] = span;
+    });
+    let res: LocalizedComment[] = [];
+    pairs.forEach((spans, commentId) => {
+      let comment = this.comments!.find(c => c.id === commentId)!;
+      res.push({
+        comment: comment,
+        spans: spans as [HTMLElement, HTMLElement],
+      });
+    });
+    return res;
+  }
+
 
   _getAndSortLocalizations(comments: Comment[]): Localization[] {
     let offsets: Localization[] = [];
@@ -169,9 +225,10 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   _createSpan(type: 'start'|'end', commentId: string): HTMLElement {
-    let startSpan = document.createElement("span");
-    startSpan.id = this._makeSpanId(type, commentId);
-    return startSpan;
+    let span = document.createElement("span");
+    span.id = this._makeSpanId(type, commentId);
+    span.classList.add("localized-comment");
+    return span;
   }
 
   _makeSpanId(type: 'start'|'end', commentId: string): string {
