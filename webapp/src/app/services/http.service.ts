@@ -192,8 +192,8 @@ export class HttpService {
     return this._get<Comment>(`comments/${id}`);
   }
 
-  async postComment(ideaId: string, content: string): Promise<string> {
-    return this._post("comments", {ideaId: ideaId, content: content});
+  async postComment(ideaId: string, content: string, location?: [number, number]): Promise<string> {
+    return this._post("comments", {ideaId: ideaId, content: content, location: location});
   }
 
   async getMessage(id: string): Promise<Message> {

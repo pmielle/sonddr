@@ -1,7 +1,7 @@
-import { Component, OnDestroy, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, lastValueFrom } from 'rxjs';
-import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
+import { Comment, localized_comment_start, localized_comment_end, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
@@ -35,7 +35,7 @@ export class IdeaViewComponent implements OnDestroy {
 
   // i/o
   // --------------------------------------------
-  // ...
+  @ViewChild('content') contentRef?: ElementRef;
 
   // attributes
   // --------------------------------------------
@@ -69,19 +69,45 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
-  onMouseDown(e: MouseEvent) {
+  onContentMouseDown(e: MouseEvent) {
     this.mouseDown = e;
   }
-  async onMouseup(e: MouseEvent) {
+  async onContentMouseUp(e: MouseEvent) {
     let sele = document.getSelection()!;  // never null is it?
     if (sele.type !== "Range") { return; }
     if (this._isFalsePositive(e)) { return; }
     let range = sele.getRangeAt(0);
     let body = await this._openLocalizedCommentPopup(range.toString());
     if (body) {
-      let id = await this.postComment(body);
-      this._positionComment(id, range);
+      let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
+      let [startOffset, endOffset] = this._getOffsetsInContent(startSpan, endSpan);
+      let id = await this.postComment(body, [startOffset, endOffset]);
+      startSpan.id = `${localized_comment_start}${id}`;
+      endSpan.id = `${localized_comment_end}${id}`;
     }
+  }
+
+  _getOffsetsInContent(startSpan: HTMLElement, endSpan: HTMLElement): [number, number] {
+    let content = this.contentRef?.nativeElement as HTMLElement;
+    let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    let node: Node|null = null;
+    let startOffset = 0;
+    let endOffset = 0;
+    node = walker.nextNode();
+    if (!node) { throw new Error("Failed to getOffsetsInContent"); }
+    while (node.compareDocumentPosition(startSpan) & Node.DOCUMENT_POSITION_FOLLOWING) {
+      startOffset += node.textContent!.length;
+      endOffset += node.textContent!.length;
+      node = walker.nextNode();
+      if (!node) { throw new Error("Failed to getOffsetsInContent"); }
+    }
+    while (node.compareDocumentPosition(endSpan) & Node.DOCUMENT_POSITION_FOLLOWING) {
+      endOffset += node.textContent!.length;
+      node = walker.nextNode();
+      if (!node) { break; }
+    }
+    if (endOffset <= startOffset) { throw new Error("Failed to getOffsetsInContent"); }
+    return [startOffset, endOffset];
   }
 
   async _openLocalizedCommentPopup(quote: string): Promise<string> {
@@ -93,14 +119,15 @@ export class IdeaViewComponent implements OnDestroy {
     return body;
   }
 
-  _positionComment(commentId: string, range: Range) {
+  _positionComment(commentId: string, range: Range): [HTMLElement, HTMLElement] {
     let startSpan = document.createElement("span");
-    startSpan.id = `start:${commentId}`;
+    startSpan.id = `${localized_comment_start}${commentId}`;
     let endSpan = document.createElement("span");
-    endSpan.id = `end:${commentId}`;
+    endSpan.id = `${localized_comment_end}${commentId}`;
     range.insertNode(startSpan); // at the beginning of the range
     range.collapse(false); // trick: collapse to the end and insertNode again
     range.insertNode(endSpan);
+    return [startSpan, endSpan];
   }
 
   _isFalsePositive(e: MouseEvent) {
@@ -254,10 +281,10 @@ export class IdeaViewComponent implements OnDestroy {
     this.postComment(body);
   }
 
-  async postComment(body: string): Promise<string> {
+  async postComment(body: string, location?: [number, number]): Promise<string> {
     const placeholderComment = this.makePlaceholderComment(body, this.idea!.id);
     this.comments = [placeholderComment, ...this.comments!];  // otherwise same reference, and @Input is not updated
-    let insertedId = await this.http.postComment(this.idea!.id, body);
+    let insertedId = await this.http.postComment(this.idea!.id, body, location);
     const comment = await this.http.getComment(insertedId);
     this.replacePlaceholderComment(comment);
     return insertedId;
