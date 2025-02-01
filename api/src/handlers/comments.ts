@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { DbComment, DbIdea, localized_comment_end, localized_comment_start, } from "sonddr-shared";
-import { deleteDocument, getDocument, getDocuments, patchDocument, postDocument } from "../database.js";
+import { DbComment } from "sonddr-shared";
+import { deleteDocument, getDocument, getDocuments, postDocument } from "../database.js";
 import { _getFromReqBody, _getReqPath, _getUnique } from "../utils.js";
 import { Filter, } from "../types/types.js";
 import { reviveComment, reviveComments } from "../revivers/comments.js";
-import { start } from "node:repl";
 
 export async function getComments(req: Request, res: Response, _: NextFunction) {
     const order = req.query.order || "date";

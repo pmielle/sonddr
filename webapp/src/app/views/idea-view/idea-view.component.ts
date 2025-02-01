@@ -13,6 +13,8 @@ import { TranslationService } from 'src/app/services/translation.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
 
+type Localization = { offset: number, type: 'start'|'end', commentId: string };
+
 @Component({
   selector: 'app-idea-view',
   templateUrl: './idea-view.component.html',
@@ -56,7 +58,10 @@ export class IdeaViewComponent implements OnDestroy {
         this.idea = i;
         this.setHasCheered(i.userHasCheered, true);
       });
-      this.http.getComments("recent", id, undefined).then(c => this.comments = c);
+      this.http.getComments("recent", id, undefined).then(c => {
+        this.comments = c;
+        setTimeout(() => this.placeLocalizedComments(c));
+      });
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
     });
 
@@ -69,6 +74,51 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+
+  _getAndSortLocalizations(comments: Comment[]): Localization[] {
+    let offsets: Localization[] = [];
+    comments.forEach(c => {
+      if (c.location) {
+        offsets.push(
+          { offset: c.location[0], type: "start", commentId: c.id },
+          { offset: c.location[1], type: "end", commentId: c.id },
+        );
+      }
+    });
+    offsets.sort((a, b) => a.offset - b.offset);
+    return offsets;
+  }
+
+  _insertSpan(localization: Localization, text: Text, offsetInText: number) {
+    let span = this._createSpan(localization.type, localization.commentId);
+    const remain = text.splitText(offsetInText);
+    text.parentNode!.insertBefore(span, remain);  // insert before 'remain'
+  }
+
+  placeLocalizedComments(comments: Comment[]) {
+    let localizations = this._getAndSortLocalizations(comments);
+    if (! localizations.length) { return; }
+    // walk and insert spans
+    let localization = localizations.shift();
+    let offset = 0;
+    let content = this.contentRef?.nativeElement as HTMLElement;
+    let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    let node: Node|null = null;
+    while (node = walker.nextNode()) {
+      let text = node as Text;
+      for (let i = 0; i < text.textContent!.length; i++) {
+        if (offset === localization!.offset) {
+          console.log(`i=${i} and offset=${offset}`);
+          this._insertSpan(localization!, text, i);
+          localization = localizations.shift();
+          if (!localization) { return; }
+        }
+        offset += 1;
+      }
+    }
+    if (localization) { throw new Error("Failed to place every comments"); }
+  }
+
   onContentMouseDown(e: MouseEvent) {
     this.mouseDown = e;
   }
@@ -82,8 +132,8 @@ export class IdeaViewComponent implements OnDestroy {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
       let [startOffset, endOffset] = this._getOffsetsInContent(startSpan, endSpan);
       let id = await this.postComment(body, [startOffset, endOffset]);
-      startSpan.id = `${localized_comment_start}${id}`;
-      endSpan.id = `${localized_comment_end}${id}`;
+      startSpan.id = this._makeSpanId('start', id);
+      endSpan.id = this._makeSpanId('end', id);
     }
   }
 
@@ -119,11 +169,19 @@ export class IdeaViewComponent implements OnDestroy {
     return body;
   }
 
-  _positionComment(commentId: string, range: Range): [HTMLElement, HTMLElement] {
+  _createSpan(type: 'start'|'end', commentId: string): HTMLElement {
     let startSpan = document.createElement("span");
-    startSpan.id = `${localized_comment_start}${commentId}`;
-    let endSpan = document.createElement("span");
-    endSpan.id = `${localized_comment_end}${commentId}`;
+    startSpan.id = this._makeSpanId(type, commentId);
+    return startSpan;
+  }
+
+  _makeSpanId(type: 'start'|'end', commentId: string): string {
+    return `${type}:${commentId}`;
+  }
+
+  _positionComment(commentId: string, range: Range): [HTMLElement, HTMLElement] {
+    let startSpan = this._createSpan('start', commentId);
+    let endSpan = this._createSpan('end', commentId);
     range.insertNode(startSpan); // at the beginning of the range
     range.collapse(false); // trick: collapse to the end and insertNode again
     range.insertNode(endSpan);
