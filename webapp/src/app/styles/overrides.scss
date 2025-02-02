@@ -1,4 +1,9 @@
 mat-expansion-panel {
   border-radius: var(--spacing) !important;
   box-shadow: none !important;
+
+  .mat-expansion-panel-content {
+    font-size: var(--content-font-size);
+  }
 }
+

@@ -19,7 +19,7 @@ export async function reviveComments(dbDocs: DbComment[], userId: string|undefin
 
 	if (userId) {
 		[authors, votes] = await Promise.all([
-			_usersPromise(authorsToGet),
+			_usersPromise(authorsToGet, userId),
 			getDocuments<Vote>("votes", undefined, [
 				{ field: "commentId", operator: "in", value: votesToGet },
 				{ field: "authorId", operator: "eq", value: userId },

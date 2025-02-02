@@ -4,11 +4,9 @@
 
 #container {
 
-  #top-part {
-    position: relative;
-
-    &.wider {
-
+  &.mobile { #active-localized-comment { width: 100% !important; } }
+  &.wide {
+    #top-part {
       display: block;
 
       #cover {
@@ -25,9 +23,17 @@
         right: 100px;
         padding: var(--large-spacing);
         border-radius: var(--spacing);
+        box-shadow: rgb(0 0 0 / 33%) 5px 5px var(--spacing);
       }
-
     }
+
+    #summary {
+      max-width: 66%;
+    }
+  }
+
+  #top-part {
+    position: relative;
 
     #cover {
       position: relative;
@@ -136,23 +142,43 @@
     padding-top: var(--large-spacing);
 
     #summary {
-      margin-left: 32px;
-
-      &.reduce-width {
-        max-width: calc(50% - 32px - var(--large-spacing) / 2);
-      }
+      margin-left: calc(32px + 2 * var(--gutter) - 24px);
+      margin-right: var(--gutter);
 
       #glitter {
-        margin-right: var(--small-spacing);
+        margin-right: 10px;
       }
     }
 
-    #content {
-      font-size: var(--content-font-size);
+    #content-container {
       width: 100%;
       min-height: 60px;
       padding-left: calc(32px + 2 * var(--gutter));
       padding-right: var(--gutter);
+      position: relative;
+
+      #content {
+        font-size: var(--content-font-size);
+      }
+
+      .comment-bubble {
+        position: absolute;
+        left: var(--gutter);
+        margin-top: 0;
+        // top is set dynamically
+      }
+
+      #active-localized-comment {
+        position: absolute;
+        width: 66%;
+        left: 0;
+        z-index: 99;
+        border-radius: var(--spacing);
+        background-color: var(--darker-background-color);
+        margin-top: -10px;  // align with its bubble
+        box-shadow: rgb(0 0 0 / 33%) 5px 5px var(--spacing);
+        // top is set dynamically
+      }
     }
 
     app-comment-section {

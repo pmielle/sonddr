@@ -93,6 +93,7 @@ export type Comment = {
     date: Date,
     content: string,
     rating: number,
+    location?: [number, number],
     userVote?: 1|-1,
 };
 
@@ -103,6 +104,7 @@ export type DbComment = {
     date: Date,
     content: string,
     rating: number,
+    location?: [number, number],
 };
 
 export type DbUser = {

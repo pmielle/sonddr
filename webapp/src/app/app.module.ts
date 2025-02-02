@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule, isDevMode } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
@@ -63,6 +63,7 @@ import { AboveKeyboardDirective } from './directives/above-keyboard.directive';
 import { AutoGrowDirective } from './directives/auto-grow.directive';
 import { EmojiPickerComponent } from './components/emoji-picker/emoji-picker.component';
 import { DeletePillComponent } from './components/delete-pill/delete-pill.component';
+import { AddLocalizedCommentPopupComponent } from './components/add-localized-comment-popup/add-localized-comment-popup.component';
 
 
 @NgModule({
@@ -115,6 +116,7 @@ import { DeletePillComponent } from './components/delete-pill/delete-pill.compon
     AutoGrowDirective,
     EmojiPickerComponent,
     DeletePillComponent,
+    AddLocalizedCommentPopupComponent,
   ],
   imports: [
     BrowserModule,

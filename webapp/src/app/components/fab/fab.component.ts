@@ -39,7 +39,7 @@ export class FabComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.updating = false;
           this.displayedMode = mode;
-        }, 300);
+        }, 500);
       } else {
       this.displayedMode = mode;
       }

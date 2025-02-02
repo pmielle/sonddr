@@ -19,3 +19,5 @@ export const delete_str = "SONDDR_DELETE";
 export const react_str = "SONDDR_REACT_ADD";
 export const delete_react_str = "SONDDR_REACT_DELETE";
 export const sep_str = "@@@";
+export const localized_comment_start = "start:";
+export const localized_comment_end = "end:";
