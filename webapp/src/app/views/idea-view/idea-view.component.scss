@@ -178,12 +178,6 @@
         margin-top: -10px;  // align with its bubble
         box-shadow: rgb(0 0 0 / 33%) 5px 5px var(--spacing);
         // top is set dynamically
-
-        button {
-          position: absolute;
-          top: 2px;  // align with autor name
-          right: var(--gutter);
-        }
       }
     }
 

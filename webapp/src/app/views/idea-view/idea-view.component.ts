@@ -80,7 +80,7 @@ export class IdeaViewComponent implements OnDestroy {
       this.http.getComments("recent", id, undefined).then(c => {
         this.comments = c;
         setTimeout(() => {
-          this.placeLocalizedComments(c);
+          this.refreshSpans();
           this.setLocalizedComments();
         }, 500);
       });
@@ -106,6 +106,7 @@ export class IdeaViewComponent implements OnDestroy {
     let top = startSpan.offsetTop === endSpan.offsetTop
       ? startSpan.offsetTop
       : startSpan.offsetTop + endSpan.offsetTop / 2;
+    top -= 5; // looks nicer
     return `${top}px`;
   }
 
@@ -169,9 +170,12 @@ export class IdeaViewComponent implements OnDestroy {
     text.parentNode!.insertBefore(span, remain);  // insert before 'remain'
   }
 
-  placeLocalizedComments(comments: Comment[]) {
-    let localizations = this._getAndSortLocalizations(comments);
+  refreshSpans() {
+    let localizations = this._getAndSortLocalizations(this.comments!);
     if (! localizations.length) { return; }
+    // remove previous spans
+    document.querySelectorAll(".localized-comment")
+      .forEach((elem) => elem.remove());
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
@@ -402,7 +406,10 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   deleteComment(commentId: string) {
+    if (this.activeLocalizedComment?.comment.id === commentId) { this.closeBubble(); }
     this.comments = this.comments?.filter(c => c.id !== commentId);
+    this.refreshSpans();
+    this.setLocalizedComments();
     this.http.deleteComment(commentId);
   }
 

@@ -100,7 +100,6 @@
           <app-comment [comment]="c.comment" (upvote)="upvoteComment(c.comment.id)"
             (downvote)="downvoteComment(c.comment.id)" (delete-vote)="deleteCommentVote(c.comment.id)"
             (delete-comment)="deleteComment(c.comment.id)"></app-comment>
-          <button mat-icon-button (click)="closeBubble()"><mat-icon>close</mat-icon></button>
         </div>
       }
     </div>
