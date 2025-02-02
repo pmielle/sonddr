@@ -169,6 +169,7 @@
         position: absolute;
         width: 66%;
         left: 0;
+        z-index: 99;
         border-radius: var(--spacing);
         background-color: var(--darker-background-color);
         margin-top: -10px;  // align with its bubble
