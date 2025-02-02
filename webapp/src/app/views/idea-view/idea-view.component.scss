@@ -4,6 +4,8 @@
 
 #container {
 
+  &.mobile { #active-localized-comment { width: 100% !important; } }
+
   #top-part {
     position: relative;
 
