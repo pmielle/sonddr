@@ -17,7 +17,7 @@
   <div id="top-part" class="flex column large-gap" [class.wider]="screen.isWide$ | async">
 
     <div id="cover">
-      <div id="cover-background" class="bg cover" [style.backgroundImage]="chooseCover()" [appOpenImage]="idea?.cover"></div>
+      <div id="cover-background" class="bg cover pointer" [style.backgroundImage]="chooseCover()" [appOpenImage]="idea?.cover"></div>
 
       <div id="goals" class="flex">
         @for (g of idea?.goals; track g.id) {
@@ -89,10 +89,19 @@
            #content>
       </div>
       @for(c of localizedComments; track c.comment.id) {
-        <app-profile-picture class="comment-bubble"
+        <app-profile-picture class="comment-bubble pointer"
           [user]="c.comment.author"
           [style.top]="chooseBubbleTop(c)"
+          (click)="activeLocalizedComment = c"
         ></app-profile-picture>
+      }
+      @if (activeLocalizedComment; as c) {
+        <div id="active-localized-comment" [style.top]="chooseBubbleTop(c)" #activeBubble>
+          <app-comment [comment]="c.comment" (upvote)="upvoteComment(c.comment.id)"
+            (downvote)="downvoteComment(c.comment.id)" (delete-vote)="deleteCommentVote(c.comment.id)"
+            (delete-comment)="deleteComment(c.comment.id)"></app-comment>
+          <button mat-icon-button (click)="closeBubble()"><mat-icon>close</mat-icon></button>
+        </div>
       }
     </div>
 

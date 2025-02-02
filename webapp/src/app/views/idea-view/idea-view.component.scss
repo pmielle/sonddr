@@ -164,6 +164,23 @@
         margin-top: 0;
         // top is set dynamically
       }
+
+      #active-localized-comment {
+        position: absolute;
+        width: 66%;
+        left: 0;
+        border-radius: var(--spacing);
+        background-color: var(--darker-background-color);
+        margin-top: -10px;  // align with its bubble
+        box-shadow: rgb(0 0 0 / 33%) 5px 5px var(--spacing);
+        // top is set dynamically
+
+        button {
+          position: absolute;
+          top: 2px;  // align with autor name
+          right: var(--gutter);
+        }
+      }
     }
 
     app-comment-section {

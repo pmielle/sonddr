@@ -18,15 +18,15 @@
 
   <div id="content">
     <div id="rating" class="flex column">
-      <mat-icon id="upvote" [class.active]="comment.userVote === 1" mat-ripple [matRippleCentered]="true"
-        [matRippleUnbounded]="true" (click)="onUpvoteClick()">
+      <mat-icon id="upvote" class="pointer" [class.active]="comment.userVote === 1" mat-ripple
+        [matRippleCentered]="true" [matRippleUnbounded]="true" (click)="onUpvoteClick()">
         keyboard_arrow_up
       </mat-icon>
       <p id="rating-value" class="no-margin-bottom" [style.color]="chooseRatingColor()">
         {{ comment.rating }}
       </p>
-      <mat-icon id="downvote" [class.active]="comment.userVote === -1" mat-ripple [matRippleCentered]="true"
-        [matRippleUnbounded]="true" (click)="onDownvoteClick()">
+      <mat-icon id="downvote" class="pointer" [class.active]="comment.userVote === -1" mat-ripple
+        [matRippleCentered]="true" [matRippleUnbounded]="true" (click)="onDownvoteClick()">
         keyboard_arrow_down
       </mat-icon>
     </div>

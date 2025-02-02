@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, lastValueFrom } from 'rxjs';
 import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
@@ -38,10 +38,22 @@ export class IdeaViewComponent implements OnDestroy {
   dialog = inject(MatDialog);
   i18n = inject(TranslationService);
   auth = inject(AuthService);
+  firstClickOut = false;  // opening the bubble triggers clickout: ignore the first event
 
   // i/o
   // --------------------------------------------
   @ViewChild('content') contentRef?: ElementRef;
+  @ViewChild('activeBubble') activeBubble?: ElementRef;
+  @HostListener('document:click', ['$event']) clickout(event: MouseEvent) {
+    if (!this.activeLocalizedComment) { return; }
+    if (! this.activeBubble!.nativeElement!.contains(event.target)) {
+      if (this.firstClickOut) {
+        this.closeBubble();
+      } else {
+        this.firstClickOut = true;
+      }
+    }
+  }
 
   // attributes
   // --------------------------------------------
@@ -53,6 +65,7 @@ export class IdeaViewComponent implements OnDestroy {
   popupSub?: Subscription;
   resizeSub?: Subscription;
   mouseDown?: MouseEvent;
+  activeLocalizedComment?: LocalizedComment;
 
   // lifecycle hooks
   // --------------------------------------------
@@ -83,6 +96,11 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  closeBubble() {
+    this.firstClickOut = false;
+    this.activeLocalizedComment = undefined;
+  }
+
   chooseBubbleTop(localizedComment: LocalizedComment): string {
     let [startSpan, endSpan] = localizedComment.spans;
     let top = startSpan.offsetTop === endSpan.offsetTop
