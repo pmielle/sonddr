@@ -105,7 +105,7 @@ export class IdeaViewComponent implements OnDestroy {
     let [startSpan, endSpan] = localizedComment.spans;
     let top = startSpan.offsetTop === endSpan.offsetTop
       ? startSpan.offsetTop
-      : startSpan.offsetTop + endSpan.offsetTop / 2;
+      : (startSpan.offsetTop + endSpan.offsetTop) / 2;
     top -= 5; // looks nicer
     return `${top}px`;
   }
