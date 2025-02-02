@@ -171,11 +171,11 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   refreshSpans() {
-    let localizations = this._getAndSortLocalizations(this.comments!);
-    if (! localizations.length) { return; }
     // remove previous spans
     document.querySelectorAll(".localized-comment")
       .forEach((elem) => elem.remove());
+    let localizations = this._getAndSortLocalizations(this.comments!);
+    if (! localizations.length) { return; }
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
