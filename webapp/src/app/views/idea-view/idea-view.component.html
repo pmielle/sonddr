@@ -82,12 +82,7 @@
     }
 
     <div id="content-container">
-      <div id="content"
-           [innerHTML]="idea?.content"
-           (mousedown)="onContentMouseDown($event)"
-           (mouseup)="onContentMouseUp($event)"
-           #content>
-      </div>
+      <div id="content" [innerHTML]="idea?.content" #content></div>
       @for(c of localizedComments; track c.comment.id) {
         <app-profile-picture class="comment-bubble pointer"
           [user]="c.comment.author"
