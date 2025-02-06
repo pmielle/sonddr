@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription, filter, firstValueFrom, fromEvent, lastValueFrom, map, switchMap } from 'rxjs';
+import { Observable, Subscription, delay, filter, firstValueFrom, fromEvent, lastValueFrom, map, switchMap } from 'rxjs';
 import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
@@ -12,6 +12,8 @@ import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { CdkContextMenuTrigger } from '@angular/cdk/menu';
 
 type LocalizedComment = {
   comment: Comment,
@@ -42,6 +44,7 @@ export class IdeaViewComponent implements OnDestroy {
 
   // i/o
   // --------------------------------------------
+  @ViewChild('menuTrigger') menuTrigger?: CdkContextMenuTrigger;
   @ViewChild('content') contentRef?: ElementRef;
   @ViewChild('activeBubble') activeBubble?: ElementRef;
   @HostListener('document:click', ['$event']) clickout(event: MouseEvent) {
@@ -66,18 +69,22 @@ export class IdeaViewComponent implements OnDestroy {
   resizeSub?: Subscription;
   activeLocalizedComment?: LocalizedComment;
   selectionSub?: Subscription;
+  activeSele?: Selection;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
-
     this.selectionSub = this.screen.isMobile$.pipe(
       switchMap((isMobile: boolean) => isMobile ? this.getMobileSelection() : this.getDesktopSelection()),
-      filter((sele: Selection) => this.isInContent(sele))
+      filter((sele: Selection) => this.isInContent(sele)),
     ).subscribe((sele: Selection) => {
-      this.addLocalizedComment(sele);  // TODO: open context menu instead of opening directly
+      let rect = sele.getRangeAt(0).getBoundingClientRect();
+      this.menuTrigger!.open({
+        x: (rect.x + rect.width) / 2,
+        y: rect.y + rect.height,
+      });
+      this.activeSele = sele;
     });
-
     this.routeSub = this.route.paramMap.subscribe(map => {
       const id = map.get("id");
       if (!id) { throw new Error("id not found in url params"); }
@@ -113,6 +120,7 @@ export class IdeaViewComponent implements OnDestroy {
   getMobileSelection(): Observable<Selection> {
     return fromEvent(document, "contextmenu").pipe(
       map(() => document.getSelection()!),
+      filter((sele: Selection) => sele.toString().length > 0),
     );
   }
 
@@ -121,11 +129,13 @@ export class IdeaViewComponent implements OnDestroy {
       map(() => document.getSelection()!),
       filter((sele: Selection) => sele.type === "Range"),
       switchMap((sele: Selection) => firstValueFrom(fromEvent(document, "mouseup").pipe(map(() => sele)))),
+      filter((sele: Selection) => sele.toString().length > 0),
+      delay(0), // otherwise does not work
     );
   }
 
-  async addLocalizedComment(sele: Selection) {
-    let range = sele.getRangeAt(0);
+  async addLocalizedComment() {
+    let range = this.activeSele!.getRangeAt(0);
     let body = await this._openLocalizedCommentPopup(range.toString());
     if (body) {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);

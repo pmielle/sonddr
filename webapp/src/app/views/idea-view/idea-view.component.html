@@ -82,7 +82,15 @@
     }
 
     <div id="content-container">
+      <div [cdkContextMenuTriggerFor]="context_menu" #menuTrigger="cdkContextMenuTriggerFor"></div>
+      <ng-template #context_menu>
+        <div cdkMenu>
+          <button mat-flat-button cdkMenuItem (click)="addLocalizedComment()">{{ t('misc.comment') }}</button>
+        </div>
+      </ng-template>
+
       <div id="content" [innerHTML]="idea?.content" #content></div>
+
       @for(c of localizedComments; track c.comment.id) {
         <app-profile-picture class="comment-bubble pointer"
           [user]="c.comment.author"
@@ -90,6 +98,7 @@
           (click)="activeLocalizedComment = c"
         ></app-profile-picture>
       }
+
       @if (activeLocalizedComment; as c) {
         <div id="active-localized-comment" [style.top]="chooseBubbleTop(c)" #activeBubble>
           <app-comment [comment]="c.comment" (upvote)="upvoteComment(c.comment.id)"
