@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription, delay, filter, firstValueFrom, fromEvent, lastValueFrom, map, switchMap } from 'rxjs';
+import { Observable, Subscription, delay, filter, fromEvent, lastValueFrom, map, switchMap } from 'rxjs';
 import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
@@ -12,7 +12,6 @@ import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
-import { MatMenuTrigger } from '@angular/material/menu';
 import { CdkContextMenuTrigger } from '@angular/cdk/menu';
 
 type LocalizedComment = {
@@ -20,6 +19,12 @@ type LocalizedComment = {
   spans: [HTMLElement, HTMLElement],
 };
 type Localization = { offset: number, type: 'start' | 'end', commentId: string };
+
+type ActiveSelection = {
+  selection: Selection,
+  isMobile: boolean,
+  mouseUp: MouseEvent,
+}
 
 @Component({
   selector: 'app-idea-view',
@@ -40,7 +45,6 @@ export class IdeaViewComponent implements OnDestroy {
   dialog = inject(MatDialog);
   i18n = inject(TranslationService);
   auth = inject(AuthService);
-  firstClickOut = false;  // opening the bubble triggers clickout: ignore the first event
 
   // i/o
   // --------------------------------------------
@@ -69,20 +73,20 @@ export class IdeaViewComponent implements OnDestroy {
   resizeSub?: Subscription;
   activeLocalizedComment?: LocalizedComment;
   selectionSub?: Subscription;
-  activeSele?: Selection;
+  firstClickOut = false;  // opening the bubble triggers clickout: ignore the first event
+  activeSele?: ActiveSelection;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
     this.selectionSub = this.screen.isMobile$.pipe(
       switchMap((isMobile: boolean) => isMobile ? this.getMobileSelection() : this.getDesktopSelection()),
-      filter((sele: Selection) => this.isInContent(sele)),
-    ).subscribe((sele: Selection) => {
-      let rect = sele.getRangeAt(0).getBoundingClientRect();
-      this.menuTrigger!.open({
-        x: (rect.x + rect.width) / 2,
-        y: rect.y + rect.height,
-      });
+      filter((sele: ActiveSelection) => this.isInContent(sele.selection)),
+    ).subscribe((sele: ActiveSelection) => {
+      let popupX = sele.mouseUp.clientX;
+      let popupY = sele.mouseUp.clientY;
+      if (sele.isMobile) { popupY += 10; popupX += 10; }
+      this.menuTrigger!.open({ x: popupX, y: popupY });
       this.activeSele = sele;
     });
     this.routeSub = this.route.paramMap.subscribe(map => {
@@ -117,25 +121,31 @@ export class IdeaViewComponent implements OnDestroy {
     return content.contains(sele.anchorNode) && content.contains(sele.focusNode);
   }
 
-  getMobileSelection(): Observable<Selection> {
+  getMobileSelection(): Observable<ActiveSelection> {
     return fromEvent(document, "contextmenu").pipe(
-      map(() => document.getSelection()!),
-      filter((sele: Selection) => sele.toString().length > 0),
+      map((e: Event) => e as MouseEvent),
+      map((e) => ({ selection: document.getSelection()!, isMobile: true, mouseUp: e })),
+      filter((sele: ActiveSelection) => sele.selection.toString().length > 0),
     );
   }
 
-  getDesktopSelection(): Observable<Selection> {
+  getDesktopSelection(): Observable<ActiveSelection> {
     return fromEvent(document, "selectionchange").pipe(
       map(() => document.getSelection()!),
       filter((sele: Selection) => sele.type === "Range"),
-      switchMap((sele: Selection) => firstValueFrom(fromEvent(document, "mouseup").pipe(map(() => sele)))),
-      filter((sele: Selection) => sele.toString().length > 0),
+      switchMap((sele: Selection) => {
+        return fromEvent(document, "mouseup").pipe(
+          map((e) => e as MouseEvent),
+          map((e) => ({ selection: sele, isMobile: false, mouseUp: e }))
+        );
+      }),
+      filter((sele: ActiveSelection) => sele.selection.toString().length > 0),
       delay(0), // otherwise does not work
     );
   }
 
   async addLocalizedComment() {
-    let range = this.activeSele!.getRangeAt(0);
+    let range = this.activeSele!.selection.getRangeAt(0);
     let body = await this._openLocalizedCommentPopup(range.toString());
     if (body) {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
