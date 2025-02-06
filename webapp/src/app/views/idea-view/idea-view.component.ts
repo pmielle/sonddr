@@ -146,6 +146,7 @@ export class IdeaViewComponent implements OnDestroy {
 
   async addLocalizedComment() {
     let range = this.activeSele!.selection.getRangeAt(0);
+    document.getSelection()!.removeAllRanges(); // clean things up before opening popup
     let body = await this._openLocalizedCommentPopup(range.toString());
     if (body) {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
