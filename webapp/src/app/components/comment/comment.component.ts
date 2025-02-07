@@ -15,6 +15,7 @@ export class CommentComponent {
 
   // I/O
   // --------------------------------------------
+  @Input('quote') quote?: string;
   @Input('comment') comment?: Comment;
   @Output('upvote') upvote = new EventEmitter<void>();
   @Output('downvote') downvote = new EventEmitter<void>();
