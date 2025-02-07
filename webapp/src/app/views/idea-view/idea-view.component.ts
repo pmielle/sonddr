@@ -154,6 +154,7 @@ export class IdeaViewComponent implements OnDestroy {
     main: while (node = walker.nextNode()) {
       let text = node as Text;
       for (let i = 0; i < text.textContent!.length; i++) {
+        tmp.forEach((quoteTmp, _) => { quoteTmp.text += text.textContent![i]});
         while (offset === localization!.offset) {  // there can be multiple comments at this offset
           let span = this._insertSpan(localization!, text, i);
           if (tmp.has(localization!.commentId)) {
@@ -167,6 +168,7 @@ export class IdeaViewComponent implements OnDestroy {
               comment: comment,
               quote: tmpQuote as Quote,
             });
+            tmp.delete(localization!.commentId);
           } else {
             // this is a start span
             tmp.set(localization!.commentId, {text: "", spans: [span, undefined]});
@@ -178,7 +180,7 @@ export class IdeaViewComponent implements OnDestroy {
         offset += 1;
       }
     }
-    if (localization) { throw new Error("Failed to place some comments"); }
+    if (localization || tmp.size) { throw new Error("Failed to place some comments"); }
     this.localizedComments = localizedComments;
   }
 
