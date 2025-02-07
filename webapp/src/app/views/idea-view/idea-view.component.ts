@@ -236,7 +236,9 @@ export class IdeaViewComponent implements OnDestroy {
   setLCGroups() {
     let lcGroups: LCGroup[] = [];
     let binheight = 100;
-    this.localizedComments.forEach((lc: LocalizedComment) => {
+    this.localizedComments.sort(
+      (a, b) => b.comment.date.getTime() - a.comment.date.getTime()
+    ).forEach((lc: LocalizedComment) => {
       let y = this._chooseLCY(lc);
       let found = false;
       lcGroups.forEach((lcGroup) => {
