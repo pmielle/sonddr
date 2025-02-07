@@ -95,6 +95,7 @@ export type Comment = {
     rating: number,
     location?: [number, number],
     userVote?: 1|-1,
+    quote?: string,
 };
 
 export type DbComment = {

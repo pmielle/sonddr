@@ -62,6 +62,12 @@
                 position: relative;
             }
         }
+
+        #quote {
+          color: var(--transparent-foreground-color);
+          padding-left: var(--spacing);
+          border-left: 1px solid var(--transparent-foreground-color);
+        }
     }
 
 }

@@ -82,24 +82,43 @@
     }
 
     <div id="content-container">
-      <div id="content"
-           [innerHTML]="idea?.content"
-           (mousedown)="onContentMouseDown($event)"
-           (mouseup)="onContentMouseUp($event)"
-           #content>
-      </div>
-      @for(c of localizedComments; track c.comment.id) {
-        <app-profile-picture class="comment-bubble pointer"
-          [user]="c.comment.author"
-          [style.top]="chooseBubbleTop(c)"
-          (click)="activeLocalizedComment = c"
-        ></app-profile-picture>
+      <div [cdkContextMenuTriggerFor]="context_menu" #menuTrigger="cdkContextMenuTriggerFor"></div>
+      <ng-template #context_menu>
+        <div cdkMenu>
+          <button mat-flat-button cdkMenuItem (click)="addLocalizedComment()">{{ t('misc.comment') }}</button>
+        </div>
+      </ng-template>
+
+      <div id="content" [innerHTML]="idea?.content" #content></div>
+
+      @for(lcGroup of lcGroups; track lcGroup.y) {
+        <div class="lc-group flex column pointer"
+            [style.top]="lcGroup.y + 'px'"
+            (click)="activeLCGroup = lcGroup">
+          <app-profile-picture class="pointer"
+            [user]="lcGroup.localizedComments[0].comment.author"
+          ></app-profile-picture>
+          @if (lcGroup.localizedComments.length > 1) {
+            <app-profile-picture class="pointer"
+              [user]="lcGroup.localizedComments[1].comment.author"
+            ></app-profile-picture>
+          }
+          @if (lcGroup.localizedComments.length > 2) {
+            <p class="bubble-label no-margin-bottom">+ {{ lcGroup.localizedComments.length - 2 }}</p>
+          }
+          @else {
+            <p class="not-bubble-label no-margin-bottom">...</p>  <!-- to increase clickable area -->
+          }
+        </div>
       }
-      @if (activeLocalizedComment; as c) {
-        <div id="active-localized-comment" [style.top]="chooseBubbleTop(c)" #activeBubble>
-          <app-comment [comment]="c.comment" (upvote)="upvoteComment(c.comment.id)"
-            (downvote)="downvoteComment(c.comment.id)" (delete-vote)="deleteCommentVote(c.comment.id)"
-            (delete-comment)="deleteComment(c.comment.id)"></app-comment>
+
+      @if (activeLCGroup; as lcGroup) {
+        <div id="active-localized-comment" [style.top]="lcGroup.y + 'px'" #activeBubble>
+          @for(lc of lcGroup.localizedComments; track lc.comment.id) {
+            <app-comment [comment]="lc.comment" (upvote)="upvoteComment(lc.comment.id)"
+              (downvote)="downvoteComment(lc.comment.id)" (delete-vote)="deleteCommentVote(lc.comment.id)"
+              (delete-comment)="deleteComment(lc.comment.id)"></app-comment>
+          }
         </div>
       }
     </div>

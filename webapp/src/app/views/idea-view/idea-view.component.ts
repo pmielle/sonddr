@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, lastValueFrom } from 'rxjs';
+import { Observable, Subscription, delay, filter, fromEvent, lastValueFrom, map, switchMap } from 'rxjs';
 import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
@@ -12,12 +12,34 @@ import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
+import { CdkContextMenuTrigger } from '@angular/cdk/menu';
+
+type LCGroup = {
+  localizedComments: LocalizedComment[],
+  y: number,
+};
 
 type LocalizedComment = {
   comment: Comment,
   spans: [HTMLElement, HTMLElement],
 };
-type Localization = { offset: number, type: 'start'|'end', commentId: string };
+
+type QuoteTmp = {
+  text: string,
+  spans: [HTMLElement, HTMLElement|undefined],
+};
+
+type Localization = {
+  offset: number,
+  type: 'start'|'end',
+  commentId: string,
+};
+
+type ActiveSelection = {
+  selection: Selection,
+  isMobile: boolean,
+  mouseUp: MouseEvent,
+}
 
 @Component({
   selector: 'app-idea-view',
@@ -38,15 +60,15 @@ export class IdeaViewComponent implements OnDestroy {
   dialog = inject(MatDialog);
   i18n = inject(TranslationService);
   auth = inject(AuthService);
-  firstClickOut = false;  // opening the bubble triggers clickout: ignore the first event
 
   // i/o
   // --------------------------------------------
+  @ViewChild('menuTrigger') menuTrigger?: CdkContextMenuTrigger;
   @ViewChild('content') contentRef?: ElementRef;
   @ViewChild('activeBubble') activeBubble?: ElementRef;
   @HostListener('document:click', ['$event']) clickout(event: MouseEvent) {
-    if (!this.activeLocalizedComment) { return; }
-    if (! this.activeBubble!.nativeElement!.contains(event.target)) {
+    if (!this.activeLCGroup) { return; }
+    if (!this.activeBubble!.nativeElement!.contains(event.target)) {
       if (this.firstClickOut) {
         this.closeBubble();
       } else {
@@ -60,16 +82,29 @@ export class IdeaViewComponent implements OnDestroy {
   idea?: Idea;
   comments?: Comment[];
   localizedComments: LocalizedComment[] = [];
+  lcGroups: LCGroup[] = [];
   volunteers?: Volunteer[];
   routeSub?: Subscription;
   popupSub?: Subscription;
   resizeSub?: Subscription;
-  mouseDown?: MouseEvent;
-  activeLocalizedComment?: LocalizedComment;
+  activeLCGroup?: LCGroup;
+  selectionSub?: Subscription;
+  firstClickOut = false;  // opening the bubble triggers clickout: ignore the first event
+  activeSele?: ActiveSelection;
 
   // lifecycle hooks
   // --------------------------------------------
   ngOnInit(): void {
+    this.selectionSub = this.screen.isMobile$.pipe(
+      switchMap((isMobile: boolean) => isMobile ? this.getMobileSelection() : this.getDesktopSelection()),
+      filter((sele: ActiveSelection) => this.isInContent(sele.selection)),
+    ).subscribe((sele: ActiveSelection) => {
+      let popupX = sele.mouseUp.clientX;
+      let popupY = sele.mouseUp.clientY;
+      if (sele.isMobile) { popupY += 10; popupX += 10; }
+      this.menuTrigger!.open({ x: popupX, y: popupY });
+      this.activeSele = sele;
+    });
     this.routeSub = this.route.paramMap.subscribe(map => {
       const id = map.get("id");
       if (!id) { throw new Error("id not found in url params"); }
@@ -80,8 +115,8 @@ export class IdeaViewComponent implements OnDestroy {
       this.http.getComments("recent", id, undefined).then(c => {
         this.comments = c;
         setTimeout(() => {
-          this.refreshSpans();
-          this.setLocalizedComments();
+          this.localizeComments();
+          this.setLCGroups();
         }, 500);
       });
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
@@ -92,63 +127,139 @@ export class IdeaViewComponent implements OnDestroy {
     this.routeSub?.unsubscribe();
     this.popupSub?.unsubscribe();
     this.resizeSub?.unsubscribe();
+    this.selectionSub?.unsubscribe();
   }
 
   // methods
   // --------------------------------------------
-  closeBubble() {
-    this.firstClickOut = false;
-    this.activeLocalizedComment = undefined;
+  localizeComments() {
+    // remove previous spans
+    document.querySelectorAll(".localized-comment")
+      .forEach((elem) => elem.remove());
+    let localizations = this._getAndSortLocalizations(this.comments!);
+    if (!localizations.length) { return; }
+    // walk and insert spans
+    let localization = localizations.shift();
+    let offset = 0;
+    let content = this.contentRef?.nativeElement as HTMLElement;
+    let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    let node: Node | null = null;
+    let tmp: Map<string, QuoteTmp> = new Map();
+    let localizedComments: LocalizedComment[] = [];
+    main: while (node = walker.nextNode()) {
+      let text = node as Text;
+      for (let i = 0; i < text.textContent!.length; i++) {
+        tmp.forEach((quoteTmp, _) => { quoteTmp.text += text.textContent![i]});
+        while (offset === localization!.offset) {  // there can be multiple comments at this offset
+          let span = this._insertSpan(localization!, text, i);
+          if (tmp.has(localization!.commentId)) {
+            // this is an end span: we are done with this comment
+            // add it to the final localizedComments list
+            tmp.get(localization!.commentId)!.spans[1] = span;
+            let tmpQuote = tmp.get(localization!.commentId)!;
+            tmpQuote.spans[1] = span;
+            let comment = this.comments!.find(c => c.id === localization!.commentId)!;
+            comment.quote = tmpQuote.text;
+            localizedComments.push({
+              comment: comment,
+              spans: tmpQuote.spans as [HTMLElement, HTMLElement],
+            });
+            tmp.delete(localization!.commentId);
+          } else {
+            // this is a start span
+            tmp.set(localization!.commentId, {text: "", spans: [span, undefined]});
+          }
+          // prepare for next one
+          localization = localizations.shift();
+          if (!localization) { break main; }
+        }
+        offset += 1;
+      }
+    }
+    if (localization || tmp.size) { throw new Error("Failed to place some comments"); }
+    this.localizedComments = localizedComments;
   }
 
-  chooseBubbleTop(localizedComment: LocalizedComment): string {
+  isInContent(sele: Selection): boolean {
+    const content = (this.contentRef!.nativeElement as HTMLElement);
+    return content.contains(sele.anchorNode) && content.contains(sele.focusNode);
+  }
+
+  getMobileSelection(): Observable<ActiveSelection> {
+    return fromEvent(document, "contextmenu").pipe(
+      map((e: Event) => e as MouseEvent),
+      map((e) => ({ selection: document.getSelection()!, isMobile: true, mouseUp: e })),
+      filter((sele: ActiveSelection) => sele.selection.toString().length > 0),
+    );
+  }
+
+  getDesktopSelection(): Observable<ActiveSelection> {
+    return fromEvent(document, "selectionchange").pipe(
+      map(() => document.getSelection()!),
+      filter((sele: Selection) => sele.type === "Range"),
+      switchMap((sele: Selection) => {
+        return fromEvent(document, "mouseup").pipe(
+          map((e) => e as MouseEvent),
+          map((e) => ({ selection: sele, isMobile: false, mouseUp: e }))
+        );
+      }),
+      filter((sele: ActiveSelection) => sele.selection.toString().length > 0),
+      delay(0), // otherwise does not work
+    );
+  }
+
+  async addLocalizedComment() {
+    let range = this.activeSele!.selection.getRangeAt(0);
+    let quote = range.toString();
+    document.getSelection()!.removeAllRanges(); // clean things up before opening popup
+    let body = await this._openLocalizedCommentPopup(quote);
+    if (body) {
+      let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
+      let [startOffset, endOffset] = this._getOffsetsInContent(startSpan, endSpan);
+      let comment = await this.postComment(body, [startOffset, endOffset]);
+      startSpan.id = this._makeSpanId('start', comment.id);
+      endSpan.id = this._makeSpanId('end', comment.id);
+      comment.quote = quote;
+      this.localizedComments.push({
+        comment: comment,
+        spans: [startSpan, endSpan],
+      });
+      this.setLCGroups();
+    }
+  }
+
+  closeBubble() {
+    this.firstClickOut = false;
+    this.activeLCGroup = undefined;
+  }
+
+  setLCGroups() {
+    let lcGroups: LCGroup[] = [];
+    let binheight = 100;
+    this.localizedComments.sort(
+      (a, b) => b.comment.date.getTime() - a.comment.date.getTime()
+    ).forEach((lc: LocalizedComment) => {
+      let y = this._chooseLCY(lc);
+      let found = false;
+      lcGroups.forEach((lcGroup) => {
+        if ((lcGroup.y - binheight / 2) < y && y <= (lcGroup.y + binheight / 2)) {
+          lcGroup.localizedComments.push(lc);
+          found = true;
+        }
+      });
+      if (! found) { lcGroups.push({ y: y, localizedComments: [ lc ] }); }
+    });
+    this.lcGroups = lcGroups;
+  }
+
+  _chooseLCY(localizedComment: LocalizedComment): number {
     let [startSpan, endSpan] = localizedComment.spans;
     let top = startSpan.offsetTop === endSpan.offsetTop
       ? startSpan.offsetTop
       : (startSpan.offsetTop + endSpan.offsetTop) / 2;
     top -= 5; // looks nicer
-    return `${top}px`;
+    return Math.round(top);
   }
-
-  setLocalizedComments() {
-    let spans = document.querySelectorAll(".localized-comment");
-    let pairs: Map<string, [HTMLElement|undefined, HTMLElement|undefined]> = new Map();
-    spans.forEach((_span) => {
-      const span = _span as HTMLElement;
-      const [type, commentId] = span.id.split(":");
-      if (! pairs.has(commentId)) { pairs.set(commentId, [ undefined, undefined ]); }
-      pairs.get(commentId)![type === 'start' ? 0 : 1] = span;  // [startSpan, endSpan]
-    });
-    let localizedComments: LocalizedComment[] = [];
-    pairs.forEach((spans, commentId) => {
-      let comment = this.comments!.find(c => c.id === commentId)!;
-      localizedComments.push({
-        comment: comment,
-        spans: spans as [HTMLElement, HTMLElement],
-      });
-    });
-    this.localizedComments = localizedComments;
-  }
-
-  _buildLocalizedComments(spans: NodeList): LocalizedComment[] {
-    let pairs: Map<string, [HTMLElement|undefined, HTMLElement|undefined]> = new Map();
-    spans.forEach((_span) => {
-      const span = _span as HTMLElement;
-      const [type, commentId] = span.id.split(":");
-      if (! pairs.has(commentId)) { pairs.set(commentId, [ undefined, undefined ]); }
-      pairs.get(commentId)![type === 'start' ? 0 : 1] = span;
-    });
-    let res: LocalizedComment[] = [];
-    pairs.forEach((spans, commentId) => {
-      let comment = this.comments!.find(c => c.id === commentId)!;
-      res.push({
-        comment: comment,
-        spans: spans as [HTMLElement, HTMLElement],
-      });
-    });
-    return res;
-  }
-
 
   _getAndSortLocalizations(comments: Comment[]): Localization[] {
     let offsets: Localization[] = [];
@@ -164,61 +275,17 @@ export class IdeaViewComponent implements OnDestroy {
     return offsets;
   }
 
-  _insertSpan(localization: Localization, text: Text, offsetInText: number) {
+  _insertSpan(localization: Localization, text: Text, offsetInText: number): HTMLElement {
     let span = this._createSpan(localization.type, localization.commentId);
     const remain = text.splitText(offsetInText);
     text.parentNode!.insertBefore(span, remain);  // insert before 'remain'
-  }
-
-  refreshSpans() {
-    // remove previous spans
-    document.querySelectorAll(".localized-comment")
-      .forEach((elem) => elem.remove());
-    let localizations = this._getAndSortLocalizations(this.comments!);
-    if (! localizations.length) { return; }
-    // walk and insert spans
-    let localization = localizations.shift();
-    let offset = 0;
-    let content = this.contentRef?.nativeElement as HTMLElement;
-    let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
-    let node: Node|null = null;
-    while (node = walker.nextNode()) {
-      let text = node as Text;
-      for (let i = 0; i < text.textContent!.length; i++) {
-        if (offset === localization!.offset) {
-          this._insertSpan(localization!, text, i);
-          localization = localizations.shift();
-          if (!localization) { return; }
-        }
-        offset += 1;
-      }
-    }
-    if (localization) { throw new Error("Failed to place some comments"); }
-  }
-
-  onContentMouseDown(e: MouseEvent) {
-    this.mouseDown = e;
-  }
-  async onContentMouseUp(e: MouseEvent) {
-    let sele = document.getSelection()!;  // never null is it?
-    if (sele.type !== "Range") { return; }
-    if (this._isFalsePositive(e)) { return; }
-    let range = sele.getRangeAt(0);
-    let body = await this._openLocalizedCommentPopup(range.toString());
-    if (body) {
-      let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
-      let [startOffset, endOffset] = this._getOffsetsInContent(startSpan, endSpan);
-      let comment = await this.postComment(body, [startOffset, endOffset]);
-      startSpan.id = this._makeSpanId('start', comment.id);
-      endSpan.id = this._makeSpanId('end', comment.id);
-      this.localizedComments.push({comment: comment, spans: [startSpan, endSpan]});
-    }
+    return span;
   }
 
   _getOffsetsInContent(startSpan: HTMLElement, endSpan: HTMLElement): [number, number] {
     let content = this.contentRef?.nativeElement as HTMLElement;
     let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
-    let node: Node|null = null;
+    let node: Node | null = null;
     let startOffset = 0;
     let endOffset = 0;
     node = walker.nextNode();
@@ -247,14 +314,14 @@ export class IdeaViewComponent implements OnDestroy {
     return body;
   }
 
-  _createSpan(type: 'start'|'end', commentId: string): HTMLElement {
+  _createSpan(type: 'start' | 'end', commentId: string): HTMLElement {
     let span = document.createElement("span");
     span.id = this._makeSpanId(type, commentId);
     span.classList.add("localized-comment");
     return span;
   }
 
-  _makeSpanId(type: 'start'|'end', commentId: string): string {
+  _makeSpanId(type: 'start' | 'end', commentId: string): string {
     return `${type}:${commentId}`;
   }
 
@@ -267,12 +334,6 @@ export class IdeaViewComponent implements OnDestroy {
     return [startSpan, endSpan];
   }
 
-  _isFalsePositive(e: MouseEvent) {
-    if (! this.mouseDown) { return true; }
-    if (this.mouseDown.x === e.x && this.mouseDown.y === e.y) { return true; }
-    return false;
-  }
-
   setHasCheered(hasCheered: boolean, firstLoad = false) {
     if (!this.idea) { throw new Error("cannot set userHasCheered if idea is undefined"); }
     if (hasCheered) {
@@ -283,7 +344,7 @@ export class IdeaViewComponent implements OnDestroy {
         label: "✅",
         action: () => this.toggleCheer(),
       });
-      if (! firstLoad) { this.idea.supports += 1 }
+      if (!firstLoad) { this.idea.supports += 1 }
     } else {
       this.idea.userHasCheered = false;
       this.mainNav.setFab({
@@ -292,7 +353,7 @@ export class IdeaViewComponent implements OnDestroy {
         label: this.i18n.get("fab.cheer"),
         action: () => this.toggleCheer(),
       });
-      if (! firstLoad) { this.idea.supports -= 1 }
+      if (!firstLoad) { this.idea.supports -= 1 }
     }
   }
 
@@ -320,7 +381,7 @@ export class IdeaViewComponent implements OnDestroy {
     this.mainNav.navigateTo(
       `/ideas/add?edit=${this.idea!.id}`,
       true,
-      {skipLocationChange: true}
+      { skipLocationChange: true }
     );
   }
 
@@ -406,10 +467,10 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   deleteComment(commentId: string) {
-    if (this.activeLocalizedComment?.comment.id === commentId) { this.closeBubble(); }
+    if (this.activeLCGroup?.localizedComments.find(c => c.comment.id === commentId)) { this.closeBubble(); }
     this.comments = this.comments?.filter(c => c.id !== commentId);
-    this.refreshSpans();
-    this.setLocalizedComments();
+    this.localizeComments();
+    this.setLCGroups();
     this.http.deleteComment(commentId);
   }
 

@@ -30,6 +30,9 @@
         keyboard_arrow_down
       </mat-icon>
     </div>
+    @if (comment.quote; as quote) {
+    <p id="quote">"{{ quote }}"</p>
+    }
     <p>{{ comment.content }}</p>
   </div>
 </div>
