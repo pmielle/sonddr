@@ -173,18 +173,17 @@ export class IdeaViewComponent implements OnDestroy {
 
   setLCGroups() {
     let lcGroups: LCGroup[] = [];
+    let binheight = 100;
     this.localizedComments.forEach((lc: LocalizedComment) => {
       let y = this._chooseLCY(lc);
       let found = false;
       lcGroups.forEach((lcGroup) => {
-        if ((lcGroup.y - 20) < y && y <= (lcGroup.y + 20)) {
+        if ((lcGroup.y - binheight / 2) < y && y <= (lcGroup.y + binheight / 2)) {
           lcGroup.localizedComments.push(lc);
           found = true;
         }
       });
-      if (! found) {
-        lcGroups.push({y: y, localizedComments: [lc]});
-      }
+      if (! found) { lcGroups.push({ y: y, localizedComments: [ lc ] }); }
     });
     this.lcGroups = lcGroups;
   }
@@ -244,6 +243,7 @@ export class IdeaViewComponent implements OnDestroy {
       .forEach((elem) => elem.remove());
     let localizations = this._getAndSortLocalizations(this.comments!);
     if (!localizations.length) { return; }
+    console.log(localizations);
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
@@ -253,11 +253,20 @@ export class IdeaViewComponent implements OnDestroy {
     while (node = walker.nextNode()) {
       let text = node as Text;
       for (let i = 0; i < text.textContent!.length; i++) {
-        if (offset === localization!.offset) {
+
+        while (offset === localization!.offset) {
           this._insertSpan(localization!, text, i);
           localization = localizations.shift();
+          console.log(`new localization is: ${localization?.offset} and offset is ${offset}`);
           if (!localization) { return; }
         }
+
+        //if (offset === localization!.offset) {
+        //  this._insertSpan(localization!, text, i);
+        //  localization = localizations.shift();
+        //  console.log(`new localization is: ${localization?.offset} and offset is ${offset}`);
+        //  if (!localization) { return; }
+        //}
         offset += 1;
       }
     }

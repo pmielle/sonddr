@@ -161,23 +161,40 @@
         font-size: var(--content-font-size);
       }
 
-      .comment-bubble {
+      .lc-group {
         position: absolute;
-        left: var(--gutter);
+        left: var(--gutter); // top is set dynamically
         margin-top: 0;
-        // top is set dynamically
+
+        app-profile-picture:nth-of-type(2) {
+          position: absolute;
+          top: 10px;
+          z-index: -1;
+        }
+
+        app-profile-picture:nth-of-type(3) {
+          position: absolute;
+          top: calc(2 * 10px);
+          z-index: -2;
+        }
+
+        .bubble-label {
+          margin-top: 20px;
+          color: var(--transparent-foreground-color);
+        }
       }
 
       #active-localized-comment {
         position: absolute;
         width: 66%;
-        left: 0;
+        left: 0; // top is set dynamically
         z-index: 99;
         border-radius: var(--spacing);
         background-color: var(--darker-background-color);
         margin-top: -10px;  // align with its bubble
         box-shadow: rgb(0 0 0 / 33%) 5px 5px var(--spacing);
-        // top is set dynamically
+        max-height: 250px;
+        overflow: auto;
       }
     }
 

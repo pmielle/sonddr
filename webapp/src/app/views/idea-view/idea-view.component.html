@@ -92,11 +92,26 @@
       <div id="content" [innerHTML]="idea?.content" #content></div>
 
       @for(lcGroup of lcGroups; track lcGroup.y) {
-        <app-profile-picture class="comment-bubble pointer"
-          [user]="lcGroup.localizedComments[0].comment.author"
-          [style.top]="lcGroup.y + 'px'"
-          (click)="activeLCGroup = lcGroup"
-        ></app-profile-picture>
+        <div class="lc-group flex column"
+            [style.top]="lcGroup.y + 'px'"
+            (click)="activeLCGroup = lcGroup">
+          <app-profile-picture class="pointer"
+            [user]="lcGroup.localizedComments[0].comment.author"
+          ></app-profile-picture>
+          @if (lcGroup.localizedComments.length > 1) {
+            <app-profile-picture class="pointer"
+              [user]="lcGroup.localizedComments[1].comment.author"
+            ></app-profile-picture>
+          }
+          @if (lcGroup.localizedComments.length > 2) {
+            <app-profile-picture class="pointer"
+              [user]="lcGroup.localizedComments[1].comment.author"
+            ></app-profile-picture>
+          }
+          @if (lcGroup.localizedComments.length > 3) {
+            <p class="bubble-label no-margin-bottom">+ {{ lcGroup.localizedComments.length - 3 }}</p>
+          }
+        </div>
       }
 
       @if (activeLCGroup; as lcGroup) {
