@@ -21,9 +21,19 @@ type LCGroup = {
 
 type LocalizedComment = {
   comment: Comment,
-  spans: [HTMLElement, HTMLElement],
+  quote: Quote,
 };
-type Localization = { offset: number, type: 'start' | 'end', commentId: string };
+
+type Quote = {
+  spans: [HTMLElement, HTMLElement],
+  text: string,
+}
+
+type Localization = {
+  offset: number,
+  type: 'start'|'end',
+  commentId: string,
+};
 
 type ActiveSelection = {
   selection: Selection,
@@ -153,15 +163,19 @@ export class IdeaViewComponent implements OnDestroy {
 
   async addLocalizedComment() {
     let range = this.activeSele!.selection.getRangeAt(0);
+    let quote = range.toString();
     document.getSelection()!.removeAllRanges(); // clean things up before opening popup
-    let body = await this._openLocalizedCommentPopup(range.toString());
+    let body = await this._openLocalizedCommentPopup(quote);
     if (body) {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
       let [startOffset, endOffset] = this._getOffsetsInContent(startSpan, endSpan);
       let comment = await this.postComment(body, [startOffset, endOffset]);
       startSpan.id = this._makeSpanId('start', comment.id);
       endSpan.id = this._makeSpanId('end', comment.id);
-      this.localizedComments.push({ comment: comment, spans: [startSpan, endSpan] });
+      this.localizedComments.push({
+        comment: comment,
+        quote: { spans: [ startSpan, endSpan ], text: quote },
+      });
       this.setLCGroups();
     }
   }
@@ -189,7 +203,7 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   _chooseLCY(localizedComment: LocalizedComment): number {
-    let [startSpan, endSpan] = localizedComment.spans;
+    let [startSpan, endSpan] = localizedComment.quote.spans;
     let top = startSpan.offsetTop === endSpan.offsetTop
       ? startSpan.offsetTop
       : (startSpan.offsetTop + endSpan.offsetTop) / 2;
@@ -211,7 +225,10 @@ export class IdeaViewComponent implements OnDestroy {
       let comment = this.comments!.find(c => c.id === commentId)!;
       localizedComments.push({
         comment: comment,
-        spans: spans as [HTMLElement, HTMLElement],
+        quote: {
+          spans: spans as [HTMLElement, HTMLElement],
+          text: "toto",
+        }
       });
     });
     this.localizedComments = localizedComments;
