@@ -172,20 +172,14 @@
           z-index: -1;
         }
 
-        app-profile-picture:nth-of-type(3) {
-          position: absolute;
-          top: calc(2 * 10px);
-          z-index: -2;
-        }
-
         .bubble-label {
-          margin-top: 20px;
+          margin-top: 10px;
           color: var(--transparent-foreground-color);
           font-size: small;
         }
 
         .not-bubble-label {
-          margin-top: 3px;
+          margin-top: -10px;
           opacity: 0;
         }
       }

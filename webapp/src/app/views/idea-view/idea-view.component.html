@@ -104,12 +104,7 @@
             ></app-profile-picture>
           }
           @if (lcGroup.localizedComments.length > 2) {
-            <app-profile-picture class="pointer"
-              [user]="lcGroup.localizedComments[1].comment.author"
-            ></app-profile-picture>
-          }
-          @if (lcGroup.localizedComments.length > 3) {
-            <p class="bubble-label no-margin-bottom">+ {{ lcGroup.localizedComments.length - 3 }}</p>
+            <p class="bubble-label no-margin-bottom">+ {{ lcGroup.localizedComments.length - 2 }}</p>
           }
           @else {
             <p class="not-bubble-label no-margin-bottom">...</p>  <!-- to increase clickable area -->
