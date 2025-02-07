@@ -181,6 +181,12 @@
         .bubble-label {
           margin-top: 20px;
           color: var(--transparent-foreground-color);
+          font-size: small;
+        }
+
+        .not-bubble-label {
+          margin-top: 3px;
+          opacity: 0;
         }
       }
 

@@ -243,7 +243,6 @@ export class IdeaViewComponent implements OnDestroy {
       .forEach((elem) => elem.remove());
     let localizations = this._getAndSortLocalizations(this.comments!);
     if (!localizations.length) { return; }
-    console.log(localizations);
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
@@ -253,20 +252,11 @@ export class IdeaViewComponent implements OnDestroy {
     while (node = walker.nextNode()) {
       let text = node as Text;
       for (let i = 0; i < text.textContent!.length; i++) {
-
-        while (offset === localization!.offset) {
+        while (offset === localization!.offset) {  // there can be multiple comments at this offset
           this._insertSpan(localization!, text, i);
           localization = localizations.shift();
-          console.log(`new localization is: ${localization?.offset} and offset is ${offset}`);
           if (!localization) { return; }
         }
-
-        //if (offset === localization!.offset) {
-        //  this._insertSpan(localization!, text, i);
-        //  localization = localizations.shift();
-        //  console.log(`new localization is: ${localization?.offset} and offset is ${offset}`);
-        //  if (!localization) { return; }
-        //}
         offset += 1;
       }
     }

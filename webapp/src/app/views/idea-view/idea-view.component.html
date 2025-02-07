@@ -92,7 +92,7 @@
       <div id="content" [innerHTML]="idea?.content" #content></div>
 
       @for(lcGroup of lcGroups; track lcGroup.y) {
-        <div class="lc-group flex column"
+        <div class="lc-group flex column pointer"
             [style.top]="lcGroup.y + 'px'"
             (click)="activeLCGroup = lcGroup">
           <app-profile-picture class="pointer"
@@ -110,6 +110,9 @@
           }
           @if (lcGroup.localizedComments.length > 3) {
             <p class="bubble-label no-margin-bottom">+ {{ lcGroup.localizedComments.length - 3 }}</p>
+          }
+          @else {
+            <p class="not-bubble-label no-margin-bottom">...</p>  <!-- to increase clickable area -->
           }
         </div>
       }
