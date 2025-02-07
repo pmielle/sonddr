@@ -164,6 +164,7 @@ export class IdeaViewComponent implements OnDestroy {
             let tmpQuote = tmp.get(localization!.commentId)!;
             tmpQuote.spans[1] = span;
             let comment = this.comments!.find(c => c.id === localization!.commentId)!;
+            comment.quote = tmpQuote.text;
             localizedComments.push({
               comment: comment,
               quote: tmpQuote as Quote,

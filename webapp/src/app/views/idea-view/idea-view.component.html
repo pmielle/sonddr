@@ -115,7 +115,7 @@
       @if (activeLCGroup; as lcGroup) {
         <div id="active-localized-comment" [style.top]="lcGroup.y + 'px'" #activeBubble>
           @for(lc of lcGroup.localizedComments; track lc.comment.id) {
-            <app-comment [comment]="lc.comment" [quote]="lc.quote.text" (upvote)="upvoteComment(lc.comment.id)"
+            <app-comment [comment]="lc.comment" (upvote)="upvoteComment(lc.comment.id)"
               (downvote)="downvoteComment(lc.comment.id)" (delete-vote)="deleteCommentVote(lc.comment.id)"
               (delete-comment)="deleteComment(lc.comment.id)"></app-comment>
           }
