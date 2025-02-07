@@ -21,13 +21,8 @@ type LCGroup = {
 
 type LocalizedComment = {
   comment: Comment,
-  quote: Quote,
-};
-
-type Quote = {
   spans: [HTMLElement, HTMLElement],
-  text: string,
-}
+};
 
 type QuoteTmp = {
   text: string,
@@ -167,7 +162,7 @@ export class IdeaViewComponent implements OnDestroy {
             comment.quote = tmpQuote.text;
             localizedComments.push({
               comment: comment,
-              quote: tmpQuote as Quote,
+              spans: tmpQuote.spans as [HTMLElement, HTMLElement],
             });
             tmp.delete(localization!.commentId);
           } else {
@@ -224,9 +219,10 @@ export class IdeaViewComponent implements OnDestroy {
       let comment = await this.postComment(body, [startOffset, endOffset]);
       startSpan.id = this._makeSpanId('start', comment.id);
       endSpan.id = this._makeSpanId('end', comment.id);
+      comment.quote = quote;
       this.localizedComments.push({
         comment: comment,
-        quote: { spans: [ startSpan, endSpan ], text: quote },
+        spans: [startSpan, endSpan],
       });
       this.setLCGroups();
     }
@@ -255,7 +251,7 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   _chooseLCY(localizedComment: LocalizedComment): number {
-    let [startSpan, endSpan] = localizedComment.quote.spans;
+    let [startSpan, endSpan] = localizedComment.spans;
     let top = startSpan.offsetTop === endSpan.offsetTop
       ? startSpan.offsetTop
       : (startSpan.offsetTop + endSpan.offsetTop) / 2;
