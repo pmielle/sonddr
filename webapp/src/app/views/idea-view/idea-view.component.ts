@@ -29,6 +29,11 @@ type Quote = {
   text: string,
 }
 
+type QuoteTmp = {
+  text: string,
+  spans: [HTMLElement, HTMLElement|undefined],
+};
+
 type Localization = {
   offset: number,
   type: 'start'|'end',
@@ -115,8 +120,7 @@ export class IdeaViewComponent implements OnDestroy {
       this.http.getComments("recent", id, undefined).then(c => {
         this.comments = c;
         setTimeout(() => {
-          this.refreshSpans();
-          this.setLocalizedComments();
+          this.localizeComments();
           this.setLCGroups();
         }, 500);
       });
@@ -133,6 +137,51 @@ export class IdeaViewComponent implements OnDestroy {
 
   // methods
   // --------------------------------------------
+  localizeComments() {
+    // remove previous spans
+    document.querySelectorAll(".localized-comment")
+      .forEach((elem) => elem.remove());
+    let localizations = this._getAndSortLocalizations(this.comments!);
+    if (!localizations.length) { return; }
+    // walk and insert spans
+    let localization = localizations.shift();
+    let offset = 0;
+    let content = this.contentRef?.nativeElement as HTMLElement;
+    let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    let node: Node | null = null;
+    let tmp: Map<string, QuoteTmp> = new Map();
+    let localizedComments: LocalizedComment[] = [];
+    main: while (node = walker.nextNode()) {
+      let text = node as Text;
+      for (let i = 0; i < text.textContent!.length; i++) {
+        while (offset === localization!.offset) {  // there can be multiple comments at this offset
+          let span = this._insertSpan(localization!, text, i);
+          if (tmp.has(localization!.commentId)) {
+            // this is an end span: we are done with this comment
+            // add it to the final localizedComments list
+            tmp.get(localization!.commentId)!.spans[1] = span;
+            let tmpQuote = tmp.get(localization!.commentId)!;
+            tmpQuote.spans[1] = span;
+            let comment = this.comments!.find(c => c.id === localization!.commentId)!;
+            localizedComments.push({
+              comment: comment,
+              quote: tmpQuote as Quote,
+            });
+          } else {
+            // this is a start span
+            tmp.set(localization!.commentId, {text: "", spans: [span, undefined]});
+          }
+          // prepare for next one
+          localization = localizations.shift();
+          if (!localization) { break main; }
+        }
+        offset += 1;
+      }
+    }
+    if (localization) { throw new Error("Failed to place some comments"); }
+    this.localizedComments = localizedComments;
+  }
+
   isInContent(sele: Selection): boolean {
     const content = (this.contentRef!.nativeElement as HTMLElement);
     return content.contains(sele.anchorNode) && content.contains(sele.focusNode);
@@ -211,29 +260,6 @@ export class IdeaViewComponent implements OnDestroy {
     return Math.round(top);
   }
 
-  setLocalizedComments() {
-    let spans = document.querySelectorAll(".localized-comment");
-    let pairs: Map<string, [HTMLElement | undefined, HTMLElement | undefined]> = new Map();
-    spans.forEach((_span) => {
-      const span = _span as HTMLElement;
-      const [type, commentId] = span.id.split(":");
-      if (!pairs.has(commentId)) { pairs.set(commentId, [undefined, undefined]); }
-      pairs.get(commentId)![type === 'start' ? 0 : 1] = span;  // [startSpan, endSpan]
-    });
-    let localizedComments: LocalizedComment[] = [];
-    pairs.forEach((spans, commentId) => {
-      let comment = this.comments!.find(c => c.id === commentId)!;
-      localizedComments.push({
-        comment: comment,
-        quote: {
-          spans: spans as [HTMLElement, HTMLElement],
-          text: "toto",
-        }
-      });
-    });
-    this.localizedComments = localizedComments;
-  }
-
   _getAndSortLocalizations(comments: Comment[]): Localization[] {
     let offsets: Localization[] = [];
     comments.forEach(c => {
@@ -248,36 +274,11 @@ export class IdeaViewComponent implements OnDestroy {
     return offsets;
   }
 
-  _insertSpan(localization: Localization, text: Text, offsetInText: number) {
+  _insertSpan(localization: Localization, text: Text, offsetInText: number): HTMLElement {
     let span = this._createSpan(localization.type, localization.commentId);
     const remain = text.splitText(offsetInText);
     text.parentNode!.insertBefore(span, remain);  // insert before 'remain'
-  }
-
-  refreshSpans() {
-    // remove previous spans
-    document.querySelectorAll(".localized-comment")
-      .forEach((elem) => elem.remove());
-    let localizations = this._getAndSortLocalizations(this.comments!);
-    if (!localizations.length) { return; }
-    // walk and insert spans
-    let localization = localizations.shift();
-    let offset = 0;
-    let content = this.contentRef?.nativeElement as HTMLElement;
-    let walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
-    let node: Node | null = null;
-    while (node = walker.nextNode()) {
-      let text = node as Text;
-      for (let i = 0; i < text.textContent!.length; i++) {
-        while (offset === localization!.offset) {  // there can be multiple comments at this offset
-          this._insertSpan(localization!, text, i);
-          localization = localizations.shift();
-          if (!localization) { return; }
-        }
-        offset += 1;
-      }
-    }
-    if (localization) { throw new Error("Failed to place some comments"); }
+    return span;
   }
 
   _getOffsetsInContent(startSpan: HTMLElement, endSpan: HTMLElement): [number, number] {
@@ -467,8 +468,7 @@ export class IdeaViewComponent implements OnDestroy {
   deleteComment(commentId: string) {
     if (this.activeLCGroup?.localizedComments.find(c => c.comment.id === commentId)) { this.closeBubble(); }
     this.comments = this.comments?.filter(c => c.id !== commentId);
-    this.refreshSpans();
-    this.setLocalizedComments();
+    this.localizeComments();
     this.setLCGroups();
     this.http.deleteComment(commentId);
   }
