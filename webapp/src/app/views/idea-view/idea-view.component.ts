@@ -14,6 +14,11 @@ import { AuthService } from 'src/app/services/auth.service';
 import { AddLocalizedCommentPopupComponent } from 'src/app/components/add-localized-comment-popup/add-localized-comment-popup.component';
 import { CdkContextMenuTrigger } from '@angular/cdk/menu';
 
+type LCGroup = {
+  localizedComments: LocalizedComment[],
+  y: number,
+};
+
 type LocalizedComment = {
   comment: Comment,
   spans: [HTMLElement, HTMLElement],
@@ -52,7 +57,7 @@ export class IdeaViewComponent implements OnDestroy {
   @ViewChild('content') contentRef?: ElementRef;
   @ViewChild('activeBubble') activeBubble?: ElementRef;
   @HostListener('document:click', ['$event']) clickout(event: MouseEvent) {
-    if (!this.activeLocalizedComment) { return; }
+    if (!this.activeLCGroup) { return; }
     if (!this.activeBubble!.nativeElement!.contains(event.target)) {
       if (this.firstClickOut) {
         this.closeBubble();
@@ -67,11 +72,12 @@ export class IdeaViewComponent implements OnDestroy {
   idea?: Idea;
   comments?: Comment[];
   localizedComments: LocalizedComment[] = [];
+  lcGroups: LCGroup[] = [];
   volunteers?: Volunteer[];
   routeSub?: Subscription;
   popupSub?: Subscription;
   resizeSub?: Subscription;
-  activeLocalizedComment?: LocalizedComment;
+  activeLCGroup?: LCGroup;
   selectionSub?: Subscription;
   firstClickOut = false;  // opening the bubble triggers clickout: ignore the first event
   activeSele?: ActiveSelection;
@@ -101,6 +107,7 @@ export class IdeaViewComponent implements OnDestroy {
         setTimeout(() => {
           this.refreshSpans();
           this.setLocalizedComments();
+          this.setLCGroups();
         }, 500);
       });
       this.http.getVolunteers(id, undefined).then(v => this.volunteers = v);
@@ -155,21 +162,40 @@ export class IdeaViewComponent implements OnDestroy {
       startSpan.id = this._makeSpanId('start', comment.id);
       endSpan.id = this._makeSpanId('end', comment.id);
       this.localizedComments.push({ comment: comment, spans: [startSpan, endSpan] });
+      this.setLCGroups();
     }
   }
 
   closeBubble() {
     this.firstClickOut = false;
-    this.activeLocalizedComment = undefined;
+    this.activeLCGroup = undefined;
   }
 
-  chooseBubbleTop(localizedComment: LocalizedComment): string {
+  setLCGroups() {
+    let lcGroups: LCGroup[] = [];
+    this.localizedComments.forEach((lc: LocalizedComment) => {
+      let y = this._chooseLCY(lc);
+      let found = false;
+      lcGroups.forEach((lcGroup) => {
+        if ((lcGroup.y - 20) < y && y <= (lcGroup.y + 20)) {
+          lcGroup.localizedComments.push(lc);
+          found = true;
+        }
+      });
+      if (! found) {
+        lcGroups.push({y: y, localizedComments: [lc]});
+      }
+    });
+    this.lcGroups = lcGroups;
+  }
+
+  _chooseLCY(localizedComment: LocalizedComment): number {
     let [startSpan, endSpan] = localizedComment.spans;
     let top = startSpan.offsetTop === endSpan.offsetTop
       ? startSpan.offsetTop
       : (startSpan.offsetTop + endSpan.offsetTop) / 2;
     top -= 5; // looks nicer
-    return `${top}px`;
+    return Math.round(top);
   }
 
   setLocalizedComments() {
@@ -191,26 +217,6 @@ export class IdeaViewComponent implements OnDestroy {
     });
     this.localizedComments = localizedComments;
   }
-
-  _buildLocalizedComments(spans: NodeList): LocalizedComment[] {
-    let pairs: Map<string, [HTMLElement | undefined, HTMLElement | undefined]> = new Map();
-    spans.forEach((_span) => {
-      const span = _span as HTMLElement;
-      const [type, commentId] = span.id.split(":");
-      if (!pairs.has(commentId)) { pairs.set(commentId, [undefined, undefined]); }
-      pairs.get(commentId)![type === 'start' ? 0 : 1] = span;
-    });
-    let res: LocalizedComment[] = [];
-    pairs.forEach((spans, commentId) => {
-      let comment = this.comments!.find(c => c.id === commentId)!;
-      res.push({
-        comment: comment,
-        spans: spans as [HTMLElement, HTMLElement],
-      });
-    });
-    return res;
-  }
-
 
   _getAndSortLocalizations(comments: Comment[]): Localization[] {
     let offsets: Localization[] = [];
@@ -443,10 +449,11 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   deleteComment(commentId: string) {
-    if (this.activeLocalizedComment?.comment.id === commentId) { this.closeBubble(); }
+    if (this.activeLCGroup?.localizedComments.find(c => c.comment.id === commentId)) { this.closeBubble(); }
     this.comments = this.comments?.filter(c => c.id !== commentId);
     this.refreshSpans();
     this.setLocalizedComments();
+    this.setLCGroups();
     this.http.deleteComment(commentId);
   }
 

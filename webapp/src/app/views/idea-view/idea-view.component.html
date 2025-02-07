@@ -91,19 +91,21 @@
 
       <div id="content" [innerHTML]="idea?.content" #content></div>
 
-      @for(c of localizedComments; track c.comment.id) {
+      @for(lcGroup of lcGroups; track lcGroup.y) {
         <app-profile-picture class="comment-bubble pointer"
-          [user]="c.comment.author"
-          [style.top]="chooseBubbleTop(c)"
-          (click)="activeLocalizedComment = c"
+          [user]="lcGroup.localizedComments[0].comment.author"
+          [style.top]="lcGroup.y + 'px'"
+          (click)="activeLCGroup = lcGroup"
         ></app-profile-picture>
       }
 
-      @if (activeLocalizedComment; as c) {
-        <div id="active-localized-comment" [style.top]="chooseBubbleTop(c)" #activeBubble>
-          <app-comment [comment]="c.comment" (upvote)="upvoteComment(c.comment.id)"
-            (downvote)="downvoteComment(c.comment.id)" (delete-vote)="deleteCommentVote(c.comment.id)"
-            (delete-comment)="deleteComment(c.comment.id)"></app-comment>
+      @if (activeLCGroup; as lcGroup) {
+        <div id="active-localized-comment" [style.top]="lcGroup.y + 'px'" #activeBubble>
+          @for(lc of lcGroup.localizedComments; track lc.comment.id) {
+            <app-comment [comment]="lc.comment" (upvote)="upvoteComment(lc.comment.id)"
+              (downvote)="downvoteComment(lc.comment.id)" (delete-vote)="deleteCommentVote(lc.comment.id)"
+              (delete-comment)="deleteComment(lc.comment.id)"></app-comment>
+          }
         </div>
       }
     </div>
