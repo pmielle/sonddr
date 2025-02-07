@@ -179,7 +179,6 @@ export class IdeaViewComponent implements OnDestroy {
       let found = false;
       lcGroups.forEach((lcGroup) => {
         if ((lcGroup.y - binheight / 2) < y && y <= (lcGroup.y + binheight / 2)) {
-          lcGroup.y = (lcGroup.localizedComments.length * lcGroup.y + y) / (lcGroup.localizedComments.length + 1);
           lcGroup.localizedComments.push(lc);
           found = true;
         }
