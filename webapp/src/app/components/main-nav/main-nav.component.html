@@ -1,4 +1,4 @@
-<div #tabs id="tabs" [class.mobile]="screen.isMobile$|async" [class.nav-bar]="!mainNav.isNavBarHidden">
+<div #tabs id="tabs" [class.mobile]="screen.isMobile$|async">
     <router-outlet></router-outlet>
 </div>
 <app-nav-bar></app-nav-bar>

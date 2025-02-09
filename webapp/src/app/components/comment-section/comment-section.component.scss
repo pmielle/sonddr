@@ -17,7 +17,7 @@
         --header-height: 48px;
         position: relative;
         background-color: var(--darker-background-color);
-        padding-bottom: calc(56px + var(--spacing) + var(--large-spacing));  // space for fab
+        padding-bottom: 200px;
         margin-top: calc(var(--large-spacing) - var(--spacing));
 
         #sort-by {
@@ -58,6 +58,6 @@
     }
 
     #no-comments {
-        padding-bottom: calc(56px + var(--spacing));
+        padding-bottom: 200px;
     }
 }

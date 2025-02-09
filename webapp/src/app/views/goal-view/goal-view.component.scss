@@ -1,5 +1,7 @@
 #container {
 
+  padding-bottom: 200px;
+
   /* display title in the top-bar on desktop */
   #title, #top-bar-title { display: none; }
   &.mobile { #title { display: block; } }
