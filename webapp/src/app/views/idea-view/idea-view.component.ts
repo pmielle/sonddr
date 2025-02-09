@@ -137,7 +137,10 @@ export class IdeaViewComponent implements OnDestroy {
     document.querySelectorAll(".localized-comment")
       .forEach((elem) => elem.remove());
     let localizations = this._getAndSortLocalizations(this.comments!);
-    if (!localizations.length) { return; }
+    if (!localizations.length) {
+      this.localizedComments = [];
+      return;
+    }
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
@@ -212,6 +215,10 @@ export class IdeaViewComponent implements OnDestroy {
     let range = this.activeSele!.selection.getRangeAt(0);
     let quote = range.toString();
     document.getSelection()!.removeAllRanges(); // clean things up before opening popup
+    if (!this.auth.isLoggedIn()) {  // after selection clear
+      this.auth.openAuthSnack();
+      return;
+    }
     let body = await this._openLocalizedCommentPopup(quote);
     if (body) {
       let [startSpan, endSpan] = this._positionComment(placeholder_id, range);
@@ -391,18 +398,30 @@ export class IdeaViewComponent implements OnDestroy {
   }
 
   upvoteComment(commentId: string) {
+    if (!this.auth.isLoggedIn()) {  // after selection clear
+      this.auth.openAuthSnack();
+      return;
+    }
     const user = this.userData.user$.getValue();
     if (!user) { throw new Error("cannot upvote if user is undefined"); }
     this.http.upvoteComment(commentId, user.id);
   }
 
   downvoteComment(commentId: string) {
+    if (!this.auth.isLoggedIn()) {  // after selection clear
+      this.auth.openAuthSnack();
+      return;
+    }
     const user = this.userData.user$.getValue();
     if (!user) { throw new Error("cannot downvote if user is undefined"); }
     this.http.downvoteComment(commentId, user.id);
   }
 
   deleteCommentVote(commentId: string) {
+    if (!this.auth.isLoggedIn()) {  // after selection clear
+      this.auth.openAuthSnack();
+      return;
+    }
     const user = this.userData.user$.getValue();
     if (!user) { throw new Error("cannot downvote if user is undefined"); }
     this.http.deleteVote(commentId, user.id);
