@@ -3,14 +3,18 @@
     top: 0;
     z-index: 9;  // must be > 1 otherwise behind idea list section headers
     height: var(--top-bar-height);
-    transition: var(--duration);
+    transition: background-color var(--duration);
 
     &.out-of-sight {
       transform: translateY(-100%);
     }
 
+    &.mobile {
+      padding-top: 0;
+    }
+
     &:not(.mobile) {
-        padding-bottom: 10px;  // otherwise not aligned with logo
+      padding-bottom: 10px;  // otherwise not aligned with logo
     }
 
     #content {

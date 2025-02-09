@@ -32,7 +32,7 @@
     }
 
     @case ('close') {
-    <div class="left-item" [class.mobile]="screen.isMobile$|async" (click)="goBack()">
+    <div class="left-item" (click)="goBack()">
       <button mat-icon-button><mat-icon>close</mat-icon></button>
     </div>
     }
@@ -45,4 +45,7 @@
 </div>
 
 <!-- right below so that it does not transition if scroll down is only a few pixels -->
-<div appIntersection [rootMargin]="(screen.isMobile$|async) ? '-20px 0px 0px 0px' : '-80px 0px 0px 0px'" (isIntersecting)="this.stuck=!$event"></div>
+<div appIntersection
+     [rootMargin]="(screen.isMobile$|async) ? '-20px 0px 0px 0px' : '-80px 0px 0px 0px'"
+     (isIntersecting)="this.stuck=!$event"
+     ></div>
