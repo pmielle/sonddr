@@ -3,6 +3,7 @@
     --spacing: 16px;
     --large-spacing: 32px;
     --gutter: 12px;
+    --bottom-padding: 200px;  /* each view handles it for more flexibility */
 }
 
 .flex {
@@ -28,6 +29,10 @@
     &.large-gap { gap: var(--large-spacing); }
 
     .spacer { flex: 1; }
+}
+
+.view {
+  padding-bottom: var(--bottom-padding);
 }
 
 .gutter {

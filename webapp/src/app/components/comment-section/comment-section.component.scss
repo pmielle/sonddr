@@ -17,7 +17,7 @@
         --header-height: 48px;
         position: relative;
         background-color: var(--darker-background-color);
-        padding-bottom: 200px;
+        padding-bottom: var(--bottom-padding);
         margin-top: calc(var(--large-spacing) - var(--spacing));
 
         #sort-by {
@@ -58,6 +58,6 @@
     }
 
     #no-comments {
-        padding-bottom: 200px;
+        padding-bottom: var(--bottom-padding);
     }
 }

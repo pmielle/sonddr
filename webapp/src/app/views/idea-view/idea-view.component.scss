@@ -4,6 +4,8 @@
 
 #container {
 
+  padding-bottom: 0;
+
   &.mobile { #active-localized-comment { width: 100% !important; } }
   &.wide {
     #top-part {

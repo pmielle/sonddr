@@ -5,8 +5,6 @@
   &.mobile { #title { display: block; } }
   &:not(.mobile) { #top-bar-title { display: block; } }
 
-  padding-bottom: 200px;
-
   #title {
     margin-top: var(--spacing);
   }

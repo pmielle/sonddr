@@ -1,4 +1,4 @@
-<div id="container" *transloco="let t; prefix: 'all-ideas'" [class.mobile]="screen.isMobile$ | async">
+<div id="container" class="view" *transloco="let t; prefix: 'all-ideas'" [class.mobile]="screen.isMobile$ | async">
 
   <app-top-bar [left-item]="(screen.isMobile$ | async) ? 'logo' : undefined">
     <h1 id="top-bar-title" class="no-margin-bottom">{{ t('title') }}</h1>
