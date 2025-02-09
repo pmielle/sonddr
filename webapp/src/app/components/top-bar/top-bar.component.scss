@@ -3,10 +3,10 @@
     top: 0;
     z-index: 9;  // must be > 1 otherwise behind idea list section headers
     height: var(--top-bar-height);
-    transition: background-color var(--duration), transform var(--duration);
+    transition: background-color var(--duration), opacity var(--duration);
 
     &.out-of-sight {
-      transform: translateY(-100%);
+      opacity: 0;
     }
 
     &.mobile {
