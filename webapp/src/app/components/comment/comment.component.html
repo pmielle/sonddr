@@ -31,7 +31,9 @@
       </mat-icon>
     </div>
     @if (comment.quote; as quote) {
-    <p id="quote">"{{ quote }}"</p>
+    <p id="quote" [class.unavailable]="quote === '-1'">
+      {{ quote === "-1" ?  "Unavailable because the idea has been edited" : '"' + quote + '"' }}
+    </p>
     }
     <p>{{ comment.content }}</p>
   </div>

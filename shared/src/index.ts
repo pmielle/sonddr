@@ -21,3 +21,4 @@ export const delete_react_str = "SONDDR_REACT_DELETE";
 export const sep_str = "@@@";
 export const localized_comment_start = "start:";
 export const localized_comment_end = "end:";
+export const localized_comment_deleted = [-1, -1] as const;

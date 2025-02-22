@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, delay, filter, fromEvent, lastValueFrom, map, switchMap } from 'rxjs';
-import { Comment, ExternalLink, Idea, Volunteer, placeholder_id } from 'sonddr-shared';
+import { Comment, ExternalLink, Idea, Volunteer, placeholder_id, localized_comment_deleted } from 'sonddr-shared';
 import { SortBy } from 'src/app/components/idea-list/idea-list.component';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
@@ -136,7 +136,7 @@ export class IdeaViewComponent implements OnDestroy {
     // remove previous spans
     document.querySelectorAll(".localized-comment")
       .forEach((elem) => elem.remove());
-    let localizations = this._getAndSortLocalizations(this.comments!);
+    let localizations = this._getFilterAndSortLocalizations(this.comments!);
     if (!localizations.length) {
       this.localizedComments = [];
       return;
@@ -273,14 +273,19 @@ export class IdeaViewComponent implements OnDestroy {
     return Math.round(top);
   }
 
-  _getAndSortLocalizations(comments: Comment[]): Localization[] {
+  _getFilterAndSortLocalizations(comments: Comment[]): Localization[] {
     let offsets: Localization[] = [];
     comments.forEach(c => {
       if (c.location) {
-        offsets.push(
-          { offset: c.location[0], type: "start", commentId: c.id },
-          { offset: c.location[1], type: "end", commentId: c.id },
-        );
+        if (c.location.toString() === localized_comment_deleted.toString()) {
+          // the location of this comment has been soft deleted
+          c.quote = "-1";
+        } else {
+          offsets.push(
+            { offset: c.location[0], type: "start", commentId: c.id },
+            { offset: c.location[1], type: "end", commentId: c.id },
+          );
+        }
       }
     });
     offsets.sort((a, b) => a.offset - b.offset);

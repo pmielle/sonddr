@@ -1,5 +1,5 @@
-import { DbIdea } from "sonddr-shared";
-import { deleteDocuments, patchDocument, watchCollection } from "./../database.js";
+import { DbComment, DbIdea, localized_comment_deleted } from "sonddr-shared";
+import { deleteDocuments, getDocuments, patchDocument, watchCollection } from "./../database.js";
 import { deleteUpload } from "./../uploads.js";
 import { generate_summary, llm_enabled, min_content_length } from "../llm.js";
 
@@ -29,6 +29,20 @@ export function watchIdeas() {
 			deleteDocuments(`comments`, { field: "ideaId", operator: "eq", value: ideaId });
 			// delete its volunteers
 			deleteDocuments(`volunteers`, { field: "ideaId", operator: "eq", value: ideaId });
-		}
+		} else if (change.type === "update") {
+            // soft remove the location of its comments
+            let comments = await getDocuments<DbComment>(
+                `comments`,
+                undefined,
+                [
+                    { field: "ideaId", operator: "eq", value: ideaId },
+                    { field: "location", operator: "nin", value: [null, [-1, -1]] },
+                ]
+            );
+            await Promise.all(comments.map(c => patchDocument(
+                `comments/${c.id}`,
+                { field: "location", operator: "set", value: localized_comment_deleted }
+            )));
+        }
 	});
 }

@@ -7,7 +7,7 @@ export type Order = {
 
 export type Filter = {
     field: string,
-    operator: "in"|"eq"|"nin"|"regex",
+    operator: "in"|"eq"|"ne"|"exists"|"nin"|"regex",
     value: any,
 };
 
