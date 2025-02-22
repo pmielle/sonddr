@@ -141,7 +141,6 @@ export class IdeaViewComponent implements OnDestroy {
       this.localizedComments = [];
       return;
     }
-    console.log(JSON.stringify(localizations));
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
@@ -151,13 +150,8 @@ export class IdeaViewComponent implements OnDestroy {
     let tmp: Map<string, QuoteTmp> = new Map();
     let localizedComments: LocalizedComment[] = [];
     main: while (node = walker.nextNode()) {
-      console.log(`NEW NODE: ${node.textContent!}`);
       let text = node as Text;
       for (let i = 0; i < text.textContent!.length; i++) {
-        console.log(`i=${i}`);
-        console.log(`offset=${offset}`);
-        console.log(`char: ${text.textContent![i]}`);
-        console.log("");
         if (offset === localization!.offset) {
           while (offset === localization!.offset) {  // there can be multiple comments at this offset
             let span = this._insertSpan(localization!, text, i);
