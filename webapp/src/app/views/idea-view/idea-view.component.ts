@@ -141,6 +141,7 @@ export class IdeaViewComponent implements OnDestroy {
       this.localizedComments = [];
       return;
     }
+    console.log(JSON.stringify(localizations));
     // walk and insert spans
     let localization = localizations.shift();
     let offset = 0;
@@ -150,33 +151,43 @@ export class IdeaViewComponent implements OnDestroy {
     let tmp: Map<string, QuoteTmp> = new Map();
     let localizedComments: LocalizedComment[] = [];
     main: while (node = walker.nextNode()) {
+      console.log(`NEW NODE: ${node.textContent!}`);
       let text = node as Text;
       for (let i = 0; i < text.textContent!.length; i++) {
-        tmp.forEach((quoteTmp, _) => { quoteTmp.text += text.textContent![i]});
-        while (offset === localization!.offset) {  // there can be multiple comments at this offset
-          let span = this._insertSpan(localization!, text, i);
-          if (tmp.has(localization!.commentId)) {
-            // this is an end span: we are done with this comment
-            // add it to the final localizedComments list
-            tmp.get(localization!.commentId)!.spans[1] = span;
-            let tmpQuote = tmp.get(localization!.commentId)!;
-            tmpQuote.spans[1] = span;
-            let comment = this.comments!.find(c => c.id === localization!.commentId)!;
-            comment.quote = tmpQuote.text;
-            localizedComments.push({
-              comment: comment,
-              spans: tmpQuote.spans as [HTMLElement, HTMLElement],
-            });
-            tmp.delete(localization!.commentId);
-          } else {
-            // this is a start span
-            tmp.set(localization!.commentId, {text: "", spans: [span, undefined]});
+        console.log(`i=${i}`);
+        console.log(`offset=${offset}`);
+        console.log(`char: ${text.textContent![i]}`);
+        console.log("");
+        if (offset === localization!.offset) {
+          while (offset === localization!.offset) {  // there can be multiple comments at this offset
+            let span = this._insertSpan(localization!, text, i);
+            if (tmp.has(localization!.commentId)) {
+              // this is an end span: we are done with this comment
+              // add it to the final localizedComments list
+              tmp.get(localization!.commentId)!.spans[1] = span;
+              let tmpQuote = tmp.get(localization!.commentId)!;
+              tmpQuote.spans[1] = span;
+              let comment = this.comments!.find(c => c.id === localization!.commentId)!;
+              comment.quote = tmpQuote.text;
+              localizedComments.push({
+                comment: comment,
+                spans: tmpQuote.spans as [HTMLElement, HTMLElement],
+              });
+              tmp.delete(localization!.commentId);
+            } else {
+              // this is a start span
+              tmp.set(localization!.commentId, {text: "", spans: [span, undefined]});
+            }
+            // prepare for next one
+            localization = localizations.shift();
+            if (!localization) { break main; }
           }
-          // prepare for next one
-          localization = localizations.shift();
-          if (!localization) { break main; }
+        } else {
+          // only if no match: because after insertion, the same offset will be re-evaluated
+          // because the span breaks the current text node
+          tmp.forEach((quoteTmp, _) => { quoteTmp.text += text.textContent![i]});
+          offset += 1;
         }
-        offset += 1;
       }
     }
     if (localization || tmp.size) { throw new Error("Failed to place some comments"); }
