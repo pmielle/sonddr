@@ -24,6 +24,8 @@
     "@jsverse/transloco": "^7.5.0",
     "keycloak-angular": "^15.0.0",
     "keycloak-js": "^21.1.2",
+    "ngx-quill": "^25.3.3",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "sonddr-shared": "file:../shared",
     "tslib": "^2.3.0",

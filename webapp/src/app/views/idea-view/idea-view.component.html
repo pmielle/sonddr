@@ -89,7 +89,7 @@
         </div>
       </ng-template>
 
-      <div id="content" [innerHTML]="idea?.content" #content></div>
+      <div id="content" class="quill-view-like" [innerHTML]="idea?.content" #content></div>
 
       @for(lcGroup of lcGroups; track lcGroup.y) {
         <div class="lc-group flex column pointer"

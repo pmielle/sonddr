@@ -44,10 +44,11 @@
       (keyup)="onKeyUp()" [(ngModel)]="title" (keydown.tab)="onTitleTab($event)"></textarea>
 
 
-    <div id="editor">
+    <div id="editor" #editor>
       <app-profile-picture class="pointer" [class.mobile]="screen.isMobile$|async"
                            [user]="userData.user$|async"></app-profile-picture>
-      <app-editor [placeholder]="t('placeholder.explain-your-idea') + '...'" (keyup)="onKeyUp()"></app-editor>
+      <quill-editor [placeholder]="t('placeholder.explain-your-idea') + '...'"
+        (onContentChanged)="onKeyUp()" [(ngModel)]="content" [bounds]="editor"></quill-editor>
     </div>
 
   </div>

@@ -10,6 +10,7 @@ import { EditorComponent } from 'src/app/components/editor/editor.component';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslationService } from 'src/app/services/translation.service';
+import { QuillEditorComponent } from 'ngx-quill';
 
 @Component({
   selector: 'app-add-view',
@@ -32,7 +33,7 @@ export class AddViewComponent {
 
   // i/o
   // --------------------------------------------
-  @ViewChild(EditorComponent) editor!: EditorComponent;
+  @ViewChild(QuillEditorComponent) editor!: QuillEditorComponent;
 
   // attributes
   // --------------------------------------------
@@ -51,6 +52,7 @@ export class AddViewComponent {
   draftTimeout: any;
   mainSub?: Subscription;
   hasBeenSubmitted = false;
+  content = "";
 
   // lifecycle hooks
   // --------------------------------------------
@@ -145,7 +147,7 @@ export class AddViewComponent {
       if (! idea.author.isUser) { throw new Error("Unauthorized"); }
       this.title = idea.title;
       idea.goals.forEach(g => this.selectGoal(g));
-      this.editor.setContent(idea.content);
+      this.content = idea.content;
       this.initialTitle = idea.title;
       this.initialContent = idea.content;
       this.initialGoals = idea.goals;
@@ -157,7 +159,7 @@ export class AddViewComponent {
   setupDraft(draft: Draft) {
     this.draft = draft;  // save it for later use
     if (draft.title) { this.title = draft.title }
-    if (draft.content) { this.editor.setContent(draft.content) }
+    if (draft.content) { this.content = draft.content }
     if (draft.goalIds) {
       this.goals!
       .filter(g => draft.goalIds?.includes(g.id))
@@ -177,10 +179,10 @@ export class AddViewComponent {
     await this.http.editIdea(
       this.editIdeaId!,
       this.titleHasChanged() ? this.title : undefined,
-      this.contentHasChanged() ? this.editor.content : undefined,
+      this.contentHasChanged() ? this.content : undefined,
       this.goalsHaveChanged() ? this.selectedGoals : undefined,
       this.cover,
-      this.editor.images,
+      //this.editor.images, TODO: get images
     );
     setTimeout(() => this.mainNav.navigateTo(
       `/ideas/idea/${this.editIdeaId!}`,
@@ -194,10 +196,10 @@ export class AddViewComponent {
       // post the idea
       const id = await this.http.postIdea(
         this.title,
-        this.editor.content,
+        this.content,
         this.selectedGoals.map(g => g.id),
         this.cover,
-        this.editor.images,
+        //this.editor.images, TODO: get images
       );
       // draft management
       if (this.draft) { this.http.deleteDraft(this.draft.id); }
@@ -217,7 +219,7 @@ export class AddViewComponent {
     this.http.deleteDraft(this.draft!.id);
     this.draft = undefined;
     this.title = "";
-    this.editor.setContent("");
+    this.content = "";
     this.deselectAllGoals();
     this.refreshFabDisplay();
   }
@@ -245,7 +247,7 @@ export class AddViewComponent {
     // empty form: delete draft if any
     if (
       this.draft !== undefined
-      && (!this.title && !this.editor.content && !this.selectedGoals.length)
+      && (!this.title && !this.content && !this.selectedGoals.length)
     ) {
       this.http.deleteDraft(this.draft.id);
       return;
@@ -253,7 +255,7 @@ export class AddViewComponent {
 
     // content but no draft: create it
     if (this.draft === undefined
-       && (this.title || this.editor.content || this.selectedGoals.length)
+       && (this.title || this.content || this.selectedGoals.length)
     ) {
       this.saveDraft();
       return;
@@ -264,7 +266,7 @@ export class AddViewComponent {
       this.draft
       && (
         this.draft.title !== this.title
-        || this.draft.content !== this.editor.content
+        || this.draft.content !== this.content
         || this.draft.goalIds?.sort()?.toString() !== this.selectedGoals?.map(g => g.id).sort()?.toString()
       )
     ) {
@@ -276,7 +278,7 @@ export class AddViewComponent {
 
   async saveDraft() {
     const t = this.title;
-    const c = this.editor.content;
+    const c = this.content;
     const g = this.selectedGoals;
     let id = this.draft?.id;
     if (this.draft) {
@@ -300,11 +302,11 @@ export class AddViewComponent {
 
   onTitleTab(e: Event) {
     e.preventDefault();
-    this.editor.contentDiv?.nativeElement.focus();
+    //this.editor.contentDiv?.nativeElement.focus(); TODO: focus
   }
 
   formIsValid(): boolean {
-    const result = (this.editor.content && this.title && this.selectedGoals.length)
+    const result = (this.content && this.title && this.selectedGoals.length)
       ? true
       : false;
     return result;
@@ -341,7 +343,7 @@ export class AddViewComponent {
   }
 
   contentHasChanged(): boolean {
-    return this.editor.content !== this.initialContent;
+    return this.content !== this.initialContent;
   }
 
   coverHasChanged(): boolean {

@@ -43,7 +43,7 @@
     #title {
       width: 100%;
       font-size: 32px;
-      line-height: 32px;
+      line-height: normal;
       font-weight: bold;
     }
 
@@ -53,12 +53,12 @@
 
       app-profile-picture {
         position: absolute;
-        top: calc(-6px + 58px);
+        top: 8px;
         left: calc(-1 * (32px + var(--gutter)));
+      }
 
-        &.mobile {
-          top: -6px;
-        }
+      quill-editor {
+        width: 100%;
       }
     }
 

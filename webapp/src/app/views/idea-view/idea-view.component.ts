@@ -191,6 +191,7 @@ export class IdeaViewComponent implements OnDestroy {
   isInContent(sele: Selection): boolean {
     const content = (this.contentRef!.nativeElement as HTMLElement);
     return content.contains(sele.anchorNode) && content.contains(sele.focusNode);
+    // TODO: debug from here
   }
 
   getMobileSelection(): Observable<ActiveSelection> {

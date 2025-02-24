@@ -64,6 +64,7 @@ import { AutoGrowDirective } from './directives/auto-grow.directive';
 import { EmojiPickerComponent } from './components/emoji-picker/emoji-picker.component';
 import { DeletePillComponent } from './components/delete-pill/delete-pill.component';
 import { AddLocalizedCommentPopupComponent } from './components/add-localized-comment-popup/add-localized-comment-popup.component';
+import { QuillModule } from 'ngx-quill';
 
 
 @NgModule({
@@ -162,6 +163,16 @@ import { AddLocalizedCommentPopupComponent } from './components/add-localized-co
       registrationStrategy: 'registerWhenStable:30000'
     }),
     TranslocoRootModule,
+    QuillModule.forRoot({
+      theme: 'bubble',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'],
+          [{'header': 2}, 'blockquote'],
+          ['clean'],
+        ],
+      },
+    }),
   ],
   providers: [
     {

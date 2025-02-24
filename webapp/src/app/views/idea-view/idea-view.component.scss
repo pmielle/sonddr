@@ -159,10 +159,6 @@
       padding-right: var(--gutter);
       position: relative;
 
-      #content {
-        font-size: var(--content-font-size);
-      }
-
       .lc-group {
         position: absolute;
         left: var(--gutter); // top is set dynamically

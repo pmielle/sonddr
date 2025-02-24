@@ -7,3 +7,27 @@ mat-expansion-panel {
   }
 }
 
+
+.ql-editor {
+  font-family: var(--font-family);
+  font-size: var(--content-font-size);
+  padding-left: 0;
+
+  &.ql-blank::before {
+    color: gray; // TODO: find the shade
+    font-style: normal;
+    left: 0;
+  }
+}
+
+.quill-view-like {
+  font-size: var(--content-font-size);
+  h2 { font-size: x-large !important; }
+  blockquote {
+    margin-left: 0px;
+    border-left: 4px solid #ccc;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding-left: 16px;
+  }
+}
