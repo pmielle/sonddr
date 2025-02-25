@@ -105,17 +105,19 @@ export class HttpService {
     this._patch(`/users/${userId}`, formData);
   }
 
-  // images is a map with ids as keys and actual files as values
+  // images is a map with local ids as keys and actual files as values
   // it is needed because the backend needs a way to tell which image matches which img tag
-  // this id is shared between the file (originalName attr) and the tag (id attr)
   async editIdea(ideaId: string, title?: string, content?: string, goals?: Goal[], cover?: File, images?: Map<string, File>) {
     const formData = new FormData();
     if (title !== undefined) { formData.append("title", title); }
     if (content !== undefined) { formData.append("content", content); }
     if (goals !== undefined) { formData.append("goalIds", JSON.stringify(goals.map(g => g.id))); }
     if (cover) { formData.append("cover", cover); }
-    if (images) { images.forEach((file, id, _) => formData.append("images", file, id)); } // 3rd arg is the filename to use
-    this._patch(`/ideas/${ideaId}`, formData);
+    if (images) { images.forEach((file, url, _) => {
+      let id = this._getIdOfObjectUrl(url);
+      formData.append("images", file, id);
+    }); }
+    this._patch(`/ideas/${ideaId}`, formData);  // multer needs a multipart/form-data
   }
 
   async addIdeaExternalLink(ideaId: string, externalLink: ExternalLink): Promise<void> {
@@ -212,17 +214,25 @@ export class HttpService {
     return this._get<User[]>(`users?regex=${nameRegex}`);
   }
 
-  // images is a map with ids as keys and actual files as values
+  // images is a map with local ids as keys and actual files as values
   // it is needed because the backend needs a way to tell which image matches which img tag
-  // this id is shared between the file (originalName attr) and the tag (id attr)
   async postIdea(title: string, content: string, goalIds: string[], cover?: File, images?: Map<string, File>): Promise<string> {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
     formData.append("goalIds", JSON.stringify(goalIds));
     if (cover) { formData.append("cover", cover); }
-    if (images) { images.forEach((file, id, _) => formData.append("images", file, id)); } // 3rd arg is the filename to use
+    if (images) { images.forEach((file, url, _) => {
+      let id = this._getIdOfObjectUrl(url);
+      formData.append("images", file, id);
+    }); }
     return this._post(`ideas`, formData);  // multer needs a multipart/form-data
+  }
+
+  _getIdOfObjectUrl(url: string): string {
+    let match = url.match(/\/([^\/]+)$/);
+    if (! match) {  throw Error(`Failed to get id of objecturl: ${url}`); }
+    return match[1];
   }
 
   async createUser(id: string, name: string): Promise<void> {

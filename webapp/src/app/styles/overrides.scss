@@ -14,7 +14,7 @@ mat-expansion-panel {
   padding-left: 0;
 
   &.ql-blank::before {
-    color: gray; // TODO: find the shade
+    color: gray;
     font-style: normal;
     left: 0;
   }

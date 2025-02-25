@@ -51,10 +51,11 @@
       position: relative;
       width: 100%;
 
-      app-profile-picture {
+      app-file-picker {
         position: absolute;
-        top: 8px;
-        left: calc(-1 * (32px + var(--gutter)));
+        top: 50px;
+        transform: translate(-100%, -13px);
+        color: var(--transparent-foreground-color);
       }
 
       quill-editor {

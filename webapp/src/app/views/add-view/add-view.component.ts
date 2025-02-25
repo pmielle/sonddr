@@ -11,6 +11,7 @@ import { UserDataService } from 'src/app/services/user-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslationService } from 'src/app/services/translation.service';
 import { QuillEditorComponent } from 'ngx-quill';
+import Quill from 'quill';
 
 @Component({
   selector: 'app-add-view',
@@ -53,6 +54,9 @@ export class AddViewComponent {
   mainSub?: Subscription;
   hasBeenSubmitted = false;
   content = "";
+  displayAddMedia = false;
+  addMediaTop = 0;
+  images = new Map<string, File>();  // keys are images local urls
 
   // lifecycle hooks
   // --------------------------------------------
@@ -133,6 +137,32 @@ export class AddViewComponent {
 
   // methods
   // --------------------------------------------
+  onEditorChange(e: any) {
+    if (e.event !== "selection-change") { return }
+    if (this.displayAddMedia) { this.displayAddMedia = false; }
+    if (!e.range) { return; }
+    if (e.range.length > 0) { return }
+    const block = this.editor.quillEditor.getLine(e.range.index)[0]!;
+    if (block.domNode.innerText !== "\n") { return }
+    this.addMediaTop = block.domNode.offsetTop;
+    this.displayAddMedia = true;
+  }
+
+  onImgChange(file: File) {
+    this.editor.quillEditor.focus();
+    let sele = this.editor.quillEditor.getSelection();
+    let position = sele!.index;
+    // from https://github.com/slab/quill/issues/1503#issuecomment-819404035
+    const Image: any = Quill.import("formats/image");
+    Image.sanitize = (url: any) => url;
+    let url = URL.createObjectURL(file);
+    this.editor.quillEditor.insertEmbed(position, 'image', url);
+    this.images.set(url, file);
+    this.editor.quillEditor.insertText(position + 1, "\n");
+    this.editor.quillEditor.setSelection(position + 2);
+    this.displayAddMedia = false;
+  }
+
   setupPreselectedGoal(goalId: string) {
     const goal = this.goals?.find(g => g.id === goalId);
     if (!goal) {
@@ -182,7 +212,7 @@ export class AddViewComponent {
       this.contentHasChanged() ? this.content : undefined,
       this.goalsHaveChanged() ? this.selectedGoals : undefined,
       this.cover,
-      //this.editor.images, TODO: get images
+      this.images,
     );
     setTimeout(() => this.mainNav.navigateTo(
       `/ideas/idea/${this.editIdeaId!}`,
@@ -199,7 +229,7 @@ export class AddViewComponent {
         this.content,
         this.selectedGoals.map(g => g.id),
         this.cover,
-        //this.editor.images, TODO: get images
+        this.images,
       );
       // draft management
       if (this.draft) { this.http.deleteDraft(this.draft.id); }
@@ -302,7 +332,7 @@ export class AddViewComponent {
 
   onTitleTab(e: Event) {
     e.preventDefault();
-    //this.editor.contentDiv?.nativeElement.focus(); TODO: focus
+    this.editor.quillEditor.focus();
   }
 
   formIsValid(): boolean {
