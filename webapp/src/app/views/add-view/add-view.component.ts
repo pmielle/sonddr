@@ -6,7 +6,6 @@ import { HttpService } from 'src/app/services/http.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
-import { EditorComponent } from 'src/app/components/editor/editor.component';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslationService } from 'src/app/services/translation.service';

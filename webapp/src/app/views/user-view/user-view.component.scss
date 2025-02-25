@@ -33,19 +33,10 @@
             opacity: 0.5;
         }
 
-        #external-links {
-            max-width: 100%;
-
-            #open-in-new {
-                opacity: 0.5;
-            }
-
-            #external-link-label {
-                margin-top: -4px;
-                opacity: 0.5;
-                margin-left: var(--gutter);
-            }
+        app-external-links, #bio {
+          min-width: 50%;
         }
-    }
+
+      }
 
 }

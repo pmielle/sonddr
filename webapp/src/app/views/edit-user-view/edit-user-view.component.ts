@@ -5,9 +5,9 @@ import { User } from 'sonddr-shared';
 import { HttpService } from 'src/app/services/http.service';
 import { MainNavService } from 'src/app/services/main-nav.service';
 import { ScreenSizeService } from 'src/app/services/screen-size.service';
-import { EditorComponent } from 'src/app/components/editor/editor.component';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { TranslationService } from 'src/app/services/translation.service';
+import { QuillEditorComponent } from 'ngx-quill';
 
 @Component({
   selector: 'app-edit-user-view',
@@ -28,7 +28,7 @@ export class EditUserViewComponent {
 
   // i/o
   // --------------------------------------------
-  @ViewChild(EditorComponent) editor!: EditorComponent;
+  @ViewChild(QuillEditorComponent) editor!: QuillEditorComponent;
 
   // attributes
   // --------------------------------------------
@@ -42,6 +42,7 @@ export class EditUserViewComponent {
   user?: User;
   welcome = false;
   mainSub?: Subscription;
+  bio = "";
 
   // lifecycle hooks
   // --------------------------------------------
@@ -93,7 +94,7 @@ export class EditUserViewComponent {
   // --------------------------------------------
   setupEdit(user: User) {
     this.name = user.name;
-    this.editor.setContent(user.bio);
+    this.bio = user.bio;
     this.initialBio = user.bio;
     this.initialName = user.name;
     if (user.cover) { this.coverPreview = this.http.getImageUrl(user.cover); }
@@ -107,7 +108,7 @@ export class EditUserViewComponent {
 
   onNameTab(e: Event) {
     e.preventDefault();
-    this.editor.contentDiv?.nativeElement.focus();
+    this.editor.quillEditor.focus();
   }
 
   formIsValid(): boolean {
@@ -121,7 +122,7 @@ export class EditUserViewComponent {
     await this.http.editUser(
       this.user!.id,
       this.nameHasChanged() ? this.name : undefined,
-      this.bioHasChanged() ? this.editor.content : undefined,
+      this.bioHasChanged() ? this.bio : undefined,
       this.cover,
       this.profilePicture,
     );
@@ -164,7 +165,7 @@ export class EditUserViewComponent {
   }
 
   bioHasChanged(): boolean {
-    return this.editor.content !== this.initialBio;
+    return this.bio !== this.initialBio;
   }
 
   coverHasChanged(): boolean {

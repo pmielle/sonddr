@@ -29,10 +29,12 @@
   </div>
 
   <div id="form" class="flex column gap">
-    <input id="name" type="text" placeholder="Choose a name" (keyup)="refreshFabDisplay()" [(ngModel)]="name"
-      (keydown.tab)="onNameTab($event)">
+    <input id="name" type="text" placeholder="Choose a name" (keyup)="refreshFabDisplay()"
+                                 [(ngModel)]="name" (keydown.tab)="onNameTab($event)">
 
-    <app-editor placeholder="Write a short bio..." [text-only]="true" (keyup)="refreshFabDisplay()"></app-editor>
+    <quill-editor placeholder="Write a short bio..."
+                  (onContentChanged)="refreshFabDisplay()"
+                  [(ngModel)]="bio" bounds="self"></quill-editor>
 
   </div>
 

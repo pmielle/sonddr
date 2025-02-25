@@ -37,7 +37,7 @@
         (delete)="deleteExternalLink($event)"
         ></app-external-links>
 
-    <div id="bio" class="gutter" [innerHTML]="user.bio"></div>
+    <div id="bio" class="gutter quill-view-like" [innerHTML]="user.bio"></div>
   </div>
 
   <app-idea-list [ideas]="ideas" (sort-by-change)="onSortByChange($event)"></app-idea-list>

@@ -44,7 +44,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { RedDotComponent } from './components/red-dot/red-dot.component';
 import { FilePickerComponent } from './components/file-picker/file-picker.component';
 import { NotificationImageComponent } from './components/notification-image/notification-image.component';
-import { EditorComponent } from './components/editor/editor.component';
 import { LikeCounterComponent } from './components/like-counter/like-counter.component';
 import {CdkMenuModule} from '@angular/cdk/menu';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -103,7 +102,6 @@ import { QuillModule } from 'ngx-quill';
     RedDotComponent,
     FilePickerComponent,
     NotificationImageComponent,
-    EditorComponent,
     LikeCounterComponent,
     AddExternalLinkPopupComponent,
     ExternalLinksComponent,
