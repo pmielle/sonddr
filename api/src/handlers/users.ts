@@ -49,7 +49,8 @@ export async function patchUser(req: Request, res: Response, _: NextFunction) {
 	const patches: Patch[] = [];
 	const newName = req.body["name"];
 	if (newName) { patches.push({ field: "name", operator: "set", value: newName }); }
-	const newBio = req.body["bio"];
+	let newBio = req.body["bio"];
+	newBio = newBio.replaceAll("&nbsp;", " ");
 	if (newBio) { patches.push({ field: "bio", operator: "set", value: newBio }); }
 	const cover: Express.Multer.File | undefined = req.files?.["cover"]?.pop();
 	if (cover !== undefined) { patches.push({ operator: "set", field: "cover", value: cover.filename }); }

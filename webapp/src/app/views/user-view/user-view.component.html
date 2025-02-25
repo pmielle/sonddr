@@ -1,5 +1,5 @@
 @if (user) {
-<div id="container" class="view" [class.swipe-up]="user.isUser" *transloco="let t">
+<div id="container" class="view" [class.swipe-up]="user.isUser" [class.mobile]="screen.isMobile$|async" *transloco="let t">
 
   <app-top-bar [left-item]="user.isUser ? 'close' : 'back'">
     @if(! user.isUser) {

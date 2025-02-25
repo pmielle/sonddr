@@ -1,5 +1,9 @@
 #container {
 
+    &:not(.mobile) {
+        #bio { max-width: 66%; }
+    }
+
     #cover {
         position: relative;
         width: 100%;

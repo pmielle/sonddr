@@ -46,6 +46,8 @@ export async function postIdea(req: Request, res: Response, _: NextFunction) {
 			`<img src="${image.filename}"`
 		);
 	});
+	// quill uses nbsps
+	content = content.replaceAll("&nbsp;", " ");
 	const payload = {
 		title: _getFromReqBody("title", req),
 		authorId: req["userId"],
@@ -91,6 +93,7 @@ export async function patchIdea(req: Request, res: Response, _: NextFunction) {
 		});
 		// images that were already present should be re-formatted to remove any prefix added by the frontend
 		content = content.replace(/<img src="[^"]+\/([^"]+)">/g, `<img src="$1">`);
+		content = content.replaceAll("&nbsp;", " ");
 	}
 	let patches: Patch[] = [];
 	if (content !== undefined) { patches.push({ operator: "set", field: "content", value: content }); }
