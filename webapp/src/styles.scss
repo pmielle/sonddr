@@ -28,5 +28,8 @@ $sonddr-webapp-theme: mat.define-dark-theme((
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-* {box-sizing: border-box;}
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
