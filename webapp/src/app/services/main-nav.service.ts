@@ -52,15 +52,7 @@ export class MainNavService implements OnDestroy {
 
   // lifecycle hooks
   // --------------------------------------------
-  updateStatusBarColor(color: string) {
-    document.querySelector("meta[name=content]")?.setAttribute("content", `${color}`);
-  }
   constructor() {
-    setInterval(() => {
-    var randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
-    console.log(`updating to ${randomColor}`);
-      this.updateStatusBarColor(randomColor);
-    }, 1000);
     this.routerSub = this.router.events.subscribe(
       (e) => {
         if (e instanceof NavigationEnd) {
