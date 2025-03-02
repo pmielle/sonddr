@@ -74,6 +74,8 @@ export class GoalViewComponent implements OnInit, OnDestroy {
     });
     this.otherGoals = otherGoals;
     this.goal = goal;
+    // update status bar color
+    this.mainNav.updateStatusBarColor(goal!.color);
   }
 
   onSortByChange(sortBy: SortBy) {

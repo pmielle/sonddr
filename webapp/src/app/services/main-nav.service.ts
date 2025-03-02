@@ -53,14 +53,10 @@ export class MainNavService implements OnDestroy {
   // lifecycle hooks
   // --------------------------------------------
   updateStatusBarColor(color: string) {
-    document.querySelector("meta[name=content]")?.setAttribute("content", `${color}`);
+    document.querySelector("meta[name=theme-color]")!.setAttribute("content", `${color}`);
   }
+
   constructor() {
-    setInterval(() => {
-    var randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
-    console.log(`updating to ${randomColor}`);
-      this.updateStatusBarColor(randomColor);
-    }, 1000);
     this.routerSub = this.router.events.subscribe(
       (e) => {
         if (e instanceof NavigationEnd) {
@@ -186,6 +182,11 @@ export class MainNavService implements OnDestroy {
     this.restoreNavBar();
     this.restoreFab();
     this.restoreScroll();
+    this.restoreStatusBar();
+  }
+
+  restoreStatusBar() {
+    this.updateStatusBarColor("#303030");
   }
 
   restoreScroll() {
